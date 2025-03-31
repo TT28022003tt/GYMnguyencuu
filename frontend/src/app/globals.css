@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+	margin: 0;
+  }
+  body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+	  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+	  sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-family: poppins;
+  }
+  
+  code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+	  monospace;
+  }
+.fc-timegrid-slot {
+	height: 45px !important; 
+}
+@media (max-width: 768px) {
+	.fc-timegrid-slot {
+	  height: 55px !important;
+	}
+}
+.fc-toolbar-chunk:nth-child(2) {
+	margin-left: auto !important;
+	padding-right: 10px !important;
+
+}
+.fc-toolbar-title{
+	font-size: 20px !important;
+}
+.fc-event{
+	background: linear-gradient(to right, #9b4100, #ff7300) !important;
+	border: none !important;
+	cursor: pointer !important;
+}
+.fc-scrollgrid-sync-inner, .fc-timegrid-axis{
+	background: #000;
+}
+
+
+.react-calendar{
+	background: #000 !important;
+	width: 100% !important;
+}
+.react-calendar__tile:hover{
+	background-color: #9b4100 !important;
+}
+.react-calendar__navigation__label:hover{
+	background-color: #9b4100 !important;
+}
+.react-calendar__navigation__arrow:hover{
+	background-color: #9b4100 !important;
+}
+.react-calendar__navigation__arrow{
+	background-color: black !important;
+}
