@@ -22,21 +22,22 @@ const QuantitySelector:React.FC<QuantitySelectorProps> = ({defaultValue,onValueC
     onValueChange(newValue); // Gửi giá trị mới về component cha
   };
   return (
-	<div className="h-3 flex justify-center items-center gap-3 bg-orange-600 p-3">
-      <button
-        onClick={up}
-		    className="text-black text-xl cursor-pointer "
-      >
-        +
-      </button>
-      <span className="text-lg font-bold">{value}</span>
-      <button
-        onClick={down}
-        className="text-black text-xl cursor-pointer "
-      >
-        -
-      </button>
-    </div>
+    <div className="flex justify-center items-center gap-2 mt-2 px-2 py-1">
+    <button 
+      onClick={down}
+      className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 active:scale-95 transition disabled:opacity-50"
+      disabled={value <= 1}
+    >
+      -
+    </button>
+    <span className="text-lg font-bold min-w-[30px] text-center">{value}</span>
+    <button 
+      onClick={up}
+      className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 active:scale-95 transition"
+    >
+      +
+    </button>
+  </div>
   );
 };
 

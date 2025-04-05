@@ -1,9 +1,9 @@
-import GymPaymentForm from "@/app/components/hello";
+import GymPayment from "@/app/components/GymPayment";
 
 const CheckoutPage = () => {
   return (
 	<div className=''>
-		<GymPaymentForm/>
+		<GymPayment/>
 	</div>
   );
 };

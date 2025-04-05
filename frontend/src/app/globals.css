@@ -2,62 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
 	margin: 0;
-  }
-  body {
+}
+
+body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-	  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-	  sans-serif;
+		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-family: poppins;
-  }
-  
-  code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	  monospace;
-  }
-.fc-timegrid-slot {
-	height: 45px !important; 
 }
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace;
+}
+
+.fc-timegrid-slot {
+	height: 45px !important;
+}
+
 @media (max-width: 768px) {
 	.fc-timegrid-slot {
-	  height: 55px !important;
+		height: 55px !important;
 	}
 }
+
 .fc-toolbar-chunk:nth-child(2) {
 	margin-left: auto !important;
 	padding-right: 10px !important;
 
 }
-.fc-toolbar-title{
+
+.fc-toolbar-title {
 	font-size: 20px !important;
 }
-.fc-event{
+
+.fc-event {
 	background: linear-gradient(to right, #9b4100, #ff7300) !important;
 	border: none !important;
 	cursor: pointer !important;
 }
-.fc-scrollgrid-sync-inner, .fc-timegrid-axis{
-	background: #000;
-}
 
-
-.react-calendar{
-	background: #000 !important;
+[data-theme="mylight"] .fc-timegrid-axis,.fc-scrollgrid-sync-inner
+{
+	background: white;
 	width: 100% !important;
 }
-.react-calendar__tile:hover{
-	background-color: #9b4100 !important;
+
+[data-theme="mydark"] .fc-scrollgrid-sync-inner,
+.fc-timegrid-axis{
+	@apply bg-base-300 text-base-content;
+	width: 100% !important;
 }
-.react-calendar__navigation__label:hover{
-	background-color: #9b4100 !important;
+
+
+
+[data-theme="mylight"] .react-calendar {
+	@apply bg-white text-base-content;
+	width: 100% !important;
+
 }
-.react-calendar__navigation__arrow:hover{
-	background-color: #9b4100 !important;
+
+[data-theme="mydark"] .react-calendar {
+	@apply bg-base-300 text-base-content;
+	width: 100% !important;
+
 }
-.react-calendar__navigation__arrow{
-	background-color: black !important;
+
+
+[data-theme="mydark"] .react-calendar__tile:hover {
+	color: black !important;
+}
+
+[data-theme="mydark"] .react-calendar__navigation__label:hover {
+	color: black !important;
+
+}
+
+[data-theme="mydark"] .react-calendar__navigation__arrow:hover {
+	color: black !important;
+
+}
+.react-calendar__tile--now {
+	color: black !important;
+}
+[data-theme="mylight"] .textWinDark{
+	color: white;
 }

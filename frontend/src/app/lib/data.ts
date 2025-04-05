@@ -1501,3 +1501,62 @@ export const WeightControldata=[
     },
   ];
 
+  export const hlvData = [
+    {
+      id: 1,
+      idMaHLV: "HLV001",
+      ten: "Nguyen Van A",
+      ngaySinh: "1990-05-15",
+      gioiTinh: "Nam",
+      chungChi: "Chứng chỉ PT Level 3",
+      bangCap: "Cử nhân Thể dục Thể thao",
+      chuyenMon: "Gym, Yoga",
+      email: "nguyenvana@example.com",
+      luong: 15000000,
+      photo:
+        "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      id: 2,
+      idMaHLV: "HLV002",
+      ten: "Tran Thi B",
+      ngaySinh: "1988-08-25",
+      gioiTinh: "Nữ",
+      chungChi: "Chứng chỉ Yoga Master",
+      bangCap: "Thạc sĩ Khoa học thể chất",
+      chuyenMon: "Yoga, Pilates",
+      email: "tranthib@example.com",
+      luong: 18000000,
+      photo:
+        "https://images.pexels.com/photos/936126/pexels-photo-936126.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      id: 3,
+      idMaHLV: "HLV003",
+      ten: "Pham Van C",
+      ngaySinh: "1985-03-10",
+      gioiTinh: "Nam",
+      chungChi: "Chứng chỉ Fitness Coach",
+      bangCap: "Cử nhân Y học thể thao",
+      chuyenMon: "Fitness, Bơi lội",
+      email: "phamvanc@example.com",
+      luong: 20000000,
+      photo:
+        "https://images.pexels.com/photos/428328/pexels-photo-428328.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+    {
+      id: 4,
+      idMaHLV: "HLV004",
+      ten: "Le Thi D",
+      ngaySinh: "1992-12-05",
+      gioiTinh: "Nữ",
+      chungChi: "Chứng chỉ HLV CrossFit",
+      bangCap: "Cử nhân Giáo dục thể chất",
+      chuyenMon: "CrossFit, Gym",
+      email: "lethid@example.com",
+      luong: 17000000,
+      photo:
+        "https://images.pexels.com/photos/1187765/pexels-photo-1187765.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    },
+  ];
+  

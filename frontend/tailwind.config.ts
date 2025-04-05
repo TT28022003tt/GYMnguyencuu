@@ -18,7 +18,18 @@ export default {
     },
   },
   daisyui: {
-    themes: ["light", "dark", "cupcake","black"],
+    themes: [{
+      mylight: {
+        ...require("daisyui/src/theming/themes")["light"], // Kế thừa toàn bộ theme light
+        "base-content": "#222222", // Màu chữ trên nền light
+      },
+    },
+    {
+      mydark: {
+        ...require("daisyui/src/theming/themes")["dark"], // Kế thừa toàn bộ theme dark
+        "base-content": "#ffffff", // Màu chữ TRẮNG trên nền dark
+      },
+    }, "cupcake","black"],
   },
   plugins: [
     require('daisyui')
