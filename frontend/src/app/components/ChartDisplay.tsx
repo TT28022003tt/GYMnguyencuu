@@ -43,7 +43,7 @@ const ChartDisplay = () => {
         <TotalCard type="Total Age & Gender" onSelect={setSelectedType} />
       </div>
 
-      <div className="mt-8">{renderChart()}</div>
+      <div className="mt-8 bg-neutral pt-4 textWinDark rounded-2xl">{renderChart()}</div>
     </div>
   );
 };

@@ -7,7 +7,7 @@ const AdminPage = () => {
     <div className="w-full lg:w-2/3 flex flex-col gap-8">
       <ChartDisplay/>
     </div>
-    <div className="w-full lg:w-1/3 flex flex-col gap-8">
+    <div className="w-full bg-neutral rounded-2xl lg:w-1/3 flex flex-col gap-8">
       <EventCalendar/>
     </div>
   </div>

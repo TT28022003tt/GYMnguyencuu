@@ -1,5 +1,5 @@
 "use client"
-import { faPlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faPlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -10,27 +10,31 @@ const WorkoutScheduleForm = dynamic(() => import("./forms/WorkoutScheduleForm"),
 const NutritionForm = dynamic(() => import("./forms/NutritionForm"), { loading: () => <h1>Loading</h1> });
 const EventForm = dynamic(() => import("./forms/EventForm"), { loading: () => <h1>Loading</h1> });
 const ClassForm = dynamic(() => import("./forms/ClassForm"), { loading: () => <h1>Loading</h1> });
+const TrainerForm = dynamic(() => import("./forms/TrainerForm"), { loading: () => <h1>Loading</h1> });
+const TrainingForm = dynamic(() => import("./forms/TrainingForm"), { loading: () => <h1>Loading</h1> });
+
 
 const forms: { [key: string]: (type: "create" | "update", data?: any) => JSX.Element } = {
+  training: (type, data) => <TrainingForm type={type} data={data} />,
   user: (type, data) => <UserForm type={type} data={data} />, 
   workoutSchedule: (type, data) => <WorkoutScheduleForm type={type} data={data} />, 
   nutrition: (type, data) => <NutritionForm type={type} data={data} />, 
   event: (type, data) => <EventForm type={type} data={data} />, 
-  class: (type, data) => <ClassForm type={type} data={data} />, 
+  class: (type, data) => <ClassForm type={type} data={data} />,
+  trainer: (type, data) => <TrainerForm type={type} data={data} />, 
 };
 
 const FormModal = ({
   table, type, data, id,
 }: {
-  table: "user" | "workoutSchedule" | "nutrition" | "event" | "membership" | "feedback" | "class";
+  table: "user" | "workoutSchedule" | "nutrition" | "event" | "membership" | "feedback" | "class"|"trainer"|"training";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
 }) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
-  const bgColor = type === "create" ? "text-white" : type === "update" ? "bg-lamaSky" : "bg-lamaPurple";
   const [open, setOpen] = useState(false);
-  const Icon = type === "create" ? faPlus : type === "delete" ? faTrashCan : null;
+  const Icon = type === "create" ? faPlus : type === "delete" ? faTrashCan : faPenToSquare;
   const Form = () => {
     return type === "delete" && id ? (
       <form action="" className="p-4 flex flex-col gap-4">
@@ -46,7 +50,7 @@ const FormModal = ({
   return (
     <>
       <button
-        className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
+        className={`${size} flex items-center justify-center rounded-full `}
         onClick={() => setOpen(true)}
       >
         {Icon && <FontAwesomeIcon icon={Icon} className="w-5 h-5" />}

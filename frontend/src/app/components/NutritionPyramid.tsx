@@ -7,7 +7,7 @@ const NutritionPyramid = () => {
   return (
     <div className="flex flex-col items-center justify-center py-8">
       <div 
-        className="w-full max-w-4xl rounded-lg p-6 flex items-center justify-center relative overflow-hidden"
+        className="w-full max-w-4xl rounded-lg p-6 flex items-center justify-center relative "
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

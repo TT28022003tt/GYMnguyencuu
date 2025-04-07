@@ -31,7 +31,7 @@ const columns = [
 
 const EventManagement = () => {
   const renderRow = (item: Event) => (
-    <tr key={item.id} className="border-b text-sm hover:bg-secondary ">
+    <tr key={item.id} className="border-b text-sm hover:bg-gray-400 ">
       <td>{item.eventId}</td>
       <td>
         <Image src={item.photo} alt="" width={40} height={40} className="md:hidden xl:block w-10 h-10 rounded-full object-cover"/>
@@ -63,7 +63,7 @@ const EventManagement = () => {
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 text-white flex items-center justify-center ">
+            <button className="w-8 h-8  flex items-center justify-center ">
               <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
             </button>
             {role === "admin" && <FormModal table="event" type="create" />}

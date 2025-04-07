@@ -35,7 +35,7 @@ const EventCalendar = () => {
   }
   
   return (
-    <div className="p-4 rounded-md ">
+    <div className="p-5 ">
 			<Calendar className="rounded-lg" onChange={onChange} value={value} tileClassName={({date})=>{
 				const events = getEventsForDate(date);
 				if (events.length > 0) {
@@ -46,7 +46,7 @@ const EventCalendar = () => {
 			}}
 			onClickDay={handleDateClick}
 			/>
-			<h1 className="text-lg font-semibold">EVENTS</h1>
+			<h1 className="text-lg font-semibold text-white">EVENTS</h1>
 			<div className="space-y-4 max-h-[250px] overflow-y-auto scrollbar-hide">
 				{calendarEvents.map((event) => {
 					const startDate = new Date(event.start);
@@ -58,7 +58,7 @@ const EventCalendar = () => {
 					return(
 						<div
 							key={event.title}
-							className={`p-2 rounded-md cursor-pointer bg-gradient-to from-brown-red to-bright-orange hover:bg-gradient-to-r ${
+							className={`p-2 rounded-md cursor-pointer bg-gradient-to from-brown-red to-bright-orange hover:bg-gradient-to-r text-white ${
 								selectedEvent === event.title
 								? "bg-blue-300 text-white"
 								: ""

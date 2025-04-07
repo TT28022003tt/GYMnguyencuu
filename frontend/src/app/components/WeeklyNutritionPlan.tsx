@@ -1,39 +1,61 @@
-"use client"
-import React, { useState } from "react";
-import { menu } from "../lib/data";
+"use client";
+import { useState } from "react";
+import { menu, role } from "../lib/data";
+import FormModal from "./FormModal";
+import TableSearch from "./TableSearch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const WeeklyNutritionPlan = () => {
-  const [menuFood, setMenuFood] = useState(menu)
+  const Role = role;
+  const [menuFood, setMenuFood] = useState(menu);
+
   return (
-    <div className="overflow-x-auto p-4 md:pl-28 md:pr-28">
+    <div className="p-6 flex flex-col justify-center items-center">
+      <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+        <TableSearch />
+        {Role === "admin" && (
+          <div className="flex items-center gap-4 self-end">
+            <button className="w-8 h-8 flex items-center justify-center">
+              <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
+            </button>
+            <FormModal table="nutrition" type="create" />
+          </div>
+        )}
+      </div>
       {menuFood.map((plan) => (
-        <div key={plan.id} className="mb-6">
+        <div key={plan.id} className="mb-8 w-[80%] p-4">
+          <div className="flex mr-4">
           <h2 className="text-xl font-bold mb-2">{plan.name}</h2>
-          <table className="w-full border-collapse border border-gray-300 ">
+            <FormModal table="nutrition" type="update" data={plan} />
+            <FormModal table="nutrition" type="delete" id={plan.id} />
+          </div>
+          <table className="w-full border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-accent">
+              <tr className="bg-gray-700 text-white">
                 <th className="border border-gray-300 p-2">Ngày / Bữa</th>
                 <th className="border border-gray-300 p-2">Thực đơn</th>
               </tr>
             </thead>
             <tbody>
               {plan.schedule.map((day) => (
-                <React.Fragment key={day.day}>
-                  <tr className="bg-base-300">
-                    <td className="border border-gray-300 p-2 font-semibold hover:bg-secondary" colSpan={2}>
+                <>
+                  <tr key={day.day} className="bg-base-300">
+                    <td className="border border-gray-300 p-2 font-semibold hover:bg-gray-400" colSpan={2}>
                       {day.day}
                     </td>
                   </tr>
                   {day.meals.map((meal) => (
-                    <tr key={meal.name} className="hover:bg-secondary">
+                    <tr key={meal.name} className="hover:bg-gray-400">
                       <td className="border border-gray-300 p-2">{meal.name}</td>
                       <td className="border border-gray-300 p-2">{meal.food}</td>
                     </tr>
                   ))}
-                </React.Fragment>
+                </>
               ))}
             </tbody>
           </table>
+          
         </div>
       ))}
     </div>
@@ -41,4 +63,3 @@ const WeeklyNutritionPlan = () => {
 };
 
 export default WeeklyNutritionPlan;
-
