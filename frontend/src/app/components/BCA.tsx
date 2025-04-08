@@ -33,7 +33,7 @@ const BodyCompositionAnalysis = () => {
 	if (!bodyComposition) return <p>Đang tải dữ liệu...</p>;
 	  
   return (
-	<div className='w-full mt-4  bg-secondary rounded-md p-4 '>
+	<div className='w-full mt-4  bg-neutral textWinDark rounded-md p-4 '>
 		<h1 className="py-2 text-xl font-medium ">Phân Tích Thành Phần Cơ Thể</h1>
 		<div className="flex items-center justify-between border-b border-white pb-2 ">
 			<p className="">Tuổi:29</p>
@@ -41,7 +41,7 @@ const BodyCompositionAnalysis = () => {
 			<p className="">Cân Nặng:{bodyComposition.weight}kg</p>
 		</div>
 		<div className="">
-			<table className="border-separate border-spacing-y-3 text-white w-full table-fixed">
+			<table className="border-separate border-spacing-y-3  w-full table-fixed">
 				<thead>
 					<tr className="w-full text-center ">
 						<td className="w-1/4"></td>

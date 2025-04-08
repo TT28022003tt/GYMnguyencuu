@@ -1,95 +1,131 @@
-import Announcement from "@/app/components/Announcements";
 import FormModal from "@/app/components/FormModal";
-import InBody from "@/app/components/InBody";
-import Performance from "@/app/components/Performance";
-import { role } from "@/app/lib/data";
-import { faCircleUser, faEnvelope, faKey, faMarsAndVenus, faPhone, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "@/app/components/Pagination";
+import Table from "@/app/components/Table";
+import TableSearch from "@/app/components/TableSearch";
+import { accountsData, role } from "@/app/lib/data";
+import { faCirclePlus, faEye, faFilter, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 
-const UserId = () => {
-  return (
-    <div className='flex-1 p-4 flex flex-col gap-4 xl:flex-row'>
-      {/* LEFT */}
-      <div className="w-full xl:w-2/3">
-        {/* USER INFO CARD */}
-        <div className=" py-6 rounded-md flex gap-4">
-          <div className="w-1/3">
-            <Image 
-              src="/images/123.jpg" 
-              alt="User Photo" 
-              width={144} 
-              height={144} 
-              className="w-36 h-36 rounded-full object-cover" 
-            />
-          </div>
-          <div className="w-2/3 flex flex-col justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold">Leonard Snyder</h1>
-              <FormModal table="user" type="update" data={{
-                id: 1,
-                accountId: "ACC123456",
-                userName: "leonardsnyder",
-                email: "leonard.snyder@gmail.com",
-                password: "securepassword",
-                phone: "+1 987 654 3210",
-                role: "Admin",
-                status: "Active",
-                fullName: "Leonard Snyder",
-                sex:"nữ",//
-                photo: "/images/123.jpg",
-              }} />
-            </div>
-            <p className="text-sm text-gray-500">User profile details and status.</p>
-            <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4"/>
-                <span>leonard.snyder@gmail.com</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faPhone} className="w-4 h-4"/>
-                <span>+1 987 654 3210</span>
-              </div>
-              <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faMarsAndVenus} className="w-4 h-4" />
-                <span>Nữ</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faUserTie} className="w-4 h-4"/>
-                <span>Admin</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faCircleUser} className="w-4 h-4"/>
-                <span>leonardsnyder</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faKey}  className="w-4 h-4"/>
-                <span >securepassword</span>
-              </div>
-            </div>
-          </div>
+type Account = {
+  id: number;
+  accountId: string;
+  userName: string;
+  password: string;
+  phone: string;
+  role: string;
+  status: string;
+  email?: string;
+  fullName: string;
+  photo: string;
+};
+
+const columns = [
+  {
+    header: "Info", 
+    accessor: "info",
+  },
+  {
+    header: "Account ID",
+    accessor: "Account Id",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "User Name",
+    accessor: "Username",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Pass Word",
+    accessor: "PassWord",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Phone",
+    accessor: "phone",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Role",
+    accessor: "Role",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Status",
+    accessor: "Status",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Actions",
+    accessor: "action",
+  },
+];
+
+const UserManagement = () => {
+  const currentRole = "admin";
+
+  const renderRow=(item:Account)=>(
+    <tr key={item.id} className="border-b text-sm hover:bg-gray-400 ">
+      <td>
+        <Image src={item.photo} alt="" width={40} height={40} className="md:hidden xl:block w-10 h-10 rounded-full object-cover"/>
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{item.fullName}</h3>
+          <p className="text-xs text-gray-500">{item?.email}</p>
         </div>
-        {/* BOTTOM */}
-        <div className="">
-            <InBody/>
+      </td>
+      <td className="hidden md:table-cell">{item.accountId}</td>
+      <td className="hidden md:table-cell">{item.userName}</td>
+      <td className="hidden md:table-cell">{item.password}</td>
+      <td className="hidden md:table-cell">{item.phone}</td>
+      <td className="hidden md:table-cell">{item.role}</td>
+      <td className="hidden md:table-cell">{item.status}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          <Link href={`/listManagement/user/${item.id}`}>
+          <button className="w-7 h-7 flex items-center justify-center rounded-full ">
+          <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
+          </button>
+          </Link>
+          {currentRole && (
+            // <button className="w-7 h-7 flex items-center justify-center rounded-full ">
+            // <FontAwesomeIcon icon={faTrashCan} className="w-5 h-5" />
+            // </button>
+            <>
+              <FormModal table="user" type="delete" id={item.id}/>
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  )
+  return (
+    <div className="p-4 rounded-md flex-1 m-4 mt-0">
+      <div className="flex items-center justify-between">
+        <h1 className="hidden md:block text-lg font-semibold">ALL ACCONUT</h1>
+        <div className="flex flex-col md:flex-row items-center gap-4  w-full md:w-auto">
+          <TableSearch/>
+          <div className="flex items-center gap-4 self-end">
+            <button className="w-8 h-8  flex items-center justify-center ">
+              <FontAwesomeIcon icon={faFilter} className="w-5 h-5"/>
+            </button>
+            {currentRole && (
+            //   <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            //   <Image src="/image/plus.png" alt="" width={14} height={14}/>
+            // </button>
+            <FormModal table="user" type="create"/>
+            )}
+          </div>
         </div>
       </div>
-      {/* RIGHT */}
-      <div className="w-full xl:w-1/3 flex flex-col gap-4">
-        <div className="bg-neutral textWinDark p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Shortcuts</h1>
-          <div className="mt-4 flex gap-4 flex-wrap text-xs text-white">
-            <Link className="p-3 rounded-md " href="/healthconsultation">healthconsultation</Link>
-            <Link className="p-3 rounded-md " href="/">Settings</Link>
-            <Link className="p-3 rounded-md " href="/schedule">Schedule</Link>
-          </div>
-        </div>
-        <Performance role={role} />
-        <Announcement />
+      <div className="">
+        <Table colums={columns} renderRow={renderRow} data={accountsData}/>
+      </div>
+      <div className="">
+        <Pagination/>
       </div>
     </div>
   );
 };
 
-export default UserId;
+export default UserManagement;

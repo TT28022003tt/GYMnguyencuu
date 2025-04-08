@@ -39,7 +39,7 @@ const AgeAndGender = () => {
 	
   return (
 	<div className=''>
-		<p className="text-center">BIỂU ĐỒ TỶ LỆ GIỚI TÍNH VÀ ĐỘ TUỔI PHÒNG GYM</p>
+		<p className="text-center text-lg">BIỂU ĐỒ TỶ LỆ GIỚI TÍNH VÀ ĐỘ TUỔI PHÒNG GYM</p>
 		<ReactECharts option={option} style={{ height: '400px' }} />
 	</div>
   );

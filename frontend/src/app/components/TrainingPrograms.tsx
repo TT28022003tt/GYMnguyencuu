@@ -16,11 +16,11 @@ const TrainingPrograms = () => {
       <h1 className="text-2xl font-bold text-center mb-14 ">
         LIỆU TRÌNH TẬP (TRAINING PLANS)
       </h1>
-      <ul className="steps steps-vertical lg:steps-horizontal">
-        <li className="step step-primary">Chưa Được</li>
-        <li className="step step-primary">Cũng Cũng</li>
-        <li className="step">Ngon</li>
-        <li className="step">Xiu MLEMMLEM</li>
+      <ul className="steps steps-vertical lg:steps-horizontal w-[500px]">
+        <li className="step step-primary ">Bắt Đầu</li>
+        <li className="step step-primary">Giai Đoạn 1</li>
+        <li className="step">Giai Đoạn 2</li>
+        <li className="step">Hoàn Thành</li>
       </ul>
       <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
         <TableSearch />

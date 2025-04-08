@@ -67,7 +67,7 @@ const Performance = ({ role }: { role: string }) => {
   const renderAdminView = () => (
     <div>
       {trainerdata.map((trainer) => (
-        <div key={trainer.id} className="flex justify-between bg-secondary p-2 rounded-md mb-2">
+        <div key={trainer.id} className="flex justify-between bg-neutral textWinDark p-2 rounded-md mb-2">
           <span>{trainer.name}</span>
           <span>{trainer.averageRating} / 5</span>
         </div>
@@ -76,7 +76,7 @@ const Performance = ({ role }: { role: string }) => {
   );
 
   return (
-    <div className='bg-secondary p-4 rounded-md'>
+    <div className='bg-neutral textWinDark p-4 rounded-md'>
       {role === 'customer' && renderStars()}
       {role === 'trainer' && renderTrainerAverage()}
       {role === 'admin' && renderAdminView()}

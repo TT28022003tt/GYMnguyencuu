@@ -27,7 +27,7 @@ const WeightControlAnalysis = () => {
 	if (!bodyComposition) return <p>Đang tải dữ liệu...</p>;
 
 	return (
-		<div className='w-full mt-4 bg-secondary rounded-md p-4'>
+		<div className='w-full mt-4 bg-neutral textWinDark rounded-md p-4'>
 			<h1 className="py-2 text-xl font-medium">Kiểm Soát Cân Nặng</h1>
 			<div className="flex items-center  border-b border-white pb-2">
 				<p>Trọng lượng mục tiêu đề nghị: {bodyComposition.weightControl} kg</p>

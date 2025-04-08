@@ -6,7 +6,7 @@ const UserCard = ({type,onSelect}:{type:string; onSelect:(type:string)=>void}) =
   const today = new Date();
   const formattedDate = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
   return (
-    <div onClick={()=> onSelect(type)} className='cursor-pointer rounded-2xl bg-secondary p-4 flex-1 min-w-[130px]'>
+    <div onClick={()=> onSelect(type)} className='cursor-pointer rounded-2xl bg-neutral textWinDark p-4 flex-1 min-w-[130px]'>
         <div className=" flex justify-between items-center">
             <span className="text-[10px]  px-2 py-1 rounded-full ">{formattedDate}</span>
             <FontAwesomeIcon icon={faCircleQuestion} className="w-5 h-5" /> 

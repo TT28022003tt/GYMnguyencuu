@@ -43,6 +43,7 @@ const Navbar = () => {
             { name: "Health Consultation", href: "/healthconsultation" },
             { name: "Schedule", href: "/schedule" },
             { name: "Checkout", href: "/checkout" },
+            { name: "Services", href: "/products&services" },
           ].map((item) => (
             <li key={item.name} className="hover:text-red-500 transition">
               <Link href={item.href}>{item.name}</Link>
@@ -92,6 +93,7 @@ const Navbar = () => {
             { name: "Health Consultation", href: "/healthconsultation" },
             { name: "Schedule", href: "/schedule" },
             { name: "Checkout", href: "/checkout" },
+            { name: "Services", href: "/products&services" },
           ].map((item) => (
             <li key={item.name} className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-red-500 transition">
               <Link href={item.href} onClick={() => setMenuOpen(false)}>{item.name}</Link>
