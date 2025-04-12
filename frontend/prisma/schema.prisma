@@ -7,431 +7,306 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model admin {
-  idAdmin       Int       @id @default(autoincrement())
-  ChucVu        String?   @db.VarChar(255)
-  NgayBatDauLam DateTime? @db.DateTime(0)
+model chitietkhuyenmai {
+  idMaChiTietKM Int       @id
+  Ten           String?   @db.VarChar(45)
+  LoaiSP        String?   @db.VarChar(45)
+  SoLuong       String?   @db.VarChar(45)
+  NgayBatDauKM  DateTime? @db.Date
+  NgayKetThucKM DateTime? @db.Date
+  MaKM          Int
+  khuyenmai     khuyenmai @relation(fields: [MaKM], references: [idMaKM], onDelete: Cascade, map: "FK_CTKM_MaKM")
+
+  @@index([MaKM], map: "MaKM_idx")
 }
 
-model banlist {
-  idBanList Int       @id @default(autoincrement())
-  idUSER    Int?
-  LyDo      String?   @db.VarChar(255)
-  TGBan     DateTime? @db.DateTime(0)
-  user      user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "BanList_USER")
+model chitietmuctieu {
+  idChiTietMucTieu Int            @id @default(autoincrement())
+  idChuongTrinhTap Int
+  ThoiGian         String?        @db.VarChar(255)
+  MoTa             String?        @db.VarChar(255)
+  chuongtrinhtap   chuongtrinhtap @relation(fields: [idChuongTrinhTap], references: [idChuongTrinhTap], onDelete: NoAction, onUpdate: NoAction, map: "FK_CTMT_CTT")
 
-  @@index([idUSER], map: "idUSER_idx")
+  @@index([idChuongTrinhTap], map: "FK_CTMT_CTT_idx")
 }
 
-model banquyen {
-  idTruyen        Int             @default(autoincrement())
-  idHopDong       Int
-  hopdongbanquyen hopdongbanquyen @relation(fields: [idHopDong], references: [idHopDong], onDelete: NoAction, onUpdate: NoAction, map: "HopDong_BanQuyen")
-  truyen          truyen          @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "Truyen_BanQuyen")
+model chuongtrinhtap {
+  idChuongTrinhTap Int              @id @default(autoincrement())
+  TenCTT           String?          @db.VarChar(255)
+  MucTieu          String?          @db.VarChar(255)
+  ThoiGian         String?          @db.VarChar(255)
+  MaHV             Int
+  chitietmuctieu   chitietmuctieu[]
+  hocvien          hocvien          @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_CTT_HV")
 
-  @@id([idTruyen, idHopDong])
-  @@index([idHopDong], map: "idHopDong_idx")
+  @@index([MaHV], map: "FK_CTT_HV_idx")
 }
 
-model binhluan {
-  idBinhLuan   Int       @id @default(autoincrement())
-  idChap       Int?
-  idUSER       Int?
-  NoiDung      String?   @db.VarChar(255)
-  ThoiGianDang DateTime? @db.DateTime(0)
-  chap         chap?     @relation(fields: [idChap], references: [idChap], onDelete: NoAction, onUpdate: NoAction, map: "BL_Chap")
-  user         user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "BL_USER")
+model dangkylophoc {
+  idDangKyLopHoc Int     @id @default(autoincrement()) @db.UnsignedInt
+  idMaLH         Int
+  idMaHV         Int
+  hocvien        hocvien @relation(fields: [idMaHV], references: [idMaHV], onDelete: Cascade, map: "FK_DKLH_MaHV")
+  lophoc         lophoc  @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_DKLH_MaLH")
 
-  @@index([idChap], map: "idChap_idx")
-  @@index([idUSER], map: "idTK_idx")
+  @@index([idMaHV], map: "MaHV_idx")
+  @@index([idMaLH], map: "MaLH_idx")
 }
 
-model canhbaovipham {
-  idBaoCao   Int       @id @default(autoincrement())
-  idTruyen   Int?
-  LoaiBaoCao String?   @db.VarChar(255)
-  NoiDung    String?   @db.VarChar(255)
-  NgayGui    DateTime? @db.DateTime(0)
-  TrangThai  Boolean?  @default(dbgenerated("b'1'")) @db.Bit(1)
-  truyen     truyen?   @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "CanhBao_Truyen")
+model danhgia {
+  idMaDG        Int           @id @default(autoincrement())
+  Diem          Int?
+  MoTa          String?       @db.VarChar(255)
+  MaHV          Int
+  MaHLV         Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_DanhGia_MaHLV")
+  hocvien       hocvien       @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_DanhGia_MaHV")
 
-  @@index([idTruyen], map: "idTruyen_idx")
+  @@index([MaHV], map: "FK_DanhGia_MaHV")
+  @@index([MaHLV], map: "MaHLV_idx")
 }
 
-model chap {
-  idChap       Int         @id @default(autoincrement())
-  TenChap      String?     @db.VarChar(255)
-  idTruyen     Int?
-  idChuong     Int?
-  SoChu        Int?
-  ThoiGianDang DateTime?   @db.DateTime(0)
-  binhluan     binhluan[]
-  chuong       chuong?     @relation(fields: [idChuong], references: [idChuong], onDelete: Cascade, map: "Chap_Chuong")
-  truyen       truyen?     @relation(fields: [idTruyen], references: [idTruyen], onDelete: Cascade, map: "Chap_Truyen")
-  lichsudoc    lichsudoc[]
-
-  @@index([idChuong], map: "idChuong_idx")
-  @@index([idTruyen], map: "idTruyen_idx")
+model goitap {
+  idMaGT   Int      @id @default(autoincrement())
+  Ten      String?  @db.VarChar(45)
+  ThoiGian Int?
+  Gia      Decimal? @db.Decimal(10, 0)
 }
 
-model chitietdonhang {
-  idDonHang           Int          @id
-  idSanPham           Int?
-  NgayDatHang         DateTime?    @db.DateTime(0)
-  DonViVanChuyen      String?      @db.VarChar(255)
-  TheoGioiDon         String?      @db.VarChar(255)
-  idPTThanhToan       Int?
-  PhuongThucThanhToan String?      @db.VarChar(255)
-  DiaChiGiao          String?      @db.VarChar(255)
-  DonGia              Decimal?     @db.Decimal(10, 0)
-  NgayNhan            DateTime?    @db.DateTime(0)
-  SoLuong             Int?
-  donhang             donhang      @relation(fields: [idDonHang], references: [idDonHang], onDelete: NoAction, onUpdate: NoAction, map: "idDonHang")
-  ptthanhtoan         ptthanhtoan? @relation(fields: [idPTThanhToan], references: [idPTThanhToan], onDelete: NoAction, onUpdate: NoAction, map: "idPTThanhToan")
-  sanpham             sanpham?     @relation(fields: [idSanPham], references: [idSanPham], onDelete: NoAction, onUpdate: NoAction, map: "idSanPham")
+model hocvien {
+  idMaHV         Int              @id @default(autoincrement())
+  GoiTap         String?          @db.VarChar(45)
+  NgayDangKy     DateTime?        @db.Date
+  DangKyLopHoc   Int?
+  MaHLV          Int
+  idUSER         Int
+  chuongtrinhtap chuongtrinhtap[]
+  dangkylophoc   dangkylophoc[]
+  danhgia        danhgia[]
+  huanluyenvien  huanluyenvien    @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_HV_HVL")
+  user           user             @relation(fields: [idUSER], references: [idUser], onDelete: Cascade, map: "FK_HV_USER")
+  hopdong        hopdong[]
+  lichtap        lichtap[]
+  phanhoi        phanhoi[]
+  thanhtoan      thanhtoan[]
+  thehoivien     thehoivien[]
+  tuvanhotro     tuvanhotro[]
 
-  @@index([idPTThanhToan], map: "idPTThanhToan_idx")
-  @@index([idSanPham], map: "idSanPham_idx")
+  @@index([MaHLV], map: "FK_HV_HVL_idx")
+  @@index([idUSER], map: "FK_HV_USER_idx")
 }
 
-model chuong {
-  idChuong  Int     @id @default(autoincrement())
-  TenChuong String? @db.VarChar(255)
-  idTruyen  Int?
-  TenTruyen String? @db.VarChar(255)
-  SoChuong  Int?
-  chap      chap[]
-  truyen    truyen? @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "Chuong_Truyen")
+model hopdong {
+  idMaHD    Int       @id @default(autoincrement())
+  NgayKy    DateTime? @db.Date
+  ThoiHan   Int?
+  TinhTrang String?   @db.VarChar(45)
+  MaHV      Int
+  hocvien   hocvien   @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_HopDong_MaHV")
 
-  @@index([idTruyen], map: "idTruyen_idx")
+  @@index([MaHV], map: "MaHV_idx")
 }
 
-model cuahang {
-  idCuaHang  Int       @id @default(autoincrement())
-  idUSER     Int?
-  TenCuaHang String?   @db.VarChar(255)
-  DiaChi     String?   @db.VarChar(255)
-  TGHoatDong DateTime? @db.Date
-  Hotline    String?   @db.VarChar(20)
-  Email      String?   @db.VarChar(255)
-  user       user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "CuaHang_USER")
+model huanluyenvien {
+  idMaHLV     Int           @id @unique(map: "idMaHLV_UNIQUE") @default(autoincrement())
+  ChungChi    String?       @db.VarChar(45)
+  BangCap     String?       @db.VarChar(45)
+  ChuyeMon    String?       @db.VarChar(45)
+  Luong       Decimal?      @db.Decimal(10, 2)
+  idUser      Int
+  danhgia     danhgia[]
+  hocvien     hocvien[]
+  user        user          @relation(fields: [idUser], references: [idUser], onDelete: Cascade, map: "FK_HLV_USER")
+  lichlamviec lichlamviec[]
+  lichtap     lichtap[]
+  loailophoc  loailophoc[]
+  lophoc      lophoc[]
+  luong       luong[]
+  phanhoi     phanhoi[]
 
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model donhang {
-  idDonHang      Int             @id
-  idUSER         Int?
-  TrangThaiDon   Int?            @default(0)
-  TongTien       Decimal?        @db.Decimal(10, 0)
-  chitietdonhang chitietdonhang?
-  user           user?           @relation(fields: [idUSER], references: [idUSER], onDelete: Cascade, map: "DH_USER")
-
-  @@index([idUSER], map: "idTK_idx")
-}
-
-model dsyeuthich {
-  idDSYeuThich  Int       @id
-  TenDSYeuThich String?   @db.VarChar(255)
-  idUSER        Int?
-  idTruyen      Int?
-  NgayThem      DateTime? @db.DateTime(0)
-  truyen        truyen?   @relation(fields: [idTruyen], references: [idTruyen], onDelete: Cascade, map: "YThich_Truyen")
-  user          user?     @relation(fields: [idUSER], references: [idUSER], onDelete: Cascade, map: "YThich_USER")
-
-  @@index([idTruyen], map: "idTruyen_idx")
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model feedback {
-  idFeedback Int       @id @default(autoincrement())
-  idUSER     Int?
-  NoiDung    String?   @db.VarChar(255)
-  TGGui      DateTime? @db.DateTime(0)
-  user       user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "Feedback_USER")
-
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model giohang {
-  idGioHang Int        @id @default(autoincrement())
-  idUSER    Int?
-  TrangThai Int?       @default(1) @db.TinyInt
-  SoLuong   Int?
-  TongTien  Decimal?   @db.Decimal(10, 0)
-  user      user?      @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "GH_USER")
-  sp_ghang  sp_ghang[]
-
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model hoasimh {
-  idHS       Int     @id @default(autoincrement())
-  idUSER     Int?
-  TenDichGia String? @db.VarChar(255)
-  MoTa       String? @db.VarChar(255)
-  user       user?   @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "HS_USER")
-
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model hopdongbanquyen {
-  idHopDong   Int        @id @default(autoincrement())
-  idUSER      Int?
-  NgayKy      DateTime?  @db.Date
-  NgayBatDau  DateTime?  @db.Date
-  NgayKetThuc DateTime?  @db.Date
-  NoiDung     String?    @db.VarChar(255)
-  Chia        String?    @db.VarChar(255)
-  TrangThai   Int?       @default(1) @db.TinyInt
-  banquyen    banquyen[]
-  user        user?      @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "HOPCU_USER")
-
-  @@index([idUSER], map: "idUSER_idx")
-}
-
-model kho {
-  idKho     Int      @id @default(autoincrement())
-  IdUSER    Int?
-  TenKho    String?  @db.VarChar(255)
-  DiaChi    String?  @db.VarChar(255)
-  DungTich  String?  @db.VarChar(255)
-  TinhTrang Int?     @default(1) @db.TinyInt
-  user      user?    @relation(fields: [IdUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "Kho_USER")
-  kho_sp    kho_sp[]
-
-  @@index([IdUSER], map: "idUSER_idx")
-}
-
-model kho_sp {
-  idKho   Int
-  idSP    Int
-  kho     kho     @relation(fields: [idKho], references: [idKho], onDelete: NoAction, onUpdate: NoAction, map: "idKho")
-  sanpham sanpham @relation(fields: [idSP], references: [idSanPham], onDelete: NoAction, onUpdate: NoAction, map: "idSP")
-
-  @@id([idKho, idSP])
-  @@index([idSP], map: "idSP_idx")
-  @@map("kho-sp")
+  @@index([idUser], map: "FK_HLV_USER_idx")
 }
 
 model khuyenmai {
-  idKhuyenMai Int       @id @default(autoincrement())
-  TenKM       String?   @db.VarChar(255)
-  ThoiHan     DateTime? @db.DateTime(0)
-  NgayBatDau  DateTime? @db.Date
-  ThoiHanKT   String?   @db.VarChar(255)
-  MoTa        String?   @db.VarChar(255)
-  LoaiKM      String?   @db.VarChar(255)
-  sp_km       sp_km[]
+  idMaKM           Int                @id @default(autoincrement())
+  Ten              String?            @db.VarChar(45)
+  PhanTramGia      Int?
+  NgayBatDau       DateTime?          @db.Date
+  NgayKetThuc      DateTime?          @db.Date
+  MoTa             String?            @db.VarChar(255)
+  chitietkhuyenmai chitietkhuyenmai[]
 }
 
-model lichsudoc {
-  idLichSuDoc Int       @id @default(autoincrement())
-  idTruyen    Int?
-  idChap      Int?
-  NgayDoc     DateTime? @db.DateTime(0)
-  ViTriDoc    String?   @db.VarChar(255)
-  chap        chap?     @relation(fields: [idChap], references: [idChap], onDelete: NoAction, onUpdate: NoAction, map: "LSDoc_Chap")
-  truyen      truyen?   @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "LSDoc_Truyen")
+model lichlamviec {
+  idMaLich      Int           @id @default(autoincrement())
+  Ngay          DateTime?     @db.Date
+  CaLam         String?       @db.VarChar(45)
+  MaHLV         Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LichLamViec_MaHLV")
 
-  @@index([idChap], map: "idChap_idx")
-  @@index([idTruyen], map: "idTruyen_idx")
+  @@index([MaHLV], map: "MaHLV_idx")
 }
 
-model lichsunap {
-  idLichSuNap         Int       @id @default(autoincrement())
-  idUSER              Int?
-  SoXu                Int?
-  PhuongThucThanhToan String?   @db.VarChar(255)
-  NgayGD              DateTime? @db.DateTime(0)
-  user                user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "LSNap_USER")
+model lichtap {
+  MaLT          Int           @id @default(autoincrement())
+  GoiTap        String?       @db.VarChar(45)
+  NgayTap       String?       @db.VarChar(45)
+  MaNV          Int
+  MaHV          Int
+  MaHLV         Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LichTap_MaHLV")
+  hocvien       hocvien       @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_LichTap_MaHV")
 
-  @@index([idUSER], map: "idTK_idx")
+  @@index([MaHLV], map: "FK_LichTap_MaHLV_idx")
+  @@index([MaHV], map: "FK_LichTap_MaHV_idx")
 }
 
-model lichsutimkiem {
-  idLichSuTimKiem Int       @id @default(autoincrement())
-  idUSER          Int?
-  NoiDungTKm      String?   @db.VarChar(255)
-  ThoiGianTKm     DateTime? @db.DateTime(0)
-  user            user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "LSTim_USER")
+model loailophoc {
+  idMaLLH       Int           @id @default(autoincrement())
+  Ten           String?       @db.VarChar(45)
+  ThoiGian      String?       @db.VarChar(45)
+  Chung         String?       @db.VarChar(45)
+  Rieng         String?       @db.VarChar(45)
+  MaHLV         Int
+  MaLH          Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LLH_MaHLV")
+  lophoc        lophoc        @relation(fields: [MaLH], references: [idMaLH], onDelete: Cascade, map: "FK_LLH_MaLH")
+  suathoc       suathoc[]
 
-  @@index([idUSER], map: "idUSER_idx")
+  @@index([MaHLV], map: "MaHLV_idx")
+  @@index([MaLH], map: "MaLH_idx")
 }
 
-model ngonngu {
-  idNgonNgu  Int     @id @default(autoincrement())
-  TenNgonNgu String? @db.VarChar(255)
+model lophoc {
+  idMaLH        Int            @id @default(autoincrement())
+  Ten           String?        @db.VarChar(45)
+  Phong         String?        @db.VarChar(45)
+  Tang          String?        @db.VarChar(45)
+  MoTa          String?        @db.VarChar(255)
+  TheLoai       String?        @db.VarChar(45)
+  SoLuong       String?        @db.VarChar(45)
+  Rieng         String?        @db.VarChar(45)
+  Chung         String?        @db.VarChar(45)
+  idMaMH        Int
+  idMaHLV       Int
+  dangkylophoc  dangkylophoc[]
+  loailophoc    loailophoc[]
+  huanluyenvien huanluyenvien  @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
+  monhoc        monhoc         @relation(fields: [idMaMH], references: [idMaMH], onDelete: Cascade, map: "FK_LopHoc_MaMH")
+  suathoc       suathoc[]
+
+  @@index([idMaHLV], map: "MaHLV_idx")
+  @@index([idMaMH], map: "MaMH_idx")
 }
 
-model ptthanhtoan {
-  idPTThanhToan  Int              @id @default(autoincrement())
-  idUSER         Int?
-  TenPT          String?          @db.VarChar(255)
-  MoTa           String?          @db.VarChar(255)
-  chitietdonhang chitietdonhang[]
-  user           user?            @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "PTTT_USER")
+model luong {
+  MaL           Int           @id @default(autoincrement())
+  Ten           String?       @db.VarChar(45)
+  LuongCoBan    String?       @db.VarChar(45)
+  PhuCap        String?       @db.VarChar(45)
+  Thuong        String?       @db.VarChar(45)
+  MaHLV         Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_Luong_MaHLV")
 
-  @@index([idUSER], map: "idUSER_idx")
+  @@index([MaHLV], map: "MaHLV_idx")
 }
 
-model sanpham {
-  idSanPham      Int              @id @default(autoincrement())
-  idTacGia       Int?
-  idTruyen       Int?
-  TenSP          String?          @db.VarChar(255)
-  MoTa           String?          @db.VarChar(255)
-  LoaiSP         String?          @db.VarChar(255)
-  GiaBan         Decimal?         @db.Decimal(10, 0)
-  SoLuong        Int?
-  chitietdonhang chitietdonhang[]
-  kho_sp         kho_sp[]
-  tacgia         tacgia?          @relation(fields: [idTacGia], references: [idTacGia], onDelete: NoAction, onUpdate: NoAction, map: "SP_TG")
-  truyen         truyen?          @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "SP_Tr")
-  sp_ghang       sp_ghang[]
-  sp_km          sp_km[]
-
-  @@index([idTacGia], map: "idTacGia_idx")
-  @@index([idTruyen], map: "idTruyen _idx")
+model monhoc {
+  idMaMH  Int      @id @default(autoincrement())
+  Ten     String?  @db.VarChar(45)
+  Lop     String?  @db.VarChar(45)
+  SoLuong String?  @db.VarChar(45)
+  CoSo    String?  @db.VarChar(45)
+  Phong   String?  @db.VarChar(45)
+  lophoc  lophoc[]
 }
 
-model sp_ghang {
-  idSP      Int
-  idGioHang Int
-  SoLuong   Int?
-  giohang   giohang @relation(fields: [idGioHang], references: [idGioHang], onDelete: NoAction, onUpdate: NoAction, map: "GioHang_SPprimary")
-  sanpham   sanpham @relation(fields: [idSP], references: [idSanPham], onDelete: NoAction, onUpdate: NoAction, map: "SP_GioHangprimary")
+model phanhoi {
+  idMaPH        Int           @id @default(autoincrement())
+  Ten           String?       @db.VarChar(45)
+  GhiChu        String?       @db.VarChar(45)
+  NgayPhanHoi   DateTime?     @db.Date
+  LyDo          String?       @db.VarChar(45)
+  MaHV          Int
+  MaHLV         Int
+  huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_PhanHoi_MaHLV")
+  hocvien       hocvien       @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_PhanHoi_MaHV")
 
-  @@id([idSP, idGioHang])
-  @@index([idGioHang], map: "idGioHang_idx")
-  @@map("sp-ghang")
+  @@index([MaHLV], map: "MaHLV_idx")
+  @@index([MaHV], map: "MaHV_idx")
 }
 
-model sp_km {
-  idSP      Int
-  idKM      Int
-  khuyenmai khuyenmai @relation(fields: [idKM], references: [idKhuyenMai], onDelete: NoAction, onUpdate: NoAction, map: "KM_SPprimary")
-  sanpham   sanpham   @relation(fields: [idSP], references: [idSanPham], onDelete: NoAction, onUpdate: NoAction, map: "SP_KMprimary")
+model suathoc {
+  idSuatHoc  Int        @id @default(autoincrement())
+  HoTen      String?    @db.VarChar(255)
+  Lop        String?    @db.VarChar(255)
+  Phong      String?    @db.VarChar(255)
+  CoSo       String?    @db.VarChar(255)
+  Loai       String?    @db.VarChar(255)
+  idMaLLH    Int
+  idMaLH     Int
+  lophoc     lophoc     @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_SH_LH")
+  loailophoc loailophoc @relation(fields: [idMaLLH], references: [idMaLLH], onDelete: NoAction, onUpdate: NoAction, map: "FK_SH_LLH")
 
-  @@id([idSP, idKM])
-  @@index([idKM], map: "idKM_idx")
-  @@map("sp-km")
-}
-
-model tacgia {
-  idTacGia      Int             @id @default(autoincrement())
-  idUSER        Int?
-  TenTacGia     String?         @db.VarChar(255)
-  MoTa          String?         @db.VarChar(255)
-  sanpham       sanpham[]
-  user          user?           @relation(fields: [idUSER], references: [idUSER], onDelete: Cascade, map: "TG_USER")
-  tacgia_truyen tacgia_truyen[]
-
-  @@index([idUSER], map: "idTK_idx")
-}
-
-model tacgia_truyen {
-  idTacGia Int
-  idTruyen Int
-  tacgia   tacgia @relation(fields: [idTacGia], references: [idTacGia], onDelete: NoAction, onUpdate: NoAction, map: "TG_Truyenprimary")
-  truyen   truyen @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "Truyen_TGPrimary")
-
-  @@id([idTacGia, idTruyen])
-  @@index([idTruyen], map: "idTruyen_idx")
-  @@map("tacgia-truyen")
+  @@index([idMaLH], map: "FK_SH_LH_idx")
+  @@index([idMaLLH], map: "FK_SH_LLH_idx")
 }
 
 model taikhoan {
-  idTK                Int       @id @default(autoincrement())
-  MatKhau             String?   @db.VarChar(255)
-  LoaiUSER            String?   @db.VarChar(255)
-  Coin                Decimal?  @default(0) @db.Decimal(10, 0)
-  DiemTichLuy         Decimal?  @default(0) @db.Decimal(10, 0)
-  TrangThai           Int?      @default(1) @db.TinyInt
-  ThoiGiangHoatDongGN DateTime? @db.DateTime(0)
-  idUSER              Int?
-  user                user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "idUSER")
+  idMaTK      Int     @id @default(autoincrement())
+  TenDangNhap String? @unique @db.VarChar(255)
+  MatKhau     String? @db.VarChar(255)
+  VaiTro      String? @db.VarChar(45)
+  idUser      Int
+  token       String? @db.VarChar(255)
+  user        user    @relation(fields: [idUser], references: [idUser], onDelete: Cascade, map: "FK_TK_USER")
 
-  @@index([idUSER], map: "idUSER_idx")
+  @@index([idUser], map: "FK_TK_USER_idx")
 }
 
-model thongbao {
-  idThongBao   Int       @id @default(autoincrement())
-  idUSER       Int?
-  LoaiThongBao String?   @db.VarChar(255)
-  NoiDung      String?   @db.VarChar(255)
-  TinhTrang    Boolean?  @default(dbgenerated("b'1'")) @db.Bit(1)
-  NgayNhan     DateTime? @db.DateTime(0)
-  user         user?     @relation(fields: [idUSER], references: [idUSER], onDelete: NoAction, onUpdate: NoAction, map: "ThongBao_USER")
+model thanhtoan {
+  idThanhToan         Int      @id @default(autoincrement())
+  idHoaDon            Int?
+  PhuongThucThanhToan String?  @db.VarChar(45)
+  NgayThanhToan       Decimal? @db.Decimal(10, 2)
+  MoTa                String?  @db.VarChar(45)
+  MaHV                Int
+  hocvien             hocvien  @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_ThanhToan_MaHV")
 
-  @@index([idUSER], map: "idTK_idx")
+  @@index([MaHV], map: "FK_ThanhToan_MaHV_idx")
 }
 
-model truyen {
-  idTruyen       Int              @id @default(autoincrement())
-  TenTruyen      String?          @db.VarChar(255)
-  idTacGia       Int?
-  TacGia         String?          @db.VarChar(255)
-  MoTa           String?          @db.VarChar(255)
-  Loai           Boolean?         @default(dbgenerated("b'1'")) @db.Bit(1)
-  TheLoai        String?          @db.VarChar(255)
-  NgayPhatHanh   DateTime?        @db.Date
-  TrangThai      Boolean?         @default(dbgenerated("b'1'")) @db.Bit(1)
-  LuotXem        Int?             @default(0)
-  DanhGia        Float?           @default(0) @db.Float
-  AnhBia         String?          @db.VarChar(255)
-  NgonNgu        String?          @db.VarChar(255)
-  banquyen       banquyen[]
-  canhbaovipham  canhbaovipham[]
-  chap           chap[]
-  chuong         chuong[]
-  dsyeuthich     dsyeuthich[]
-  lichsudoc      lichsudoc[]
-  sanpham        sanpham[]
-  tacgia_truyen  tacgia_truyen[]
-  truyen_xephang truyen_xephang[]
+model thehoivien {
+  idMaThe    Int       @id @default(autoincrement()) @db.UnsignedInt
+  NgayCap    DateTime? @db.Date
+  NgayHetHan DateTime? @db.Date
+  TinhTrang  String?   @db.VarChar(45)
+  MaHV       Int
+  hocvien    hocvien   @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_TheHoiVien_MaHV")
+
+  @@index([MaHV], map: "MaHV")
 }
 
-model truyen_xephang {
-  idTruyen  Int
-  idXepHang Int
-  truyen    truyen  @relation(fields: [idTruyen], references: [idTruyen], onDelete: NoAction, onUpdate: NoAction, map: "Truyen_XPprimary")
-  xephang   xephang @relation(fields: [idXepHang], references: [idXepHang], onDelete: NoAction, onUpdate: NoAction, map: "XepHang_Truyenprimary")
+model tuvanhotro {
+  idTuVanHoTro Int     @id @default(autoincrement())
+  NoiDung      String? @db.VarChar(45)
+  HinhThuc     String? @db.VarChar(45)
+  TrangThai    String? @db.VarChar(45)
+  MaHV         Int
+  hocvien      hocvien @relation(fields: [MaHV], references: [idMaHV], onDelete: Cascade, map: "FK_TVHT_MaHV")
 
-  @@id([idTruyen, idXepHang])
-  @@index([idXepHang], map: "idXepHang_idx")
-  @@map("truyen-xephang")
+  @@index([MaHV], map: "MaKH_idx")
 }
 
 model user {
-  idUSER          Int               @id @default(autoincrement())
-  UseName         String?           @db.VarChar(255)
-  password        String?           @db.VarChar(255)
-  Email           String?           @db.VarChar(255)
-  sodth           String?           @db.VarChar(20)
-  NgaySinh        DateTime?         @db.Date
-  DiaChi          String?           @db.VarChar(255)
-  banlist         banlist[]
-  binhluan        binhluan[]
-  cuahang         cuahang[]
-  donhang         donhang[]
-  dsyeuthich      dsyeuthich[]
-  feedback        feedback[]
-  giohang         giohang[]
-  hoasimh         hoasimh[]
-  hopdongbanquyen hopdongbanquyen[]
-  kho             kho[]
-  lichsunap       lichsunap[]
-  lichsutimkiem   lichsutimkiem[]
-  ptthanhtoan     ptthanhtoan[]
-  tacgia          tacgia[]
-  taikhoan        taikhoan[]
-  thongbao        thongbao[]
-}
-
-model xephang {
-  idXepHang      Int              @id @default(autoincrement())
-  LoaiXepHang    String?          @db.VarChar(255)
-  GiaTriXepHang  Int?
-  truyen_xephang truyen_xephang[]
+  idUser        Int             @id @default(autoincrement())
+  Ten           String?         @db.VarChar(45)
+  NgaySinh      DateTime?       @db.Date
+  GioiTinh      Int?            @default(1) @db.TinyInt
+  DiaChi        String?         @db.VarChar(255)
+  SoDienThoai   String?         @db.VarChar(45)
+  Email         String?         @db.VarChar(45)
+  hocvien       hocvien[]
+  huanluyenvien huanluyenvien[]
+  taikhoan      taikhoan[]
 }
