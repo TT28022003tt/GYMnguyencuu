@@ -28,12 +28,10 @@ const LoginSignup: React.FC = () => {
       password: ''
     };
 
-  
     if (action === "Sign Up" && !formData.name.trim()) {
       newErrors.name = 'Name is required';
       valid = false;
     }
-
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -43,7 +41,6 @@ const LoginSignup: React.FC = () => {
       valid = false;
     }
 
-    
     if (!formData.password) {
       newErrors.password = 'Password is required';
       valid = false;
@@ -67,9 +64,16 @@ const LoginSignup: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-
       console.log('Form submitted:', formData);
-      alert(action === 'Login' ? 'Login successful!' : 'Sign up successful!');
+
+      if (action === 'Login') {
+        alert('Login successful!');
+        // Bạn có thể thêm chuyển hướng sau khi đăng nhập ở đây nếu cần
+      } else {
+        alert('Sign up successful!');
+        setAction('Login'); // Chuyển sang giao diện đăng nhập
+        setFormData({ name: '', email: '', password: '' }); // Reset form
+      }
     }
   };
 
@@ -90,8 +94,7 @@ const LoginSignup: React.FC = () => {
         setStatus({ type: 'error', message: 'Please enter a valid email address' });
         return;
       }
-      
-  
+
       setStatus({ type: 'success', message: `Reset link sent to ${email}` });
     };
 
