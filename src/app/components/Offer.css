@@ -1,0 +1,105 @@
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+ 
+  .offers {
+    width: 80%;
+    height: 60vh;
+    display: flex;
+    margin: auto;
+    padding: 0px 140px;
+    margin-top: 150px;
+    margin-bottom: 150px;
+    background: linear-gradient(180deg, #fde1ff 0%, #d3c3c3 60%);
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards; 
+  }
+  
+  .offers-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0; 
+    animation: slideInFromLeft 1s ease-in-out 0.5s forwards; 
+  }
+  
+  .offers-left h1 {
+    color: #171717;
+    font-size: 50px;
+    font-weight: 600;
+  }
+  
+  .offers-left p {
+    color: #171717;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .offers-left button {
+    width: 282px;
+    height: 70px;
+    border-radius: 35px;
+    background: #ff4141;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: background 0.3s ease; 
+  }
+  
+  .offers-left button:hover {
+    background: #e63939; 
+  }
+  
+  .offers-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 50px;
+    opacity: 0; 
+    animation: slideInFromRight 1s ease-in-out 0.5s forwards; 
+  }
+  
+  .offers-right img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s ease; 
+  }
+  
+  .offers-right img:hover {
+    transform: scale(1.05); 
+  }

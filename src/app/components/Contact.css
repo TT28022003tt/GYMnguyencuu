@@ -1,0 +1,60 @@
+.contact {
+    width: 80%;
+    height: 60vh;
+    display: flex;
+    margin: auto;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 150px;
+    padding: 50px 50px 50px 140px;
+    margin-top: 300px;
+    background: linear-gradient(180deg, #ba4fc2 0%, #ffff 60%);
+}
+
+.contact form {
+    background: whitesmoke;
+    width: 650px;
+    color: black;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    font-size: 20px;
+}
+
+.contact form div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.contact form div label {
+    font-weight: 500;
+}
+
+.contact form div input {
+    font-size: 20px;
+    padding: 7px 3px;
+    border: none;
+    border-bottom: 1px solid rgb(12, 12, 12);
+    background: transparent;
+}
+
+.contact form div input:focus {
+    outline: none;
+}
+
+.contact form button {
+    border: none;
+    color: rgb(19, 18, 18);
+    background: #0095ff;
+    padding: 10px;
+    font-size: 20px;
+    transition: 0.3s;
+}
+
+.contact form button:hover {
+    transition: 0.3s;
+    background: #0267af;
+    cursor: pointer;
+}
