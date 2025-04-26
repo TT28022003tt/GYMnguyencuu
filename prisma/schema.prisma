@@ -23,7 +23,7 @@ model chitietkhuyenmai {
 model chitietmuctieu {
   idChiTietMucTieu Int            @id @default(autoincrement())
   idChuongTrinhTap Int
-  MoTa             String?        @db.VarChar(255)
+  MoTa             String?        @db.Text
   ThoiGian         String?        @db.VarChar(255)
   chuongtrinhtap   chuongtrinhtap @relation(fields: [idChuongTrinhTap], references: [idChuongTrinhTap], onDelete: NoAction, onUpdate: NoAction, map: "FK_CTMT_CTT")
 
@@ -198,23 +198,21 @@ model baitap {
 }
 
 model lophoc {
-  idMaLH        Int            @id @default(autoincrement())
-  Ten           String?        @db.VarChar(45)
-  Phong         String?        @db.VarChar(45)
-  MoTa          String?        @db.VarChar(255)
-  TheLoai       String?        @db.VarChar(45)
-  SoLuong       Int?           @default(0)
-  idMaHLV       Int
-  monhocIdMaMH  Int?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime?      @updatedAt
-  dangkylophoc  dangkylophoc[]
-  lichtap       lichtap[]
-  huanluyenvien huanluyenvien  @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
-  monhoc        monhoc?        @relation(fields: [monhocIdMaMH], references: [idMaMH])
+  idMaLH         Int            @id @default(autoincrement())
+  Ten            String?        @db.VarChar(45)
+  Phong          String?        @db.VarChar(45)
+  MoTa           String?        @db.VarChar(255)
+  TheLoai        String?        @db.VarChar(45)
+  SoLuong        Int?           @default(0)
+  ThoiGianBatDau DateTime?      @db.DateTime(0)
+  idMaHLV        Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?      @updatedAt
+  dangkylophoc   dangkylophoc[]
+  lichtap        lichtap[]
+  huanluyenvien  huanluyenvien  @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
 
   @@index([idMaHLV], map: "MaHLV_idx")
-  @@index([monhocIdMaMH], map: "lophoc_monhocIdMaMH_fkey")
 }
 
 model luong {
@@ -227,16 +225,6 @@ model luong {
   huanluyenvien huanluyenvien @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_Luong_MaHLV")
 
   @@index([MaHLV], map: "MaHLV_idx")
-}
-
-model monhoc {
-  idMaMH  Int      @id @default(autoincrement())
-  Ten     String?  @db.VarChar(45)
-  Lop     String?  @db.VarChar(45)
-  SoLuong String?  @db.VarChar(45)
-  CoSo    String?  @db.VarChar(45)
-  Phong   String?  @db.VarChar(45)
-  lophoc  lophoc[]
 }
 
 model phanhoi {

@@ -74,10 +74,10 @@ export default function NutritionForm({
           idchitietthucdon: day.idchitietthucdon,
           buaAn: Array.isArray(day.buaAn)
             ? day.buaAn.map((meal) => ({
-                idBuaAn: meal.idBuaAn,
-                TenBua: meal.TenBua || "",
-                MoTa: meal.MoTa || "",
-              }))
+              idBuaAn: meal.idBuaAn,
+              TenBua: meal.TenBua || "",
+              MoTa: meal.MoTa || "",
+            }))
             : [],
         })) || [],
       });
@@ -284,16 +284,16 @@ export default function NutritionForm({
                   </button>
                 </div>
                 <ul className="list-circle pl-5">
-  {Array.isArray(day.buaAn) && day.buaAn.length > 0 ? (
-    day.buaAn.map((meal, mealIdx) => (
-      <li key={mealIdx} className="flex justify-between items-center">
-        <span>{`${meal.TenBua}: ${meal.MoTa}`}</span>
-      </li>
-    ))
-  ) : (
-    <li>Chưa có bữa ăn</li>
-  )}
-</ul>
+                  {Array.isArray(day.buaAn) && day.buaAn.length > 0 ? (
+                    day.buaAn.map((meal, mealIdx) => (
+                      <li key={mealIdx} className="flex justify-between items-center">
+                        <span>{`${meal.TenBua}: ${meal.MoTa}`}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Chưa có bữa ăn</li>
+                  )}
+                </ul>
               </li>
             ))
           ) : (

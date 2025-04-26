@@ -55,7 +55,19 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    if (!Array.isArray(chiTietMucTieu) || chiTietMucTieu.length === 0) {
+      console.warn('chitietmuctieu rỗng hoặc không phải mảng:', chiTietMucTieu);
+      return NextResponse.json({ error: 'chitietmuctieu rỗng hoặc không hợp lệ' }, { status: 400 });
+    }
 
+    // Kiểm tra từng chi tiết mục tiêu
+    for (const detail of chiTietMucTieu) {
+      if (!detail.ThoiGian || !detail.MoTa) {
+        console.warn('Chi tiết mục tiêu không hợp lệ:', detail);
+        return NextResponse.json({ error: 'Chi tiết mục tiêu thiếu ThoiGian hoặc MoTa' }, { status: 400 });
+      }
+    }
+    
     const chuongTrinhTap = await prisma.chuongtrinhtap.create({
       data: {
         TenCTT,

@@ -14,13 +14,15 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [programToSave, setProgramToSave] = useState<any>(null);
+  const [thucdonToSave, setThucdonToSave] = useState<any>(null);
+  const [lichtapToSave, setLichTapToSave] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const formatMetrics = (metrics: any) => {
-    if (metrics.type === 'basic') {
+    if (metrics?.type === 'basic') {
       const { Height, Weight, BMI, Chest, Waist, hips, Arm, Thigh, Calf, Mota, Ten } = metrics.data;
       return `
-        Chỉ số cơ bản của ${Ten}:
+        Chỉ số cơ bản của ${Ten || 'học viên'}:
         - Chiều cao: ${Height ? `${Height} cm` : 'N/A'}
         - Cân nặng: ${Weight ? `${Weight} kg` : 'N/A'}
         - BMI: ${BMI ? BMI.toFixed(2) : 'N/A'}
@@ -31,12 +33,12 @@ export default function ChatWidget() {
         - Vòng đùi: ${Thigh ? `${Thigh} cm` : 'N/A'}
         - Vòng bắp chân: ${Calf ? `${Calf} cm` : 'N/A'}
         - Mô tả: ${Mota || 'Không có mô tả'}
-        Bạn muốn tư vấn về điều gì? (VD: giảm cân, tăng cơ, cải thiện sức khỏe)
+        Bạn muốn tư vấn gì? (VD: lịch tập giảm cân, thực đơn tăng cơ)
       `;
-    } else {
+    } else if (metrics?.type === 'advanced') {
       const { BodyFatPercent, MuscleMass, VisceralFat, BasalMetabolicRate, BoneMass, WaterPercent, Mota, Ten } = metrics.data;
       return `
-        Chỉ số nâng cao của ${Ten}:
+        Chỉ số nâng cao của ${Ten || 'học viên'}:
         - % Mỡ cơ thể: ${BodyFatPercent ? `${BodyFatPercent}%` : 'N/A'}
         - Khối cơ: ${MuscleMass ? `${MuscleMass} kg` : 'N/A'}
         - Mỡ nội tạng: ${VisceralFat ? VisceralFat : 'N/A'}
@@ -44,9 +46,10 @@ export default function ChatWidget() {
         - Khối lượng xương: ${BoneMass ? `${BoneMass} kg` : 'N/A'}
         - % Nước cơ thể: ${WaterPercent ? `${WaterPercent}%` : 'N/A'}
         - Mô tả: ${Mota || 'Không có mô tả'}
-        Bạn muốn tư vấn về điều gì? (VD: giảm mỡ, tăng cơ, sức khỏe tổng quát)
+        Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ, thực đơn giảm mỡ)
       `;
     }
+    return 'Vui lòng chọn một bộ chỉ số để tư vấn.';
   };
 
   useEffect(() => {
@@ -86,40 +89,144 @@ export default function ChatWidget() {
     setIsTyping(true);
 
     try {
-      if (programToSave) {
+      if (programToSave || thucdonToSave || lichtapToSave) {
         if (input.trim().toLowerCase() === 'lưu') {
-          console.log('Dữ liệu gửi đến /api/TraniningPlans:', programToSave);
-          const res = await fetch('/api/TraniningPlans', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(programToSave),
-          });
+          let res;
+          if (programToSave) {
+            console.log('Dữ liệu gửi đến /api/TraniningPlans:', programToSave);
+            res = await fetch('/api/TraniningPlans', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(programToSave),
+            });
+          } else if (thucdonToSave) {
+            console.log('Dữ liệu gửi đến /api/healthconsultation:', thucdonToSave);
+            res = await fetch('/api/healthconsultation', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(thucdonToSave),
+            });
+          } else if (lichtapToSave) {
+            console.log('Dữ liệu lichtapToSave:', JSON.stringify(lichtapToSave, null, 2));
+            const scheduleData = Array.isArray(lichtapToSave) ? lichtapToSave[0] : lichtapToSave;
+            if (!scheduleData?.NgayGioBatDau || !scheduleData?.NgayGioKetThuc || !scheduleData?.MaHV) {
+              throw new Error(
+                `Dữ liệu lịch tập không hợp lệ. Thiếu các trường: ${
+                  !scheduleData?.NgayGioBatDau ? 'NgayGioBatDau ' : ''
+                }${!scheduleData?.NgayGioKetThuc ? 'NgayGioKetThuc ' : ''}${
+                  !scheduleData?.MaHV ? 'MaHV' : ''
+                }`
+              );
+            }
+            const formattedSchedule = {
+              NgayGioBatDau: scheduleData.NgayGioBatDau,
+              NgayGioKetThuc: scheduleData.NgayGioKetThuc,
+              MaHV: scheduleData.MaHV,
+              MaHLV: scheduleData.MaHLV,
+              idMaLH: scheduleData.idMaLH,
+              idMaCTT: scheduleData.idMaCTT,
+              idMaGT: scheduleData.idMaGT,
+              GhiChu: scheduleData.GhiChu,
+              baitap: scheduleData.baitap?.map((bt: any) => ({
+                name: bt.TenBaiTap,
+                muscleGroup: bt.NhomCo,
+                reps: bt.SoRep,
+                sets: bt.SoSet,
+                description: bt.MoTa,
+              })) || [],
+            };
+            console.log('Dữ liệu gửi đến /api/schedule:', JSON.stringify(formattedSchedule, null, 2));
+            res = await fetch('/api/schedule', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formattedSchedule),
+            });
+          }
 
-          if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Không thể lưu chương trình tập');
+          if (!res || !res.ok) {
+            const errorData = await res?.json();
+            throw new Error(errorData?.error || 'Không thể lưu dữ liệu');
           }
           setMessages((prev) => [
             ...prev,
             {
               from: 'bot',
-              text: 'Chương trình tập đã được lưu thành công! Bạn có thể xem trong danh sách chương trình tập.',
+              text: 'Lịch tập đã được lưu thành công! Bạn có thể xem trong danh sách lịch tập.',
               timestamp: new Date(),
             },
           ]);
           window.dispatchEvent(new Event('refreshTrainingPrograms'));
           setProgramToSave(null);
-        } else {
+          setThucdonToSave(null);
+          setLichTapToSave(null);
+        } else if (input.trim().toLowerCase() === 'chỉnh sửa') {
           setMessages((prev) => [
             ...prev,
             {
               from: 'bot',
-              text: 'Vui lòng nhập "lưu" để lưu chương trình tập hoặc chọn chỉ số khác.',
+              text: 'Vui lòng cung cấp chi tiết cần chỉnh sửa (VD: thay đổi bài tập ngày 1 hoặc bữa sáng ngày 1).',
               timestamp: new Date(),
             },
           ]);
+        } else {
+          const dataToEdit = programToSave || thucdonToSave || lichtapToSave;
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              metrics: selectedMetrics,
+              question: `Chỉnh sửa: ${input.trim()} cho dữ liệu hiện tại: ${JSON.stringify(dataToEdit)}`,
+            }),
+          });
+
+          const data = await res.json();
+          console.log('Dữ liệu từ /api/chat:', JSON.stringify(data, null, 2));
+
+          if (data.program) {
+            setProgramToSave(data.program);
+            setMessages((prev) => [
+              ...prev,
+              {
+                from: 'bot',
+                text: `${data.reply}\nBạn có muốn lưu chương trình này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
+                timestamp: new Date(),
+              },
+            ]);
+          } else if (data.thucdon) {
+            setThucdonToSave(data.thucdon);
+            setMessages((prev) => [
+              ...prev,
+              {
+                from: 'bot',
+                text: `${data.reply}\nBạn có muốn lưu thực đơn này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
+                timestamp: new Date(),
+              },
+            ]);
+          } else if (data.lichtap) {
+            setLichTapToSave(data.lichtap);
+            setMessages((prev) => [
+              ...prev,
+              {
+                from: 'bot',
+                text: `${data.reply}\nBạn có muốn lưu lịch tập này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
+                timestamp: new Date(),
+              },
+            ]);
+          } else {
+            setMessages((prev) => [
+              ...prev,
+              {
+                from: 'bot',
+                text: data.reply || 'Xin lỗi, có lỗi xảy ra!',
+                timestamp: new Date(),
+              },
+            ]);
+          }
         }
       } else {
+        if (!selectedMetrics?.data?.idMaHV) {
+          throw new Error('Vui lòng chọn học viên với ID hợp lệ trước khi tạo lịch tập.');
+        }
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,13 +234,35 @@ export default function ChatWidget() {
         });
 
         const data = await res.json();
+        console.log('Dữ liệu từ /api/chat:', JSON.stringify(data, null, 2));
+
         if (data.program) {
           setProgramToSave(data.program);
           setMessages((prev) => [
             ...prev,
             {
               from: 'bot',
-              text: `${data.reply}\nBạn có muốn lưu chương trình này không? Nhập "lưu" để lưu.`,
+              text: `${data.reply}\nBạn có muốn lưu chương trình này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
+              timestamp: new Date(),
+            },
+          ]);
+        } else if (data.thucdon) {
+          setThucdonToSave(data.thucdon);
+          setMessages((prev) => [
+            ...prev,
+            {
+              from: 'bot',
+              text: `${data.reply}\nBạn có muốn lưu thực đơn này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
+              timestamp: new Date(),
+            },
+          ]);
+        } else if (data.lichtap) {
+          setLichTapToSave(data.lichtap);
+          setMessages((prev) => [
+            ...prev,
+            {
+              from: 'bot',
+              text: `${data.reply}\nBạn có muốn lưu lịch tập này không? Nhập "lưu" để lưu hoặc "chỉnh sửa" để chỉnh sửa.`,
               timestamp: new Date(),
             },
           ]);
@@ -168,6 +297,8 @@ export default function ChatWidget() {
     setSelectedMetrics(null);
     setMessages([]);
     setProgramToSave(null);
+    setThucdonToSave(null);
+    setLichTapToSave(null);
   };
 
   return (
@@ -259,7 +390,7 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder={programToSave ? 'Nhập "lưu" để lưu chương trình' : 'Nhập mục tiêu của bạn...'}
+                placeholder={programToSave || thucdonToSave || lichtapToSave ? 'Nhập "lưu" hoặc "chỉnh sửa"' : 'Nhập mục tiêu của bạn...'}
                 className="border border-gray-300/50 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80 backdrop-blur-sm transition-all flex-1 placeholder:text-gray-400"
               />
               <motion.button

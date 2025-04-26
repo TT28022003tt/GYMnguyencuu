@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 import { getUser } from "@/utils/Auth";
+import { logDebug } from "@/app/lib/utils/logger";
 
 export async function GET(req: NextRequest) {
   const user = await getUser(req);
   try {
     const mealPlans = await prisma.thucdon.findMany({
-      where: {
+      where: user?.VaiTro === 'admin' ? {} : {
         hocvien: {
           idUSER: user?.idUser,
         },
@@ -26,28 +27,40 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+
+// POST /api/healthconsultation
+export async function POST(req: Request | NextRequest) {
   try {
     const body = await req.json();
-    console.log("Received body:", body); // Debug dữ liệu nhận được
 
     const { TenThucDon, SoCalo, NgayBatDau, MaHV, chiTietThucDon } = body;
 
-    // Kiểm tra trường bắt buộc
-    const errors: string[] = [];
-    if (!TenThucDon) errors.push("Tên thực đơn là bắt buộc");
-    if (!MaHV) errors.push("Mã học viên là bắt buộc");
-    if (!NgayBatDau) errors.push("Ngày bắt đầu là bắt buộc");
+    logDebug("Dữ liệu nhận được tại /api/healthconsultation", {
+      TenThucDon,
+      SoCalo,
+      NgayBatDau,
+      MaHV,
+      chiTietThucDon,
+    });
 
-    if (errors.length > 0) {
-      console.log("Validation errors:", errors); // Debug lỗi
+    // Kiểm tra thông tin bắt buộc
+    if (!TenThucDon || !SoCalo || !NgayBatDau || !MaHV || !chiTietThucDon) {
       return NextResponse.json(
-        { error: errors.join(", ") },
+        { error: "Thiếu thông tin cơ bản" },
         { status: 400 }
       );
     }
 
-    // Kiểm tra MaHV tồn tại
+    // Kiểm tra chi tiết thực đơn
+    if (!Array.isArray(chiTietThucDon) || chiTietThucDon.length === 0) {
+      logDebug("chiTietThucDon rỗng hoặc không phải mảng", chiTietThucDon);
+      return NextResponse.json(
+        { error: "chiTietThucDon rỗng hoặc không hợp lệ" },
+        { status: 400 }
+      );
+    }
+
+    // Kiểm tra học viên tồn tại
     const existingHocVien = await prisma.hocvien.findUnique({
       where: { idMaHV: MaHV },
     });
@@ -59,24 +72,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const mealPlan = await prisma.thucdon.create({
+    // Tạo thực đơn cùng chi tiết và bữa ăn
+    const createdThucDon = await prisma.thucdon.create({
       data: {
         TenThucDon,
         SoCalo,
         NgayBatDau: new Date(NgayBatDau),
         hocvien: {
-          connect: { idMaHV: MaHV }, // Kết nối với hocvien
+          connect: { idMaHV: MaHV },
         },
         chitietthucdon: {
-          create: chiTietThucDon?.map((item: any, index: number) => ({
-            Ngay: new Date(new Date(NgayBatDau).getTime() + index * 24 * 60 * 60 * 1000),
+          create: chiTietThucDon.map((detail: any, index: number) => ({
+            Ngay: detail.Ngay
+              ? new Date(detail.Ngay)
+              : new Date(new Date(NgayBatDau).getTime() + index * 86400000), // fallback ngày
             buaan: {
-              create: item.buaAn?.map((meal: any) => ({
-                TenBua: meal.TenBua,
-                MoTa: meal.MoTa,
-              })) || [],
+              create: (detail.buaan || detail.buaAn || []).map((bua: any) => ({
+                TenBua: bua.TenBua,
+                MoTa: bua.MoTa,
+              })),
             },
-          })) || [],
+          })),
         },
       },
       include: {
@@ -88,9 +104,18 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(mealPlan, { status: 201 });
-  } catch (error) {
-    console.error("Lỗi khi tạo thực đơn:", error);
-    return NextResponse.json({ error: "Lỗi khi tạo dữ liệu" }, { status: 500 });
+    logDebug("Thực đơn đã được lưu thành công", createdThucDon);
+
+    return NextResponse.json(
+      { message: "Lưu thực đơn thành công", data: createdThucDon },
+      { status: 201 }
+    );
+  } catch (err) {
+    logDebug("Lỗi khi tạo thực đơn", err);
+    const errorMessage =
+      err instanceof Error ? err.message : "Lỗi không xác định";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

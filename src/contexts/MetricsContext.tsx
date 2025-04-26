@@ -4,7 +4,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface Metrics {
   type: 'basic' | 'advanced';
-  data: any; // Dữ liệu basicmetrics hoặc advancedmetrics
+  data: any; 
 }
 
 interface MetricsContextType {

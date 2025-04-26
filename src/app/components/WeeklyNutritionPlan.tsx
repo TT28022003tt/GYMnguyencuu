@@ -17,7 +17,7 @@ const WeeklyNutritionPlan = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        console.log("Fetched meal plans:", data); // Debug
+        console.log("Fetched meal plans:", data); 
         setMenuFood(data);
       } else {
         console.error("Lỗi khi lấy danh sách thực đơn");
@@ -48,7 +48,7 @@ const WeeklyNutritionPlan = () => {
       {menuFood.map((plan) => (
         <div key={plan.idThucDon} className="mb-8 w-[80%] p-4">
           <div className="flex mr-4">
-            <h2 className="text-xl font-bold mb-2">{plan.TenThucDon}</h2>
+            <h2 className="text-xl font-bold mb-2 mr-6">{plan.TenThucDon}</h2>
             <FormModal
               table="nutrition"
               type="update"
