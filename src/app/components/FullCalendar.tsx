@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import viLocale from "@fullcalendar/core/locales/vi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import FormModal from "./FormModal";
 import TableSearch from "./TableSearch";
 import EventDetails from "./EventDetails";
 import { useMyContext } from "@/contexts/useContext";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 interface ScheduleEvent {
   id: string;
@@ -42,8 +45,10 @@ const FullCalendars = () => {
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [currentWeek, setCurrentWeek] = useState<{ start: string; end: string }>({ start: "", end: "" });
+  const calendarRef = useRef<FullCalendar>(null);
 
-  // Lấy dữ liệu từ API
+  // Fetch schedules from API
   const fetchSchedules = async () => {
     try {
       const response = await fetch("/api/schedule", {
@@ -70,7 +75,7 @@ const FullCalendars = () => {
     fetchSchedules();
   }, []);
 
-  // Lọc sự kiện khi searchQuery thay đổi
+  // Filter events based on search query
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -93,17 +98,41 @@ const FullCalendars = () => {
     }
   }, [searchQuery, events]);
 
-  // Xử lý tìm kiếm
+  // Handle search
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
-  // Xử lý sự kiện click trên lịch
+  // Handle event click to scroll to details
   const handleEventClick = (info: any) => {
     setSelectedEvent(info.event.id);
+    const detailsSection = document.getElementById("event-details");
+    if (detailsSection) {
+      detailsSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
-  // Làm mới dữ liệu khi form thành công
+  // Handle week change to update current week
+  const handleDatesSet = (dateInfo: any) => {
+    setCurrentWeek({
+      start: dayjs(dateInfo.start).format("YYYY-MM-DD"),
+      end: dayjs(dateInfo.end).format("YYYY-MM-DD"),
+    });
+  };
+
+  // Scroll back to calendar and highlight event
+  const handleScrollToCalendar = (eventId: string) => {
+    setSelectedEvent(eventId);
+  
+    // Ép kiểu an toàn nếu TypeScript không nhận ra .el
+    const calendarEl = (calendarRef.current as any)?.el;
+    if (calendarEl) {
+      calendarEl.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
+
+  // Handle form success
   const handleFormSuccess = () => {
     fetchSchedules();
     toast.success("Thao tác thành công!");
@@ -112,7 +141,7 @@ const FullCalendars = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Đang tải...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-transparent border-t-orange-500"></div>
       </div>
     );
   }
@@ -120,56 +149,64 @@ const FullCalendars = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 text-lg font-semibold">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-center mb-8">LỊCH TẬP</h1>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        locale={viLocale}
-        events={filteredEvents}
-        eventClick={handleEventClick}
-        height="auto"
-        slotEventOverlap={false}
-        eventOverlap={false}
-        dayMaxEventRows={true}
-        eventContent={(eventInfo) => (
-          <div className="flex flex-col justify-center items-center h-full text-center">
-            {eventInfo.event.start && eventInfo.event.end && (
-              <>
-                {new Date(eventInfo.event.start).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                -{" "}
-                {new Date(eventInfo.event.end).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </>
-            )}
-
-            <div>HLV: {eventInfo.event.extendedProps.trainer}</div>
-            <div>Bài tập: {eventInfo.event.title}</div>
+    <div className="p-6 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold ">LỊCH TẬP</h1>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <FormModal table="workoutSchedule" type="create" onSuccess={handleFormSuccess} />
           </div>
-        )}
-        slotMinTime="05:00:00"
-        slotMaxTime="20:00:00"
-        allDaySlot={false}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "timeGridWeek,timeGridDay",
-        }}
-      />
-
-      <div className="mt-8">
-        <EventDetails selectedId={selectedEvent} events={filteredEvents} onFormSuccess={handleFormSuccess} />
+        </div>
+        <div className=" rounded-lg shadow-lg p-4 border border-orange-200">
+          <FullCalendar
+            ref={calendarRef}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            locale={viLocale}
+            timeZone="UTC"
+            events={filteredEvents}
+            eventClick={handleEventClick}
+            datesSet={handleDatesSet}
+            height="auto"
+            slotEventOverlap={false}
+            eventOverlap={false}
+            dayMaxEventRows={true}
+            eventContent={(eventInfo) => (
+              <div className="flex flex-col justify-center items-center h-full text-center p-2 bg-orange-100 rounded-md hover:bg-orange-200 hover:shadow-md hover:scale-105 transition cursor-pointer">
+                {eventInfo.event.start && eventInfo.event.end && (
+                  <p className="text-sm font-semibold text-gray-900">
+                    {dayjs.utc(eventInfo.event.start).format("HH:mm")} - {dayjs.utc(eventInfo.event.end).format("HH:mm")}
+                  </p>
+                )}
+                <p className="text-sm text-gray-800">HLV: {eventInfo.event.extendedProps.trainer}</p>
+                <p className="text-sm font-bold text-orange-600">{eventInfo.event.title}</p>
+              </div>
+            )}
+            slotMinTime="05:00:00"
+            slotMaxTime="20:00:00"
+            allDaySlot={false}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "timeGridWeek,timeGridDay",
+            }}
+          />
+        </div>
+        <div id="event-details" className="mt-12">
+          <EventDetails
+            selectedId={selectedEvent}
+            events={filteredEvents}
+            currentWeek={currentWeek}
+            onFormSuccess={handleFormSuccess}
+            onScrollToCalendar={handleScrollToCalendar}
+          />
+        </div>
       </div>
     </div>
   );

@@ -42,9 +42,14 @@ code {
 }
 
 .fc-event {
-	background: linear-gradient(to right, #9b4100, #ff7300) !important;
+	background: none !important;
 	border: none !important;
 	cursor: pointer !important;
+}
+
+.fc-event-main{
+	background: none !important;
+	border: none !important;
 }
 
 [data-theme="mylight"] .fc-timegrid-axis,.fc-scrollgrid-sync-inner

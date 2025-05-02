@@ -7,28 +7,40 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { useMyContext } from "@/contexts/useContext";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 interface EventDetailsProps {
   selectedId: string | null;
   events: any[];
+  currentWeek: { start: string; end: string };
   onFormSuccess: () => void;
+  onScrollToCalendar: (eventId: string) => void;
 }
 
-const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormSuccess }) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, currentWeek, onFormSuccess, onScrollToCalendar }) => {
   const { user } = useMyContext();
   const [activeId, setActiveId] = useState<string | null>(selectedId);
   const [eventsByDay, setEventsByDay] = useState<{ [key: string]: any[] }>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredEvents, setFilteredEvents] = useState<any[]>(events);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const eventRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  // Đồng bộ events từ props và lọc khi searchQuery thay đổi
+  // Filter events by current week and search query
   useEffect(() => {
+    const weekStart = dayjs(currentWeek.start);
+    const weekEnd = dayjs(currentWeek.end);
+    let weekEvents = events.filter((event) => {
+      const eventDate = dayjs.utc(event.start);
+      return eventDate.isAfter(weekStart.subtract(1, "day")) && eventDate.isBefore(weekEnd);
+    });
+
     if (!searchQuery) {
-      setFilteredEvents(events);
+      setFilteredEvents(weekEvents);
     } else {
       const lowerQuery = searchQuery.toLowerCase();
-      const filtered = events.filter((event) => {
+      const filtered = weekEvents.filter((event) => {
         return (
           event.title.toLowerCase().includes(lowerQuery) ||
           event.extendedProps.student.toLowerCase().includes(lowerQuery) ||
@@ -43,14 +55,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormS
       });
       setFilteredEvents(filtered);
     }
-  }, [searchQuery, events]);
+  }, [searchQuery, events, currentWeek]);
 
-  // Xử lý tìm kiếm
+  // Handle search
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
-  // Nhóm sự kiện theo ngày
+  // Group events by day
   useEffect(() => {
     if (filteredEvents.length === 0) {
       setActiveId(null);
@@ -78,41 +90,41 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormS
     setEventsByDay(eventsByDayData);
   }, [selectedId, filteredEvents, activeId]);
 
-  // Cuộn đến sự kiện được chọn
+  // Scroll to selected event
   useEffect(() => {
     if (activeId && eventRefs.current[activeId]) {
       eventRefs.current[activeId]?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [activeId]);
 
+  // Handle click on event to scroll to calendar
+  const handleEventClick = (eventId: string) => {
+    setActiveId(eventId);
+    onScrollToCalendar(eventId);
+  };
+
   return (
-    <div className="p-6">
+    <div className="p-6  rounded-lg shadow-lg border border-orange-200">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        <h1 className="text-2xl font-bold">LỊCH TẬP CỤ THỂ</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4">
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center">
-              <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
-            </button>
-            <FormModal table="workoutSchedule" type="create" />
-          </div>
+        <h1 className="text-2xl font-bold ">LỊCH TẬP CỤ THỂ</h1>
+        <div className="flex items-center gap-4">
+          <FormModal table="workoutSchedule" type="create" onSuccess={onFormSuccess} />
         </div>
       </div>
       {filteredEvents.length === 0 ? (
-        <p className="text-center text-gray-500 font-semibold p-5 text-xl">
-          Không có lịch tập nào phù hợp.
+        <p className="text-center text-gray-600 font-semibold p-5 text-xl">
+          Không có lịch tập nào trong tuần này.
         </p>
       ) : (
         Object.keys(eventsByDay).map((day, index) => (
-          <div key={index} className="mb-8">
-            <h3 className="font-bold text-lg mb-2">{day}</h3>
+          <div key={index} className="mb-10">
+            <h3 className="font-bold text-lg  mb-4">{day}</h3>
             {eventsByDay[day].length === 0 ? (
-              <p className="text-center text-gray-500 font-semibold border rounded p-4 mb-4">
+              <p className="text-center text-gray-600 font-semibold border border-orange-200 rounded p-4 mb-6">
                 Lịch trống
               </p>
             ) : (
               eventsByDay[day].map((event) => {
-                console.log("Event data for ID", event.id, event.extendedProps); // Thêm log
                 const exercises = event.extendedProps.exercises || [];
                 const isActive = activeId === event.id.toString();
                 return (
@@ -122,56 +134,45 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormS
                     ref={(el) => {
                       eventRefs.current[event.id.toString()] = el;
                       if (isActive && el) {
-                        el.classList.add("ring", "ring-orange-400");
-                        setTimeout(() => el.classList.remove("ring", "ring-orange-400"), 2000);
+                        el.classList.add("ring", "ring-orange-600");
+                        setTimeout(() => el.classList.remove("ring", "ring-orange-600"), 2000);
                       }
                     }}
-                    className={`border rounded p-4 mb-4 ${
-                      isActive
-                        ? "bg-gradient-to-r from-brown-red to-bright-orange text-white"
-                        : "bg-base-100"
-                    }`}
+                    onClick={() => handleEventClick(event.id.toString())}
+                    className={`border rounded-lg p-6 mb-6 transition-all cursor-pointer ${
+                      isActive ? "bg-orange-50 border-orange-600 shadow-md" : "bg-white border-orange-200"
+                    } hover:shadow-lg hover:border-orange-600 hover:scale-102`}
                   >
-                    <p>
+                    <h4 className="font-semibold text-lg text-orange-600 mb-4">{event.title}</h4>
+                    <p className="text-gray-800">
                       <strong>Thời gian:</strong>{" "}
-                      {new Date(event.start).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}{" "}
-                      -{" "}
-                      {new Date(event.end).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {dayjs.utc(event.start).format("HH:mm")} - {dayjs.utc(event.end).format("HH:mm")}
                     </p>
-                    <p>
-                      <strong>Nhóm cơ:</strong> {event.title}
-                    </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Học viên:</strong> {event.extendedProps.student}
                     </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Huấn luyện viên:</strong> {event.extendedProps.trainer}
                     </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Gói tập:</strong>{" "}
                       {event.extendedProps.package || "Không có gói tập"}
                     </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Chương trình tập:</strong>{" "}
                       {event.extendedProps.program || "Không có chương trình tập"}
                     </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Lớp học:</strong>{" "}
                       {event.extendedProps.class || "Không có lớp học"}
                     </p>
-                    <p>
+                    <p className="text-gray-800">
                       <strong>Ghi chú:</strong>{" "}
                       {event.extendedProps.note || "Không có ghi chú"}
                     </p>
-                    <h5 className="font-bold mt-4">Danh sách bài tập:</h5>
+                    <h5 className="font-bold mt-4 text-gray-900">Danh sách bài tập:</h5>
                     {exercises.length > 0 ? (
-                      <ul className="list-disc list-inside">
+                      <ul className="list-disc list-inside space-y-2 text-gray-800">
                         {exercises.map((exercise: any) => (
                           <li key={exercise.id}>
                             <strong>{exercise.name}</strong> ({exercise.muscleGroup}):{" "}
@@ -180,9 +181,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormS
                         ))}
                       </ul>
                     ) : (
-                      <p>Không có bài tập nào.</p>
+                      <p className="text-gray-600">Không có bài tập nào.</p>
                     )}
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-2 mt-6">
                       <FormModal
                         table="workoutSchedule"
                         type="update"
@@ -198,6 +199,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, onFormS
                           GhiChu: event.extendedProps.note ?? "",
                           baitap: event.extendedProps.exercises || [],
                         }}
+                        onSuccess={onFormSuccess}
                       />
                       <FormModal
                         table="workoutSchedule"

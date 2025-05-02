@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Metrics {
+export interface Metrics {
   type: 'basic' | 'advanced';
   data: any; 
 }
