@@ -99,3 +99,52 @@ code {
 .input {
 	@apply w-full border p-2 rounded shadow-sm;
 }
+
+/* styles.css */
+
+body {
+    transition: background-color 0.3s ease;
+}
+
+.light-mode {
+    background-color: #ffffff; /* Nền sáng */
+    color: #000000; /* Màu chữ đen */
+}
+
+.dark-mode {
+    background-color: #1a1a1a; /* Nền tối */
+    color: #000000; /* Giữ màu chữ đen trong chế độ tối */
+}
+
+/* styles.css */
+
+body {
+    font-family: 'Roboto', sans-serif; /* Sử dụng font từ Google Fonts */
+    font-size: 16px; /* Kích thước font cơ sở */
+    line-height: 1.5; /* Khoảng cách dòng */
+}
+
+.container {
+    max-width: 1200px; /* Giới hạn chiều rộng của container */
+    margin: 0 auto; /* Căn giữa container */
+    padding: 20px; /* Khoảng cách từ biên */
+}
+
+h2 {
+    font-size: 2rem; /* 32px */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 1rem; /* Khoảng cách trong ô */
+    border: 1px solid #ccc; /* Đường viền */
+}
+
+button {
+    font-size: 1rem; /* Kích thước font cho nút */
+    padding: 0.5rem 1rem; /* Khoảng cách trong nút */
+}

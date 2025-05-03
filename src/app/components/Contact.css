@@ -22,6 +22,10 @@
     font-size: 20px;
 }
 
+textarea {
+    background: white;    /* Đặt nền của hộp nhập là trắng */
+    color: black;         /* Đặt màu chữ trong hộp nhập là đen */
+}
 .contact form div {
     display: flex;
     flex-direction: column;

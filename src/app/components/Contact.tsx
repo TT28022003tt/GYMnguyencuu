@@ -13,26 +13,24 @@ const Contact: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/sendMail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, message }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setName('');
-        setEmail('');
-        setMessage('');
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
+     const res = await fetch(`http://localhost:3000/api/sendMail`,{
+      method:"POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify({name,email,message})
+     })
+     const data = await res.json()
+     console.log(data);
+     if(res.ok){
+      setName('');
+      setEmail('');
+      setMessage('');
+      toast.success('Message sent successfully!');
+     }
     } catch (error) {
-      toast.error('Something went wrong');
+      console.error('Error sending email:', error);
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -62,11 +60,11 @@ const Contact: React.FC = () => {
         </div>
         <div>
           <label>Message</label>
-          <input
-            type="text"
+          <textarea // Changed from input to textarea for better message input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
+            rows={5}
           />
         </div>
         <button
@@ -83,6 +81,7 @@ const Contact: React.FC = () => {
         </button>
       </form>
     </section>
+    
   );
 };
 
