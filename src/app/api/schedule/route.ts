@@ -75,7 +75,15 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
+// Chuẩn hóa thời gian UTC
+    const startTime = new Date(NgayGioBatDau);
+    const endTime = new Date(NgayGioKetThuc);
+    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+      return NextResponse.json(
+        { error: "Định dạng thời gian không hợp lệ" },
+        { status: 400 }
+      );
+    }
     // Kiểm tra học viên
     const hv = await prisma.hocvien.findUnique({ where: { idMaHV: MaHV } });
     if (!hv) {

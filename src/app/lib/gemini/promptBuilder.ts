@@ -124,3 +124,4 @@ export function buildPrompt(metricsText: string, question: string, requestType: 
       Nếu không tạo được chiTietMucTieu hợp lệ, trả về lỗi trong reply: "Không thể tạo chi tiết mục tiêu do thiếu thông tin."
     `;
   }
+  

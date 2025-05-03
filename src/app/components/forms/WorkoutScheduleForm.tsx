@@ -5,7 +5,6 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
 
 const scheduleSchema = z.object({
   NgayGioBatDau: z.string().min(1, "Thời gian bắt đầu không được để trống"),
@@ -16,6 +15,7 @@ const scheduleSchema = z.object({
   idMaCTT: z.number().nullable().optional(),
   idMaLH: z.number().nullable().optional(),
   GhiChu: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
   baitap: z
     .array(
       z.object({
@@ -60,6 +60,7 @@ const WorkoutScheduleForm: React.FC<WorkoutScheduleFormProps> = ({ type, data })
       idMaCTT: null,
       idMaLH: null,
       GhiChu: "",
+      title: "",
       baitap: [{ name: "", muscleGroup: "", reps: null, sets: null, description: "" }],
     },
   });
@@ -117,10 +118,10 @@ const WorkoutScheduleForm: React.FC<WorkoutScheduleFormProps> = ({ type, data })
     if (type === "update" && data) {
       reset({
         NgayGioBatDau: data.NgayGioBatDau
-          ? format(new Date(data.NgayGioBatDau), "yyyy-MM-dd'T'HH:mm")
+          ? new Date(data.NgayGioBatDau).toISOString().slice(0, 16)
           : "",
         NgayGioKetThuc: data.NgayGioKetThuc
-          ? format(new Date(data.NgayGioKetThuc), "yyyy-MM-dd'T'HH:mm")
+          ? new Date(data.NgayGioKetThuc).toISOString().slice(0, 16)
           : "",
         MaHV: data.MaHV ?? undefined,
         MaHLV: data.MaHLV ?? undefined,
@@ -128,6 +129,7 @@ const WorkoutScheduleForm: React.FC<WorkoutScheduleFormProps> = ({ type, data })
         idMaCTT: data.idMaCTT ?? null,
         idMaLH: data.idMaLH ?? null,
         GhiChu: data.GhiChu ?? "",
+        title: data.title ?? data.GhiChu ?? "Buổi tập",
         baitap:
           data.baitap && data.baitap.length > 0
             ? data.baitap.map((bt: any) => ({
@@ -148,10 +150,22 @@ const WorkoutScheduleForm: React.FC<WorkoutScheduleFormProps> = ({ type, data })
       const url = type === "create" ? "/api/schedule" : `/api/schedule/${data.id}`;
       const method = type === "create" ? "POST" : "PUT";
 
+      // Chuẩn hóa thời gian thành ISO đầy đủ
+      const payload = {
+        ...formData,
+        NgayGioBatDau: formData.NgayGioBatDau
+          ? new Date(`${formData.NgayGioBatDau}:00.000Z`).toISOString()
+          : "",
+        NgayGioKetThuc: formData.NgayGioKetThuc
+          ? new Date(`${formData.NgayGioKetThuc}:00.000Z`).toISOString()
+          : "",
+        title: formData.GhiChu || formData.baitap[0]?.name || "Buổi tập",
+      };
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
         cache: "no-store",
       });
 
