@@ -52,7 +52,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
-          <p className="text-xl font-bold">GYM FITNESS</p>
+          <p className="text-xl font-bold">ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ</p>
         </div>
 
         {/* Desktop Menu */}
