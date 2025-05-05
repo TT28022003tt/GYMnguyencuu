@@ -2,9 +2,38 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+interface BasicMetrics {
+  idMaHV: number;
+  Height?: number | null;
+  Weight?: number | null;
+  BMI?: number | null;
+  Chest?: number | null;
+  Waist?: number | null;
+  hips?: number | null;
+  Arm?: number | null;
+  Thigh?: number | null;
+  Calf?: number | null;
+  Mota?: string | null;
+  Ten?: string;
+}
+
+interface AdvancedMetrics {
+  idMaHV: number;
+  BodyFatPercent?: number | null;
+  MuscleMass?: number | null;
+  VisceralFat?: number | null;
+  BasalMetabolicRate?: number | null;
+  BoneMass?: number | null;
+  WaterPercent?: number | null;
+  Mota?: string | null;
+  Ten?: string;
+}
+
 export interface Metrics {
   type: 'basic' | 'advanced';
-  data: any; 
+  data: BasicMetrics | AdvancedMetrics;
+  requestedDate?: string;
+  defaultQuestion?: string; 
 }
 
 interface MetricsContextType {

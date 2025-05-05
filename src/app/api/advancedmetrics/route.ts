@@ -20,18 +20,60 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập' }, { status: 401 });
     }
 
-    const metrics = await prisma.advancedmetrics.findMany({
-      orderBy: { idAdvancedMetrics: 'desc' },
-      include: {
-        hocvien: {
-          include: {
-            user: {
-              select: { Ten: true },
+    let metrics;
+    if (user.VaiTro === "admin") {
+      // Admin: Xem tất cả advanced metrics
+      metrics = await prisma.advancedmetrics.findMany({
+        orderBy: { idAdvancedMetrics: 'desc' },
+        include: {
+          hocvien: {
+            include: {
+              user: {
+                select: { Ten: true },
+              },
             },
           },
         },
-      },
-    });
+      });
+    } else if (user.VaiTro === "trainer") {
+      // Trainer: Xem advanced metrics của học viên họ phụ trách
+      metrics = await prisma.advancedmetrics.findMany({
+        where: {
+          hocvien: {
+            MaHLV: user.idUser, // Giả sử MaHLV là idUser của HLV
+          },
+        },
+        orderBy: { idAdvancedMetrics: 'desc' },
+        include: {
+          hocvien: {
+            include: {
+              user: {
+                select: { Ten: true },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      // Học viên: Xem advanced metrics của chính họ
+      metrics = await prisma.advancedmetrics.findMany({
+        where: {
+          hocvien: {
+            idUSER: user.idUser,
+          },
+        },
+        orderBy: { idAdvancedMetrics: 'desc' },
+        include: {
+          hocvien: {
+            include: {
+              user: {
+                select: { Ten: true },
+              },
+            },
+          },
+        },
+      });
+    }
 
     const formattedMetrics = metrics.map(metric => ({
       ...metric,
@@ -47,10 +89,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getUser(req);
-    if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
-      return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    }
+    // const user = await getUser(req);
+    // if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
+    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
+    // }
 
     const body: AdvancedMetricsInput = await req.json();
 

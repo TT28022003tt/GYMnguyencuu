@@ -159,9 +159,6 @@ const FullCalendars = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-3xl font-bold ">LỊCH TẬP</h1>
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
-            <FormModal table="workoutSchedule" type="create" onSuccess={handleFormSuccess} />
-          </div>
         </div>
         <div className=" rounded-lg shadow-lg p-4 border border-orange-200">
           <FullCalendar

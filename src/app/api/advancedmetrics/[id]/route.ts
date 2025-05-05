@@ -16,14 +16,14 @@ interface AdvancedMetricsInput {
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = await getUser(req);
+    // const user = await getUser(req);
     
-    const role = user?.VaiTro?.toLowerCase?.();
-    const allowedRoles = ['admin', 'trainer'];
+    // const role = user?.VaiTro?.toLowerCase?.();
+    // const allowedRoles = ['admin', 'trainer'];
 
-    if (!user || !role || !allowedRoles.includes(role)) {
-      return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    }
+    // if (!user || !role || !allowedRoles.includes(role)) {
+    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
+    // }
     const idAdvancedMetrics = parseInt(params.id);
     if (isNaN(idAdvancedMetrics)) {
       return NextResponse.json({ error: 'ID không hợp lệ' }, { status: 400 });
@@ -99,10 +99,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = await getUser(req);
-    if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
-      return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    }
+    // const user = await getUser(req);
+    // if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
+    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
+    // }
 
     const idAdvancedMetrics = parseInt(params.id);
     if (isNaN(idAdvancedMetrics)) {

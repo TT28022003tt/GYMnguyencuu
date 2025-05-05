@@ -55,6 +55,9 @@ export const config = {
 		"/login",
 		"/sign-up",
 		"/admin/:path*",
-		"/logout"
+		"/logout",
+		"/trainingplans",
+		"/healthconsultation",
+		"/schedule"
 	  ],
 }

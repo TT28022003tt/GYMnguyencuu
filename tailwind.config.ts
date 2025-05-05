@@ -34,6 +34,7 @@ export default {
     }, "cupcake","black"],
   },
   plugins: [
-    require('daisyui')
+    require('daisyui'),
+    require('@tailwindcss/typography'),
   ],
 } satisfies Config;

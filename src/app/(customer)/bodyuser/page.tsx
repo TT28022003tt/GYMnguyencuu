@@ -10,6 +10,8 @@ import { useMetrics } from '@/contexts/MetricsContext'; // Thêm context
 import FormModal from '@/app/components/FormModal';
 import BasicMetricsForm from '@/app/components/forms/BasicMetricsForm';
 import AdvancedMetricsForm from '@/app/components/forms/AdvancedMetricsForm';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 interface BasicMetrics {
   idBasicMetrics: number;
@@ -39,6 +41,7 @@ interface AdvancedMetrics {
   Mota: string | null;
   Ten: string;
 }
+
 
 export default function BodyUser() {
   const { user } = useMyContext();
@@ -90,8 +93,19 @@ export default function BodyUser() {
 
   // Hàm xử lý khi nhấn nút Tư vấn
   const handleConsult = (type: 'basic' | 'advanced', data: BasicMetrics | AdvancedMetrics) => {
-    setSelectedMetrics({ type, data });
-    setIsChatOpen(true); // Mở chatbox
+    const currentDate = new Date().toISOString().split('T')[0];
+    setSelectedMetrics({
+      type,
+      data: {
+        ...data,
+        idMaHV: data.idMaHV, // Đảm bảo idMaHV được gửi
+      },
+      requestedDate: currentDate,
+      defaultQuestion: type === 'basic'
+        ? 'Tạo chương trình tập dựa trên chỉ số cơ bản cho ngày mai'
+        : 'Tạo chương trình tập dựa trên chỉ số nâng cao cho ngày mai',
+    });
+    setIsChatOpen(true);
   };
 
   if (loading) {
@@ -139,11 +153,10 @@ export default function BodyUser() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
-              activeMode === 'basic'
+            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${activeMode === 'basic'
                 ? 'bg-primary-blue text-white shadow-md'
                 : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-            }`}
+              }`}
             onClick={() => setActiveMode('basic')}
           >
             Chỉ Số Cơ Bản
@@ -151,11 +164,10 @@ export default function BodyUser() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
-              activeMode === 'advanced'
+            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${activeMode === 'advanced'
                 ? 'bg-primary-purple text-white shadow-md'
                 : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-            }`}
+              }`}
             onClick={() => setActiveMode('advanced')}
           >
             Chỉ Số Nâng Cao
@@ -170,9 +182,8 @@ export default function BodyUser() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-3 px-8 py-4 rounded-full text-white font-semibold shadow-xl transition-all duration-300 ${
-                activeMode === 'basic' ? 'bg-primary-blue' : 'bg-primary-purple'
-              }`}
+              className={`flex items-center gap-3 px-8 py-4 rounded-full text-white font-semibold shadow-xl transition-all duration-300 ${activeMode === 'basic' ? 'bg-primary-blue' : 'bg-primary-purple'
+                }`}
             >
               <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
               <span>Thêm Chỉ Số</span>
@@ -184,7 +195,7 @@ export default function BodyUser() {
       <div className="w-full max-w-6xl">
         <AnimatePresence mode="wait">
           {(activeMode === 'basic' && basicMetrics.length === 0) ||
-          (activeMode === 'advanced' && advancedMetrics.length === 0) ? (
+            (activeMode === 'advanced' && advancedMetrics.length === 0) ? (
             <motion.div
               key="no-data"
               initial={{ opacity: 0, y: 20 }}
@@ -197,13 +208,15 @@ export default function BodyUser() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white p-10 rounded-2xl shadow-xl max-w-lg mx-auto"
               >
-                <Image
-                  src="/images/gym-placeholder.png"
-                  alt="Gym Placeholder"
-                  width={250}
-                  height={250}
-                  className="mx-auto mb-6"
-                />
+                <div className="mx-auto mb-6 flex justify-center items-center">
+                  <DotLottieReact
+                    src="https://lottie.host/1de8c03e-e7e8-4d62-b4d9-cfb2106abee7/W6r2aXE58W.lottie"
+                    loop
+                    autoplay
+                    style={{ width: 300, height: 200 }}
+                  />
+                </div>
+
                 <p className="text-gray-600 text-lg font-medium mb-6">
                   Chưa có chỉ số cơ thể! Hãy bắt đầu theo dõi chỉ số!
                 </p>
@@ -215,9 +228,8 @@ export default function BodyUser() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`px-6 py-3 rounded-full text-white font-semibold ${
-                        activeMode === 'basic' ? 'bg-primary-blue' : 'bg-primary-purple'
-                      }`}
+                      className={`px-6 py-3 rounded-full text-white font-semibold ${activeMode === 'basic' ? 'bg-primary-blue' : 'bg-primary-purple'
+                        }`}
                     >
                       Thêm Chỉ Số Ngay
                     </motion.button>
