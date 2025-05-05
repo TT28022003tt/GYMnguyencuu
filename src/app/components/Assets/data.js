@@ -1,7 +1,11 @@
 import p1_img from '../Assets/img1.jpg';
-import p2_img from '../Assets/img1.jpg'; // Giả sử bạn có thêm hình ảnh khác
-import p3_img from '../Assets/img1.jpg';
-import p4_img from '../Assets/img1.jpg';
+import p2_img from '../Assets/img2.jpg'; // Giả sử bạn có thêm hình ảnh khác
+import p3_img from '../Assets/img3.jpg';
+import p4_img from '../Assets/img4.jpg';
+import p5_img from '../Assets/img5.jpg';
+import p6_img from '../Assets/img6.jpg'; 
+import p7_img from '../Assets/img7.jpg';
+import p8_img from '../Assets/img8.jpg';
 
 let data_product = [
   {
@@ -40,7 +44,7 @@ let data_product = [
     id: 5,
     name: "282 To Hieu, Hoa Minh, Lien Chieu, Da Nang",
     category: "home",
-    image: p1_img.src, // Chuyển đổi thành đường dẫn (URL)
+    image: p5_img.src, // Chuyển đổi thành đường dẫn (URL)
     newPrice: 50.0,
     oldPrice: 80.5,
   },
@@ -48,7 +52,7 @@ let data_product = [
     id: 6,
     name: "123 Nguyen Van Linh, Thanh Khe, Da Nang",
     category: "apartment",
-    image: p2_img.src, 
+    image: p6_img.src, 
     newPrice: 70.0,
     oldPrice: 100.0,
   },
@@ -56,7 +60,7 @@ let data_product = [
     id: 7,
     name: "456 Le Duan, Hai Chau, Da Nang",
     category: "villa",
-    image: p3_img.src,
+    image: p7_img.src,
     newPrice: 120.0,
     oldPrice: 150.0,
   },
@@ -64,7 +68,7 @@ let data_product = [
     id: 8,
     name: "789 Tran Phu, Son Tra, Da Nang",
     category: "home",
-    image: p4_img.src, 
+    image: p8_img.src, 
     newPrice: 90.0,
     oldPrice: 110.0,
   },

@@ -1,16 +1,13 @@
-
 import React from 'react';
-import './Popular.css';
 import data_product from '../components/Assets/data'; 
 import Item from './Item';
 
-
 const Popular = () => {
   return (
-    <div className='popular'>
-      <h1>SOME BASIC TYPES OF GYM TRAINING</h1>
-      <hr />
-      <div className='popular-item'>
+    <div className="flex flex-col items-center gap-4 pb-4">
+      <h1 className="text-4xl font-semibold text-gray-200">SOME BASIC TYPES OF GYM TRAINING</h1>
+      <hr className="w-52 h-1 rounded-lg bg-gray-800" />
+      <div className="mt-12 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-screen-xl w-full">
         {data_product.map((item) => (
           <Item
             key={item.id} 
@@ -26,4 +23,4 @@ const Popular = () => {
   );
 };
 
-export default Popular; // Export default
+export default Popular;

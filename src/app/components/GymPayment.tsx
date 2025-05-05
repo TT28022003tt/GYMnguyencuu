@@ -19,14 +19,53 @@ const GymPayment: React.FC = () => {
   const discount = voucher === 'GIAM50K' ? 50000 : 0;
   const totalPrice = packagePrices[packageType] * months - discount;
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ packageType, months, voucher, totalPrice, paymentMethod });
+
+    if (!paymentMethod) {
+      alert('Vui lòng chọn phương thức thanh toán!');
+      return;
+    }
+
+    try {
+      let apiUrl = '';
+      if (paymentMethod === 'momo') {
+        apiUrl = '/api/payment/momo';
+      } else if (paymentMethod === 'zalopay') {
+        apiUrl = '/api/payment/zalopay';
+      } else {
+        alert('Phương thức thanh toán không hợp lệ');
+        return;
+      }
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          packageType,
+          months,
+          voucher,
+          totalPrice,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.payUrl) {
+        window.location.href = data.payUrl; // Redirect sang trang thanh toán
+      } else {
+        alert('Không tạo được đơn thanh toán.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Đã xảy ra lỗi khi tạo đơn thanh toán.');
+    }
   };
 
   const handlePayment = (method: string) => {
     setPaymentMethod(method);
-    console.log(`Phương thức thanh toán: ${method}`);
   };
 
   return (

@@ -11,27 +11,45 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        "brown-red": "#9b4100", 
+        "brown-red": "#9b4100",
         "bright-orange": "#ff7300",
-        "dark-red":"#a50000",
-        'primary-blue': '#1E40AF',
-        'primary-purple': '#7C3AED',
+        "dark-red": "#a50000",
+        "primary-blue": "#1E40AF",
+        "primary-purple": "#7C3AED",
+      },
+      animation: {
+        slideInFromLeft: "slideInFromLeft 1.5s ease-out",
+        slideInFromRight: "slideInFromRight 1.5s ease-out",
+      },
+      keyframes: {
+        slideInFromLeft: {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        slideInFromRight: {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
       },
     },
   },
   daisyui: {
-    themes: [{
-      mylight: {
-        ...require("daisyui/src/theming/themes")["light"], // Kế thừa toàn bộ theme light
-        "base-content": "#222222", // Màu chữ trên nền light
+    themes: [
+      {
+        mylight: {
+          ...require("daisyui/src/theming/themes")["light"],
+          "base-content": "#222222",
+        },
       },
-    },
-    {
-      mydark: {
-        ...require("daisyui/src/theming/themes")["dark"], // Kế thừa toàn bộ theme dark
-        "base-content": "#ffffff", // Màu chữ TRẮNG trên nền dark
+      {
+        mydark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          "base-content": "#ffffff",
+        },
       },
-    }, "cupcake","black"],
+      "cupcake",
+      "black",
+    ],
   },
   plugins: [
     require('daisyui'),

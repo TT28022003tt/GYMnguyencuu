@@ -20,7 +20,5 @@ export async function getUser(req: NextRequest) {
 
   }});
   if (!user) return null;
-
   return user
-
 }
