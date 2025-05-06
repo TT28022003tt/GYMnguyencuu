@@ -10,15 +10,18 @@ export async function middleware(req: NextRequest) {
 		return null;
 	  }
 
-	  if((req.nextUrl.pathname ==="/login"||req.nextUrl.pathname ==="/sign-up")&& !token){
+	  if((req.nextUrl.pathname ==="/login")&& !token){
 		return NextResponse.next()
 	}
 	
 	  if (!token) {
-		return NextResponse.redirect(new URL("/login", req.url));
+		const loginUrl = new URL("/login", req.url);
+loginUrl.searchParams.set("message", "login_required");
+return NextResponse.redirect(loginUrl);
+
 	  }
 
-	if((req.nextUrl.pathname ==="/login"||req.nextUrl.pathname ==="/sign-up")&& token){
+	if((req.nextUrl.pathname ==="/login")&& token){
 		return NextResponse.redirect(new URL("/", req.url));
 		
 }

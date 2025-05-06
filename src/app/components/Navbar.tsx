@@ -17,7 +17,6 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Theo dõi thay đổi theme (light/dark)
   useEffect(() => {
     const newTheme =
       document.documentElement.getAttribute("data-theme") || "mylight";
@@ -35,7 +34,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     router.push("/logout");
-    setUser({ ten: "", admin: "" });
+    setUser({ ten: "", admin: "", anh: "" });
   };
 
   const navLinks = [
@@ -52,7 +51,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
-          <p className="text-xl font-bold">ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ</p>
+          <p className="text-xl font-bold">ANH EM FREE FIRE</p>
         </div>
 
         {/* Desktop Menu */}
@@ -72,15 +71,24 @@ const Navbar = () => {
             <>
               <button
                 onClick={handleLogout}
-                className="w-[100px] h-[40px] border rounded-full font-medium"
+                className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100"
               >
                 Logout
               </button>
-              <div>{user.ten}</div>
+              <Link href="/Profile" className="flex items-center space-x-2">
+                <Image
+                  src={user.anh || "/default-avatar.png"}
+                  alt="Avatar"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover"
+                />
+                <span className="text-lg font-medium">{user.ten}</span>
+              </Link>
             </>
           ) : (
             <Link href="/login">
-              <button className="w-[100px] h-[40px] border rounded-full font-medium">
+              <button className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100">
                 Login
               </button>
             </Link>
