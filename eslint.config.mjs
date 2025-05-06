@@ -13,8 +13,7 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off", // Tắt quy tắc no-explicit-any
-      // Có thể thêm các quy tắc khác nếu cần
+      "@typescript-eslint/no-explicit-any": "off", 
       "@typescript-eslint/no-unused-vars": "off",
     },
   },

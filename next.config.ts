@@ -2,13 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['images.pexels.com'],
+    domains: ['images.pexels.com','app.cdn.chative.io'],
   },
   typescript: {
-    ignoreBuildErrors: true, // Bỏ qua lỗi TypeScript khi build
+    ignoreBuildErrors: true, 
   },
   eslint: {
-    ignoreDuringBuilds: true, // Bỏ qua lỗi ESLint khi build
+    ignoreDuringBuilds: true, 
   },
 };
 
