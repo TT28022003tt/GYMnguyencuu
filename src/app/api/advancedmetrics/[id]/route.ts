@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../../../prisma/client';
 import { getUser } from '@/utils/Auth';
-
+import { NextRequest, NextResponse } from 'next/server';
 interface AdvancedMetricsInput {
   idAdvancedMetrics: number;
   BodyFatPercent: number | null;
@@ -13,6 +12,7 @@ interface AdvancedMetricsInput {
   Mota: string | null;
   idMaHV: number;
 }
+
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -97,32 +97,27 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    // const user = await getUser(req);
-    // if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
-    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    // }
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } } 
+) {
+  const { id } = params;
 
-    const idAdvancedMetrics = parseInt(params.id);
-    if (isNaN(idAdvancedMetrics)) {
-      return NextResponse.json({ error: 'ID không hợp lệ' }, { status: 400 });
-    }
-
-    const existingMetric = await prisma.advancedmetrics.findUnique({
-      where: { idAdvancedMetrics },
-    });
-    if (!existingMetric) {
-      return NextResponse.json({ error: 'Chỉ số không tồn tại' }, { status: 404 });
-    }
-
-    await prisma.advancedmetrics.delete({
-      where: { idAdvancedMetrics },
-    });
-
-    return NextResponse.json({ message: 'Xóa thành công' }, { status: 200 });
-  } catch (error: any) {
-    console.error('Lỗi khi xóa advancedmetrics:', error);
-    return NextResponse.json({ error: 'Lỗi khi xóa dữ liệu: ' + error.message }, { status: 500 });
+  const idAdvancedMetrics = parseInt(id);
+  if (isNaN(idAdvancedMetrics)) {
+    return NextResponse.json({ error: 'ID không hợp lệ' }, { status: 400 });
   }
+
+  const existingMetric = await prisma.advancedmetrics.findUnique({
+    where: { idAdvancedMetrics },
+  });
+  if (!existingMetric) {
+    return NextResponse.json({ error: 'Chỉ số không tồn tại' }, { status: 404 });
+  }
+
+  await prisma.advancedmetrics.delete({
+    where: { idAdvancedMetrics },
+  });
+
+  return NextResponse.json({ message: 'Xóa thành công' }, { status: 200 });
 }

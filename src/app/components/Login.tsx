@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -9,7 +10,7 @@ import email_icon from '../components/Assets/email.png';
 import password_icon from '../components/Assets/password.png';
 import Image from 'next/image';
 
-// Định nghĩa kiểu dữ liệu cho form
+// Định nghĩa kiểu dữ liệu
 interface AuthFormData {
   TenDangNhap: string;
   MatKhau: string;
@@ -34,8 +35,9 @@ interface ApiError {
   error: string;
 }
 
-const Login: React.FC = () => {
-  const [action, setAction] = useState<string>("Login"); // Mặc định là Đăng nhập
+// Thành phần con để sử dụng useSearchParams
+const LoginContent: React.FC = () => {
+  const [action, setAction] = useState<string>("Login");
   const [showForgotPassword, setShowForgotPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<AuthFormData>({
     TenDangNhap: '',
@@ -55,7 +57,6 @@ const Login: React.FC = () => {
   const { refreshUser } = useMyContext();
   const toastId = "auth-toast";
 
-  // Xử lý thông báo từ searchParams
   useEffect(() => {
     const message = searchParams.get("message");
     if (message === "login_required" && !toast.isActive(toastId)) {
@@ -63,7 +64,6 @@ const Login: React.FC = () => {
     }
   }, [searchParams]);
 
-  // Xử lý thay đổi input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -74,7 +74,6 @@ const Login: React.FC = () => {
     setApiError('');
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors: Partial<AuthFormData> = {};
     let valid = true;
@@ -118,7 +117,6 @@ const Login: React.FC = () => {
     return valid;
   };
 
-  // Xử lý submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError('');
@@ -169,7 +167,6 @@ const Login: React.FC = () => {
     }
   };
 
-  // Form quên mật khẩu
   const ForgotPasswordForm = ({ onBackToLogin }: { onBackToLogin: () => void }) => {
     const [email, setEmail] = useState<string>('');
     const [status, setStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({
@@ -219,7 +216,7 @@ const Login: React.FC = () => {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -100 }}
         transition={{ duration: 0.4 }}
-        className="flex justify-center items-center  p-6"
+        className="flex justify-center items-center p-6"
       >
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-[600px]">
           <h2 className="text-gray-900 text-2xl font-extrabold text-center mb-3">Quên Mật Khẩu?</h2>
@@ -275,7 +272,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center  p-6">
+    <div className="flex justify-center items-center p-6">
       <AnimatePresence mode="wait">
         {showForgotPassword ? (
           <ForgotPasswordForm key="forgot-password" onBackToLogin={() => setShowForgotPassword(false)} />
@@ -524,4 +521,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default LoginContent;
