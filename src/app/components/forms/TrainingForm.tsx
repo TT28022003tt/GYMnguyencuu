@@ -60,7 +60,7 @@ export default function TrainingForm({
       reset(data);
       console.log("After reset:", watch("chiTietMucTieu"));
     }
-  }, [data, reset]);
+  }, [data, reset,watch]);
 
   const onSubmit = async (formData: TrainingFormInput) => {
     setIsSubmitting(true);

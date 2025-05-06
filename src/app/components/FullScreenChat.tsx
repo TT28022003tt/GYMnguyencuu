@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Markdown from 'react-markdown';
 import { useMetrics } from '@/contexts/MetricsContext';
 import { useMyContext } from '@/contexts/context';
+import Image from 'next/image';
 
 const botAvatar =
   'https://app.cdn.chative.io/0778e439-c017-52e7-ba9d-24b347d497cb/file/1734431480729/AhaCOD%20(14)%20(1).png';
@@ -115,7 +116,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
     if (selectedMetrics && !context.metrics) {
       setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
     }
-  }, [selectedMetrics]);
+  }, [selectedMetrics,context.metrics]);
 
   const saveMessage = async (message: { from: string; text: string; timestamp: Date }) => {
     if (!user.id) return;
@@ -532,7 +533,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-lg p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <img src={botAvatar} alt="Bot" className="w-10 h-10 rounded-full" />
+          <Image src={botAvatar} alt="Bot" className="w-10 h-10 rounded-full" />
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Trợ lý Sức Khỏe</h2>
         </div>
         <div className="flex gap-2">
@@ -569,7 +570,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
           >
             {msg.from === 'bot' ? (
               <>
-                <img src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
+                <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
                 <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 p-4 rounded-2xl max-w-lg shadow-md">
                   <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
                     <Markdown>{msg.text}</Markdown>
@@ -595,7 +596,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             animate={{ opacity: 1 }}
             className="flex items-start gap-3"
           >
-            <img src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
+            <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
             <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-2xl shadow-md">
               <div className="flex gap-1">
                 <motion.span

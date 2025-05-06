@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useState } from "react";
 
 interface UserData {
@@ -76,7 +77,7 @@ const FormSetting: React.FC<FormSettingProps> = ({ onClose, userData }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white rounded-lg p-6 w-[80%] max-w-4xl h-[80%] flex shadow-lg overflow-hidden">
         <div className="w-1/3 border-r p-4 flex flex-col items-center">
-          <img
+          <Image
             src={avatarPreview || "/default-avatar.png"}
             alt="Avatar"
             className="rounded-full h-80 mb-4 w-auto object-cover"

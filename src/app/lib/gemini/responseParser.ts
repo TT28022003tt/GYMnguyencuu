@@ -32,7 +32,7 @@ export function parseGeminiResponse(
         result.thucdon.NgayBatDau = minDate;
       }
       result.thucdon.chiTietThucDon.forEach((day: any) => {
-        let dayDate = new Date(day.Ngay);
+        const dayDate = new Date(day.Ngay);
         if (dayDate < today) {
           day.Ngay = minDate;
         }
@@ -42,8 +42,8 @@ export function parseGeminiResponse(
 
     if (requestType === 'lichtap' && result.lichtap) {
       result.lichtap = result.lichtap.map((schedule: any) => {
-        let startDate = new Date(schedule.NgayGioBatDau);
-        let endDate = new Date(schedule.NgayGioKetThuc);
+        const startDate = new Date(schedule.NgayGioBatDau);
+        const endDate = new Date(schedule.NgayGioKetThuc);
         if (startDate < today) {
           const timePart = schedule.NgayGioBatDau.split('T')[1] || '08:00:00Z';
           schedule.NgayGioBatDau = `${minDate}T${timePart}`;

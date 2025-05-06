@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 interface CartItem {
@@ -61,7 +62,7 @@ export default function ShoppingCart() {
           />
 
           {/* Hình ảnh sản phẩm */}
-          <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+          <Image src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
 
           {/* Thông tin sản phẩm */}
           <div className="flex-1 space-y-2">

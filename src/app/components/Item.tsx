@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 interface ItemProps {
@@ -13,7 +14,7 @@ const Item: React.FC<ItemProps> = ({ id, name, image}) => {
 
   return (
     <div className="w-full max-w-[350px] flex flex-col items-center text-center transform transition-transform duration-500 hover:scale-105">
-      <img
+      <Image
         src={image}
         alt={name}
         className="w-full h-[300px] object-cover rounded-lg"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Send, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMetrics } from '@/contexts/MetricsContext';
@@ -8,6 +8,7 @@ import { useMyContext } from '@/contexts/context';
 import FullScreenChat from './FullScreenChat';
 import Markdown from 'react-markdown';
 import isEqual from 'lodash.isequal';
+import Image from 'next/image';
 
 const botAvatar =
   'https://app.cdn.chative.io/0778e439-c017-52e7-ba9d-24b347d497cb/file/1734431480729/AhaCOD%20(14)%20(1).png';
@@ -15,7 +16,13 @@ const botAvatar =
 export default function ChatWidget() {
   const { selectedMetrics, isChatOpen, setIsChatOpen, setSelectedMetrics } = useMetrics();
   const { user, publicData, maHV } = useMyContext();
+
   const [messages, setMessages] = useState<any[]>([]);
+  const lastMetricsRef = useRef<any>(null);
+
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [programToSave, setProgramToSave] = useState<any>(null);
@@ -23,10 +30,8 @@ export default function ChatWidget() {
   const [lichtapToSave, setLichTapToSave] = useState<any>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [requestedMaHV, setRequestedMaHV] = useState<string>('');
-  const [historyLoaded, setHistoryLoaded] = useState(false);
   const [context, setContext] = useState<any>({});
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const lastMetricsRef = useRef<any>(null);
+  
 
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -81,45 +86,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
     }
     return null;
   };
-
-  useEffect(() => {
-    if (isChatOpen && !isFullScreen) {
-      if (!messages.length) {
-        setMessages([
-          {
-            from: 'bot',
-            text: `Xin chào! Bạn có thể hỏi về gói tập, chương trình tập, thực đơn, thông tin PT, lớp học, hoặc thẻ hội viên. ${user.id ? 'Bạn có thể lưu dữ liệu.' : 'Đăng nhập để lưu dữ liệu!'}`,
-            timestamp: new Date(),
-          },
-        ]);
-      }
-
-      if (user.id && !historyLoaded) {
-        loadChatHistory();
-      }
-    }
-  }, [isChatOpen, user.id, isFullScreen, historyLoaded]);
-
-  useEffect(() => {
-    
-    if (isChatOpen && selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
-      const metricsMessage = {
-        from: 'bot',
-        text: formatMetrics(selectedMetrics),
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, metricsMessage]);
-      saveMessage(metricsMessage);
-      setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
-      lastMetricsRef.current = selectedMetrics;
-    }
-  }, [isChatOpen, selectedMetrics]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const loadChatHistory = async () => {
+  const loadChatHistory = useCallback(async () => {
     if (!user.id) return;
 
     try {
@@ -152,27 +119,70 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
         },
       ]);
     }
-  };
+  }, [user.id, setMessages]);
+  
+  const saveMessage = useCallback(
+    async (message: { from: string; text: string; timestamp: Date }) => {
+      if (!user.id) return;
 
-  const saveMessage = async (message: { from: string; text: string; timestamp: Date }) => {
-    if (!user.id) return;
+      try {
+        const res = await fetch('/api/chat-messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            idUser: user.id,
+            from: message.from,
+            Text: message.text,
+            Timestamp: message.timestamp.toISOString(),
+          }),
+        });
+        if (!res.ok) throw new Error('Không thể lưu tin nhắn');
+      } catch (error) {
+        console.error('Lỗi lưu tin nhắn:', error);
+      }
+    },
+    [user.id]
+  );
+  useEffect(() => {
+    if (isChatOpen && !isFullScreen) {
+      if (!messages.length) {
+        setMessages([
+          {
+            from: 'bot',
+            text: `Xin chào! Bạn có thể hỏi về gói tập, chương trình tập, thực đơn, thông tin PT, lớp học, hoặc thẻ hội viên. ${user.id ? 'Bạn có thể lưu dữ liệu.' : 'Đăng nhập để lưu dữ liệu!'}`,
+            timestamp: new Date(),
+          },
+        ]);
+      }
 
-    try {
-      const res = await fetch('/api/chat-messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          idUser: user.id,
-          from: message.from,
-          Text: message.text,
-          Timestamp: message.timestamp.toISOString(),
-        }),
-      });
-      if (!res.ok) throw new Error('Không thể lưu tin nhắn');
-    } catch (error) {
-      console.error('Lỗi lưu tin nhắn:', error);
+      if (user.id && !historyLoaded) {
+        loadChatHistory();
+      }
     }
-  };
+  }, [isChatOpen, user.id, isFullScreen, historyLoaded, loadChatHistory, messages.length]);
+
+  useEffect(() => {
+    
+    if (isChatOpen && selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
+      const metricsMessage = {
+        from: 'bot',
+        text: formatMetrics(selectedMetrics),
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, metricsMessage]);
+      saveMessage(metricsMessage);
+      setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
+      lastMetricsRef.current = selectedMetrics;
+    }
+  }, [isChatOpen, selectedMetrics,saveMessage]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+
+
+
 
   const handleQuickReply = async (value: string) => {
     const userMessage = {
@@ -588,7 +598,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             className="bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-2xl rounded-3xl w-80 h-[400px] mb-4 p-4 flex flex-col justify-between border border-gray-200/50 dark:border-gray-700/50"
           >
             <div className="flex items-center gap-2 mb-3">
-              <img src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full" />
+              <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full" />
               <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 tracking-tight">Trợ lý Sức Khỏe</h3>
               <button
                 onClick={() => setIsFullScreen(true)}
@@ -643,7 +653,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                   animate={{ opacity: 1 }}
                   className="flex items-start gap-2"
                 >
-                  <img src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0" />
+                  <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0" />
                   <div className="bg-gray-200/80 dark:bg-gray-700/80 p-3 rounded-xl max-w-[70%] shadow-sm">
                     <div className="flex gap-1">
                       <motion.span
@@ -742,7 +752,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 p-1">
           <div className="w-full h-full rounded-full bg-white dark:bg-gray-800"></div>
         </div>
-        <img
+        <Image
           src={botAvatar}
           alt="Bot Avatar"
           className="w-[80%] h-[80%] object-cover rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"

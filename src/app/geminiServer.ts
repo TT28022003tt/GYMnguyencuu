@@ -1,16 +1,22 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import 'dotenv/config';
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const googleApiKey = process.env.GOOGLE_API_KEY;
 
-app.post('/api/chat', async (req, res) => {
+if (!googleApiKey) {
+  throw new Error('Missing GOOGLE_API_KEY environment variable');
+}
+
+const genAI = new GoogleGenerativeAI(googleApiKey);
+
+app.post('/api/chat', async (req: Request, res: Response) => {
   const { message } = req.body;
 
   try {
@@ -21,7 +27,7 @@ app.post('/api/chat', async (req, res) => {
     const text = response.text();
 
     res.json({ reply: text });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Gemini error:', err.message);
     res.status(500).json({ error: 'Lỗi khi gọi Gemini API' });
   }
