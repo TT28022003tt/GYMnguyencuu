@@ -46,12 +46,18 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full shadow-md px-6 py-3">
+    <nav className="w-full shadow-md px-6 py-3 bg-white dark:bg-gray-800">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
+<<<<<<< HEAD
+          <p className="text-lg font-bold text-gray-800 dark:text-white">
+            ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ
+          </p>
+=======
           <p className="text-xl font-bold">ANH EM FREE FIRE</p>
+>>>>>>> 208320bddbdd721f4ce71e08fc8a35c2931a9650
         </div>
 
         {/* Desktop Menu */}
@@ -64,13 +70,24 @@ const Navbar = () => {
         </ul>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-4">
           <ThemeToggle />
 
           {user.ten ? (
             <>
               <button
                 onClick={handleLogout}
+<<<<<<< HEAD
+                className="border rounded-full font-medium text-gray-700 dark:text-white"
+              >
+                Logout
+              </button>
+              <div className="text-gray-800 dark:text-white">{user.ten}</div>
+            </>
+          ) : (
+            <Link href="/login">
+              <button className="border rounded-full font-medium text-gray-700 dark:text-white">
+=======
                 className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100"
               >
                 Logout
@@ -89,6 +106,7 @@ const Navbar = () => {
           ) : (
             <Link href="/login">
               <button className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100">
+>>>>>>> 208320bddbdd721f4ce71e08fc8a35c2931a9650
                 Login
               </button>
             </Link>

@@ -54,7 +54,7 @@ const Calculator = () => {
           {/* Form */}
           <form onSubmit={calculateBMI} className="bg-white p-8 rounded-2xl shadow-lg space-y-6 border">
             <div>
-              <label className="block mb-1 font-semibold text-gray-700">Họ</label>
+              <label className="block mb-1 font-semibold text-gray-700">Tên</label>
               <input
                 type="text"
                 value={name}
