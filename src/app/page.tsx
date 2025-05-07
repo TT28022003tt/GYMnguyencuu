@@ -8,8 +8,8 @@ import Calculator from "./components/Calculator";
 import Footer from "./components/Footer";
 import Contact from "./components/Contact";
 
-
 export default function Home() {
+  console.log(process.env.NEXT_PUBLIC_JWT_SECRET)
   return (
     <div>
       <Hero/>
