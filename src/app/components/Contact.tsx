@@ -12,7 +12,7 @@ const Contact: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/sendMail`, {
+      const res = await fetch(`/api/sendMail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message }),

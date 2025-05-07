@@ -29,7 +29,7 @@ export const MyProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchPublicData = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/public-data');
+      const res = await fetch('/api/public-data');
       if (!res.ok) throw new Error('Không thể lấy dữ liệu công khai');
       const data = await res.json();
       setPublicData(data);
@@ -40,7 +40,7 @@ export const MyProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/auth/user');
+      const res = await fetch('/api/auth/user');
       if (!res.ok) throw new Error('Không thể lấy dữ liệu người dùng');
       const data = await res.json();
       console.log('API /api/auth/user response:', data);
