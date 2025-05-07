@@ -31,7 +31,7 @@ export default function ChatWidget() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [requestedMaHV, setRequestedMaHV] = useState<string>('');
   const [context, setContext] = useState<any>({});
-  
+
 
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -120,7 +120,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
       ]);
     }
   }, [user.id, setMessages]);
-  
+
   const saveMessage = useCallback(
     async (message: { from: string; text: string; timestamp: Date }) => {
       if (!user.id) return;
@@ -162,7 +162,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
   }, [isChatOpen, user.id, isFullScreen, historyLoaded, loadChatHistory, messages.length]);
 
   useEffect(() => {
-    
+
     if (isChatOpen && selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
       const metricsMessage = {
         from: 'bot',
@@ -174,7 +174,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
       setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
       lastMetricsRef.current = selectedMetrics;
     }
-  }, [isChatOpen, selectedMetrics,saveMessage]);
+  }, [isChatOpen, selectedMetrics, saveMessage]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -349,10 +349,10 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
               NgayGioBatDau: scheduleData.NgayGioBatDau,
               NgayGioKetThuc: scheduleData.NgayGioKetThuc,
               MaHV: saveMaHV,
-              MaHLV: scheduleData.MaHLV||null,
-              idMaLH: scheduleData.idMaLH||null,
-              idMaCTT: scheduleData.idMaCTT||null,
-              idMaGT: scheduleData.idMaGT||null,
+              MaHLV: scheduleData.MaHLV || null,
+              idMaLH: scheduleData.idMaLH || null,
+              idMaCTT: scheduleData.idMaCTT || null,
+              idMaGT: scheduleData.idMaGT || null,
               GhiChu: scheduleData.GhiChu,
               baitap: scheduleData.baitap?.map((bt: any) => ({
                 name: bt.TenBaiTap,
@@ -598,7 +598,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             className="bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-2xl rounded-3xl w-80 h-[400px] mb-4 p-4 flex flex-col justify-between border border-gray-200/50 dark:border-gray-700/50"
           >
             <div className="flex items-center gap-2 mb-3">
-              <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full" />
+              <Image src={botAvatar} alt="Bot" width={200} height={200} className="w-8 h-8 rounded-full" />
               <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 tracking-tight">Trợ lý Sức Khỏe</h3>
               <button
                 onClick={() => setIsFullScreen(true)}
@@ -651,9 +651,17 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-start gap-2"
+                  className="flex items-center justify-center gap-2"
                 >
-                  <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0" />
+                  <div className="relative w-8 h-8 shrink-0">
+                    <Image
+                      src={botAvatar}
+                      alt="Bot"
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+
                   <div className="bg-gray-200/80 dark:bg-gray-700/80 p-3 rounded-xl max-w-[70%] shadow-sm">
                     <div className="flex gap-1">
                       <motion.span
@@ -749,13 +757,15 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
         transition={{ repeat: Infinity, duration: 2 }}
         whileHover={{ scale: 1.1, boxShadow: '0 0 20px rgba(0, 0, 255, 0.3)' }}
       >
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 p-1">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 p-1 ">
           <div className="w-full h-full rounded-full bg-white dark:bg-gray-800"></div>
         </div>
         <Image
           src={botAvatar}
           alt="Bot Avatar"
-          className="w-[80%] h-[80%] object-cover rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
+          fill
+          sizes="100vw"
+          className="w-[80%] h-[80%] object-cover rounded-full absolute z-10"
         />
       </motion.button>
     </div>

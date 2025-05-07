@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error('API Key không được cấu hình');
     }

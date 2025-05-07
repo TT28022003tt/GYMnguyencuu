@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
     const { packageType, months, voucher, totalPrice } = body;
 
     // Load biến môi trường
-    const app_id = process.env.ZALO_APP_ID!;
-    const key1 = process.env.ZALO_KEY1!;
-    const redirectUrl = process.env.ZALO_REDIRECT_URL!;
-    const callbackUrl = process.env.ZALO_CALLBACK_URL!;
+    const app_id = process.env.NEXT_PUBLIC_ZALO_APP_ID!;
+    const key1 = process.env.NEXT_PUBLIC_ZALO_KEY1!;
+    const redirectUrl = process.env.NEXT_PUBLIC_ZALO_REDIRECT_URL!;
+    const callbackUrl = process.env.NEXT_PUBLIC_ZALO_CALLBACK_URL!;
 
     if (!app_id || !key1 || !redirectUrl || !callbackUrl) {
       throw new Error('Thiếu biến môi trường cấu hình ZaloPay');

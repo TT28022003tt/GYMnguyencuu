@@ -17,6 +17,8 @@ const Item: React.FC<ItemProps> = ({ id, name, image}) => {
       <Image
         src={image}
         alt={name}
+        fill
+        sizes="100vw"
         className="w-full h-[300px] object-cover rounded-lg"
       />
       <p className="my-2 text-base font-medium text-gray-800">{name}</p>

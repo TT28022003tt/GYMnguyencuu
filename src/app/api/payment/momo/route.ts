@@ -6,11 +6,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { packageType, months, voucher, totalPrice } = body;
 
-    const partnerCode = process.env.MOMO_PARTNER_CODE!;
-    const accessKey = process.env.MOMO_ACCESS_KEY!;
-    const secretKey = process.env.MOMO_SECRET_KEY!;
-    const redirectUrl = process.env.MOMO_REDIRECT_URL!;
-    const ipnUrl = process.env.MOMO_IPN_URL!;
+    const partnerCode = process.env.NEXT_PUBLIC_MOMO_PARTNER_CODE!;
+    const accessKey = process.env.NEXT_PUBLIC_MOMO_ACCESS_KEY!;
+    const secretKey = process.env.NEXT_PUBLIC_MOMO_SECRET_KEY!;
+    const redirectUrl = process.env.NEXT_PUBLIC_MOMO_REDIRECT_URL!;
+    const ipnUrl = process.env.NEXT_PUBLIC_MOMO_IPN_URL!;
 
     // Tạo orderId và requestId
     const orderId = `${Date.now()}`;
