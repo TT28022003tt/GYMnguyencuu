@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import prisma from "../../../../prisma/client";
 
 // Khóa bí mật cho JWT (nên lưu trong .env)
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your-secret-key";
 
 export async function POST(req: NextRequest) {
   try {
