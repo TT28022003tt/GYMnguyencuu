@@ -21,6 +21,7 @@ const NutritionPyramid = () => {
           <Image
             src="/images/thapdinhduong.png"
             alt="Nutrition Pyramid"
+            width={200} height={200}
             className="w-full h-full object-contain"
           />
           <p>THÁP DINH DƯỠNG</p>

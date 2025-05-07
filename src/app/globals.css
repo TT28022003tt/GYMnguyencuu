@@ -153,3 +153,12 @@ button {
     font-size: 1rem; /* Kích thước font cho nút */
     padding: 0.5rem 1rem; /* Khoảng cách trong nút */
 }
+
+.markdown-content ul li::marker,
+.markdown-content ol li::marker {
+  color: #e5e7eb; /* gray-800 */
+}
+.dark .markdown-content ul li::marker,
+.dark .markdown-content ol li::marker {
+  color: #e5e7eb; /* gray-200 */
+}

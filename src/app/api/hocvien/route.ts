@@ -36,12 +36,36 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Không tìm thấy học viên' }, { status: 404 });
       }
 
+      // Kiểm tra quyền truy cập
+      if (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer' && user.idUser !== parseInt(idUser)) {
+        return NextResponse.json({ error: 'Không có quyền truy cập' }, { status: 403 });
+      }
+
       return NextResponse.json(hocvien);
     } else {
-      // Trả về toàn bộ danh sách học viên
-      const hocviens = await prisma.hocvien.findMany({
-        include: { user: { select: { Ten: true } } },
-      });
+      let hocviens;
+      if (user.VaiTro === 'admin') {
+        // Admin: Xem tất cả học viên
+        hocviens = await prisma.hocvien.findMany({
+          include: { user: { select: { Ten: true } } },
+        });
+      } else if (user.VaiTro === 'trainer') {
+        // Trainer: Xem học viên họ phụ trách
+        hocviens = await prisma.hocvien.findMany({
+          where: {
+            MaHLV: user.idUser,
+          },
+          include: { user: { select: { Ten: true } } },
+        });
+      } else {
+        // Học viên: Chỉ xem thông tin của chính họ
+        hocviens = await prisma.hocvien.findMany({
+          where: {
+            idUSER: user.idUser,
+          },
+          include: { user: { select: { Ten: true } } },
+        });
+      }
 
       return NextResponse.json(
         hocviens.map((hv) => ({

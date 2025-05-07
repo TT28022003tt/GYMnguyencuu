@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Send, Maximize2 } from 'lucide-react';
@@ -15,14 +15,13 @@ const botAvatar =
 
 export default function ChatWidget() {
   const { selectedMetrics, isChatOpen, setIsChatOpen, setSelectedMetrics } = useMetrics();
-  const { user, publicData, maHV } = useMyContext();
+  const { user, publicData } = useMyContext();
 
   const [messages, setMessages] = useState<any[]>([]);
+  const [lastUserId, setLastUserId] = useState<string | null>(null);
+  const [chatUpdated, setChatUpdated] = useState(false);
   const lastMetricsRef = useRef<any>(null);
-
-  const [historyLoaded, setHistoryLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [programToSave, setProgramToSave] = useState<any>(null);
@@ -31,7 +30,7 @@ export default function ChatWidget() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [requestedMaHV, setRequestedMaHV] = useState<string>('');
   const [context, setContext] = useState<any>({});
-
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -76,16 +75,16 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
     return 'Vui lòng cung cấp chỉ số cơ thể để tư vấn chi tiết hoặc hỏi về gói tập/PT!';
   };
 
-  // Hàm tìm idMaHV từ metrics mới nhất trong messages
   const getLatestMetricsIdMaHV = () => {
     for (let i = messages.length - 1; i >= 0; i--) {
       const msg = messages[i];
-      if (msg.from === 'bot' && msg.text.includes('Chỉ số cơ bản') || msg.text.includes('Chỉ số nâng cao')) {
+      if (msg.from === 'bot' && (msg.text.includes('Chỉ số cơ bản') || msg.text.includes('Chỉ số nâng cao'))) {
         return context.metrics?.data?.idMaHV || null;
       }
     }
     return null;
   };
+
   const loadChatHistory = useCallback(async () => {
     if (!user.id) return;
 
@@ -93,21 +92,25 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
       const res = await fetch(`/api/chat-messages?idUser=${user.id}`);
       if (!res.ok) throw new Error('Không thể tải lịch sử chat');
       const data = await res.json();
-      setMessages((prev) => {
-        const newMessages = [
-          ...prev,
-          ...data.map((msg: any) => ({
-            from: msg.from,
-            text: msg.Text,
-            timestamp: new Date(msg.Timestamp),
-          })),
-        ];
-        setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 0);
-        return newMessages;
-      });
+      const historyMessages = data.map((msg: any) => ({
+        from: msg.from,
+        text: msg.Text,
+        timestamp: new Date(msg.Timestamp),
+      }));
+      
+      // Chỉ thêm tin nhắn chào nếu lịch sử rỗng
+      const welcomeMessage = {
+        from: 'bot',
+        text: `Xin chào! Bạn có thể hỏi về gói tập, chương trình tập, thực đơn, thông tin PT, lớp học, hoặc thẻ hội viên. ${user.id ? 'Bạn có thể lưu dữ liệu.' : 'Đăng nhập để lưu dữ liệu!'}`,
+        timestamp: new Date(),
+      };
+      setMessages(historyMessages.length > 0 ? historyMessages : [welcomeMessage]);
+      
       setHistoryLoaded(true);
+      setChatUpdated(false);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
     } catch (error) {
       console.error('Lỗi tải lịch sử chat:', error);
       setMessages((prev) => [
@@ -119,7 +122,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
         },
       ]);
     }
-  }, [user.id, setMessages]);
+  }, [user.id]);
 
   const saveMessage = useCallback(
     async (message: { from: string; text: string; timestamp: Date }) => {
@@ -137,52 +140,90 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
           }),
         });
         if (!res.ok) throw new Error('Không thể lưu tin nhắn');
+        setChatUpdated(true);
       } catch (error) {
         console.error('Lỗi lưu tin nhắn:', error);
       }
     },
     [user.id]
   );
+
+  // Hiển thị tin nhắn chào mặc định khi chat mở và messages rỗng
   useEffect(() => {
-    if (isChatOpen && !isFullScreen) {
-      if (!messages.length) {
-        setMessages([
-          {
-            from: 'bot',
-            text: `Xin chào! Bạn có thể hỏi về gói tập, chương trình tập, thực đơn, thông tin PT, lớp học, hoặc thẻ hội viên. ${user.id ? 'Bạn có thể lưu dữ liệu.' : 'Đăng nhập để lưu dữ liệu!'}`,
-            timestamp: new Date(),
-          },
-        ]);
-      }
-
-      if (user.id && !historyLoaded) {
-        loadChatHistory();
-      }
-    }
-  }, [isChatOpen, user.id, isFullScreen, historyLoaded, loadChatHistory, messages.length]);
-
-  useEffect(() => {
-
-    if (isChatOpen && selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
-      const metricsMessage = {
+    if (isChatOpen && messages.length === 0) {
+      const welcomeMessage = {
         from: 'bot',
-        text: formatMetrics(selectedMetrics),
+        text: `Xin chào! Bạn có thể hỏi về gói tập, chương trình tập, thực đơn, thông tin PT, lớp học, hoặc thẻ hội viên. ${user.id ? 'Bạn có thể lưu dữ liệu.' : 'Đăng nhập để lưu dữ liệu!'}`,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, metricsMessage]);
-      saveMessage(metricsMessage);
+      setMessages([welcomeMessage]);
+    }
+  }, [isChatOpen, messages.length, user.id]);
+  // Đặt lại trạng thái khi đăng xuất
+
+  useEffect(() => {
+
+    if (!user.id && lastUserId) {
+
+      setMessages([]);
+
+      setContext({});
+
+      setProgramToSave(null);
+
+      setThucdonToSave(null);
+
+      setLichTapToSave(null);
+
+      setRequestedMaHV('');
+
+      setHistoryLoaded(false);
+
+      setLastUserId(null);
+
+      setSelectedMetrics(null);
+
+      lastMetricsRef.current = null;
+
+    }
+
+  }, [user.id, lastUserId, setSelectedMetrics]);
+
+  useEffect(() => {
+    if (user.id && (!historyLoaded || chatUpdated || user.id !== lastUserId)) {
+      loadChatHistory();
+      setLastUserId(user.id);
+    }
+  }, [user.id, historyLoaded, chatUpdated, lastUserId, loadChatHistory]);
+
+  useEffect(() => {
+    if (isChatOpen && selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
+      const lastMessage = messages[messages.length - 1];
+      if (!lastMessage?.text.includes('Chỉ số cơ bản') && !lastMessage?.text.includes('Chỉ số nâng cao')) {
+        const metricsMessage = {
+          from: 'bot',
+          text: formatMetrics(selectedMetrics),
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, metricsMessage]);
+        saveMessage(metricsMessage);
+      }
       setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
       lastMetricsRef.current = selectedMetrics;
     }
-  }, [isChatOpen, selectedMetrics, saveMessage]);
+  }, [isChatOpen, selectedMetrics, saveMessage, messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-
-
-
+  useEffect(() => {
+    if (isChatOpen && !isFullScreen) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+    }
+  }, [isChatOpen, isFullScreen]);
 
   const handleQuickReply = async (value: string) => {
     const userMessage = {
@@ -286,12 +327,10 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
           }
 
           let saveMaHV: number | undefined;
-          // Ưu tiên idMaHV từ metrics mới nhất trong hội thoại
           const latestMetricsIdMaHV = getLatestMetricsIdMaHV();
           if (latestMetricsIdMaHV) {
             saveMaHV = latestMetricsIdMaHV;
           } else if (user.vaitro === 'hocvien') {
-            // Lấy idMaHV từ tài khoản đăng nhập
             const hocvienRes = await fetch(`/api/hocvien?idUser=${user.id}`);
             if (!hocvienRes.ok) {
               throw new Error('Không thể lấy mã học viên từ tài khoản.');
@@ -573,15 +612,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
 
   const handleClose = () => {
     setIsChatOpen(false);
-    setSelectedMetrics(null);
-    setMessages([]);
-    setProgramToSave(null);
-    setThucdonToSave(null);
-    setLichTapToSave(null);
     setIsFullScreen(false);
-    setRequestedMaHV('');
-    setHistoryLoaded(false);
-    setContext({});
     lastMetricsRef.current = null;
   };
 
@@ -597,19 +628,24 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-2xl rounded-3xl w-80 h-[400px] mb-4 p-4 flex flex-col justify-between border border-gray-200/50 dark:border-gray-700/50"
           >
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center mb-3">
               <Image src={botAvatar} alt="Bot" width={200} height={200} className="w-8 h-8 rounded-full" />
               <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 tracking-tight">Trợ lý Sức Khỏe</h3>
-              <button
-                onClick={() => setIsFullScreen(true)}
-                className="ml-auto text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition mr-2"
-                title="Phóng to"
-              >
-                <Maximize2 className="w-5 h-5" />
-              </button>
-              <button onClick={handleClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition">
-                <X className="w-5 h-5" />
-              </button>
+              <div className="ml-auto flex items-center ">
+                <button
+                  onClick={() => setIsFullScreen(true)}
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
+                  title="Phóng to"
+                >
+                  <Maximize2 className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={handleClose}
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 text-sm pr-1 custom-scrollbar">
               {messages.map((msg, index) => (
@@ -629,7 +665,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                         whileHover={{ scale: 1.1 }}
                       />
                       <div className="bg-gradient-to-r from-gray-200/80 to-gray-300/80 dark:from-gray-700/80 dark:to-gray-800/80 p-3 rounded-xl max-w-[70%] shadow-sm backdrop-blur-sm break-words">
-                        <div className="text-gray-900 dark:text-gray-100 text-sm prose prose-sm max-w-full">
+                        <div className=" markdown-content prose prose-sm max-w-full text-gray-800 dark:text-gray-200 [&_strong]:text-white [&_strong]:dark:text-gray-200 [&_h1]:text-gray-800 [&_h1]:dark:text-gray-200 [&_h2]:text-gray-800 [&_h2]:dark:text-gray-200 [&_h3]:text-gray-800 [&_h3]:dark:text-gray-200 [&_a]:text-blue-600 [&_a]:dark:text-blue-400">
                           <Markdown>{msg.text}</Markdown>
                         </div>
                         <span className="text-xs text-gray-500 dark:text-gray-400 block mt-1">
@@ -651,7 +687,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-start justify-start gap-2"
                 >
                   <div className="relative w-8 h-8 shrink-0">
                     <Image
@@ -661,7 +697,6 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                       className="rounded-full object-cover"
                     />
                   </div>
-
                   <div className="bg-gray-200/80 dark:bg-gray-700/80 p-3 rounded-xl max-w-[70%] shadow-sm">
                     <div className="flex gap-1">
                       <motion.span
@@ -746,6 +781,8 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
           setLichTapToSave={setLichTapToSave}
           requestedMaHV={requestedMaHV}
           setRequestedMaHV={setRequestedMaHV}
+          context={context}
+          setContext={setContext}
           onClose={handleClose}
           onMinimize={() => setIsFullScreen(false)}
         />

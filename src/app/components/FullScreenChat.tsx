@@ -7,6 +7,7 @@ import Markdown from 'react-markdown';
 import { useMetrics } from '@/contexts/MetricsContext';
 import { useMyContext } from '@/contexts/context';
 import Image from 'next/image';
+import isEqual from 'lodash.isequal';
 
 const botAvatar =
   'https://app.cdn.chative.io/0778e439-c017-52e7-ba9d-24b347d497cb/file/1734431480729/AhaCOD%20(14)%20(1).png';
@@ -26,6 +27,8 @@ interface FullScreenChatProps {
   setLichTapToSave: (lichtap: any) => void;
   requestedMaHV: string;
   setRequestedMaHV: (maHV: string) => void;
+  context: any;
+  setContext: React.Dispatch<React.SetStateAction<any>>;
   onClose: () => void;
   onMinimize: () => void;
 }
@@ -48,9 +51,10 @@ export default function FullScreenChat({
   onClose,
   onMinimize,
 }: FullScreenChatProps) {
-  const { selectedMetrics, setSelectedMetrics } = useMetrics();
-  const { user, publicData, maHV } = useMyContext();
+  const { selectedMetrics } = useMetrics();
+  const { user, publicData } = useMyContext();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const lastMetricsRef = useRef<any>(null);
   const [context, setContext] = useState<any>({});
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -113,11 +117,21 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
   }, [messages]);
 
   useEffect(() => {
-    if (selectedMetrics && !context.metrics) {
+    if (selectedMetrics && !isEqual(selectedMetrics, lastMetricsRef.current)) {
+      const lastMessage = messages[messages.length - 1];
+      if (!lastMessage?.text.includes('Chỉ số cơ bản') && !lastMessage?.text.includes('Chỉ số nâng cao')) {
+        const metricsMessage = {
+          from: 'bot',
+          text: formatMetrics(selectedMetrics),
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, metricsMessage]);
+        saveMessage(metricsMessage);
+      }
       setContext((prev: any) => ({ ...prev, metrics: selectedMetrics }));
+      lastMetricsRef.current = selectedMetrics;
     }
-  }, [selectedMetrics,context.metrics]);
-
+  }, [selectedMetrics, messages, setMessages, setContext]);
   const saveMessage = async (message: { from: string; text: string; timestamp: Date }) => {
     if (!user.id) return;
 
@@ -533,7 +547,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-lg p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <Image src={botAvatar} alt="Bot" className="w-10 h-10 rounded-full" />
+          <Image src={botAvatar} width={200} height={200} alt="Bot" className="w-10 h-10 rounded-full" />
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Trợ lý Sức Khỏe</h2>
         </div>
         <div className="flex gap-2">
@@ -570,9 +584,9 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
           >
             {msg.from === 'bot' ? (
               <>
-                <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
+                <Image src={botAvatar} alt="Bot" width={200} height={200} className="w-8 h-8 rounded-full shrink-0 mt-1" />
                 <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 p-4 rounded-2xl max-w-lg shadow-md">
-                  <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
+                  <div className="markdown-content prose prose-sm max-w-full text-gray-800 dark:text-gray-200 [&_strong]:text-white [&_strong]:dark:text-gray-200 [&_h1]:text-gray-800 [&_h1]:dark:text-gray-200 [&_h2]:text-gray-800 [&_h2]:dark:text-gray-200 [&_h3]:text-gray-800 [&_h3]:dark:text-gray-200 [&_a]:text-blue-600 [&_a]:dark:text-blue-400">
                     <Markdown>{msg.text}</Markdown>
                   </div>
                   <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
@@ -596,7 +610,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             animate={{ opacity: 1 }}
             className="flex items-start gap-3"
           >
-            <Image src={botAvatar} alt="Bot" className="w-8 h-8 rounded-full shrink-0 mt-1" />
+            <Image src={botAvatar} alt="Bot"  width={200} height={200} className="w-8 h-8 rounded-full shrink-0 mt-1" />
             <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-2xl shadow-md">
               <div className="flex gap-1">
                 <motion.span
@@ -653,7 +667,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
                   : 'Nhập "lưu" hoặc "chỉnh sửa"'
                 : 'Nhập mục tiêu hoặc câu hỏi của bạn...'
             }
-            className="flex-1 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all"
+            className="flex-1 text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all"
           />
           <motion.button
             onClick={handleSend}

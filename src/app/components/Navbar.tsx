@@ -77,7 +77,7 @@ const Navbar = () => {
               </button>
               <Link href="/Profile" className="flex items-center space-x-2">
                 <Image
-                  src={user.anh || "/default-avatar.png"}
+                  src={user.anh || "/images/default-avatar.png"}
                   alt="Avatar"
                   width={40}
                   height={40}
