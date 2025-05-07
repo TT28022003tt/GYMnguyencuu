@@ -225,14 +225,14 @@ export default function TrainingPrograms() {
                   key={plan.idChuongTrinhTap}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
+                  className="p-6 text-black bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
                 >
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
                     {index + 1}. {plan.TenCTT}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <p>
-                      <strong>Mục tiêu:</strong> {plan.MucTieu || 'Chưa có mục tiêu'}
+                      <strong >Mục tiêu:</strong> {plan.MucTieu || 'Chưa có mục tiêu'}
                     </p>
                     <p>
                       <strong>Thời gian:</strong> {plan.ThoiGian || 'Chưa xác định'}

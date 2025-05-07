@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     // Nếu không tìm thấy tài khoản
     if (!taikhoan) {
       return NextResponse.json(
-        { error: "Tên đăng nhập hoặc mật khẩu không đúng" },
+        { error: "Tên đăng nhập không đúng" },
         { status: 401 }
       );
     }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const isPasswordValid = await bcrypt.compare(MatKhau, taikhoan.MatKhau!);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Tên đăng nhập hoặc mật khẩu không đúng" },
+        { error: "Mật khẩu không đúng" },
         { status: 401 }
       );
     }

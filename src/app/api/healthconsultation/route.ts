@@ -80,7 +80,7 @@ export async function POST(req: Request | NextRequest) {
     });
 
     // Kiểm tra thông tin bắt buộc
-    if (!TenThucDon || !SoCalo || !NgayBatDau || !MaHV || !chiTietThucDon) {
+    if (!NgayBatDau || !MaHV ) {
       return NextResponse.json(
         { error: "Thiếu thông tin cơ bản" },
         { status: 400 }

@@ -246,14 +246,14 @@ export default function BodyUser() {
             >
               {activeMode === 'basic' ? (
                 <>
-                  <h2 className="text-2xl font-semibold mb-8 text-gray-800">Chỉ Số Cơ Bản</h2>
+                  <h2 className="text-2xl font-semibold mb-8 ">Chỉ Số Cơ Bản</h2>
                   <div className="grid grid-cols-1 gap-6">
                     {basicMetrics.map((metric) => (
                       <motion.div
                         key={metric.idBasicMetrics}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="w-full p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
+                        className="w-full p-6 text-black bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
                       >
                         <h3 className="text-xl font-bold text-gray-800 mb-4">
                           Chỉ Số của {metric.Ten}
@@ -340,14 +340,14 @@ export default function BodyUser() {
                 </>
               ) : (
                 <>
-                  <h2 className="text-2xl font-semibold mb-8 text-gray-800">Chỉ Số Nâng Cao</h2>
+                  <h2 className="text-2xl font-semibold mb-8 ">Chỉ Số Nâng Cao</h2>
                   <div className="grid grid-cols-1 gap-6">
                     {advancedMetrics.map((metric) => (
                       <motion.div
                         key={metric.idAdvancedMetrics}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
+                        className="p-6 text-black bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
                       >
                         <h3 className="text-xl font-bold text-gray-800 mb-4">
                           Chỉ Số của {metric.Ten}
