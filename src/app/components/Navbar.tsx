@@ -17,7 +17,6 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Theo dõi thay đổi theme (light/dark)
   useEffect(() => {
     const newTheme =
       document.documentElement.getAttribute("data-theme") || "mylight";
@@ -47,12 +46,14 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full shadow-md px-6 py-3">
+    <nav className="w-full shadow-md px-6 py-3 bg-white dark:bg-gray-800">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
-          <p className="text-xl font-bold">ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ</p>
+          <p className="text-lg font-bold text-gray-800 dark:text-white">
+            ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ
+          </p>
         </div>
 
         {/* Desktop Menu */}
@@ -65,22 +66,22 @@ const Navbar = () => {
         </ul>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-4">
           <ThemeToggle />
 
           {user.ten ? (
             <>
               <button
                 onClick={handleLogout}
-                className="w-[100px] h-[40px] border rounded-full font-medium"
+                className="border rounded-full font-medium text-gray-700 dark:text-white"
               >
                 Logout
               </button>
-              <div>{user.ten}</div>
+              <div className="text-gray-800 dark:text-white">{user.ten}</div>
             </>
           ) : (
             <Link href="/login">
-              <button className="w-[100px] h-[40px] border rounded-full font-medium">
+              <button className="border rounded-full font-medium text-gray-700 dark:text-white">
                 Login
               </button>
             </Link>

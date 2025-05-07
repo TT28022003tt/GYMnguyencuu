@@ -25,7 +25,7 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 3): P
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { packageType, months, voucher, totalPrice } = body;
+    const { packageType, months, totalPrice } = body;
 
     // Load biến môi trường
     const app_id = process.env.ZALO_APP_ID!;
@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
 
     // Chuẩn bị order
     const app_trans_id = `${new Date().getFullYear()}${(Date.now() % 1000000000)}`; // YYYY + timestamp (9 số cuối)
-    const app_time = Date.now();
-    const amount = totalPrice;
+    const app_time = Math.floor(Date.now() / 1000); // Thời gian tính bằng giây
+    const amount = totalPrice.toString(); // Chuyển đổi thành chuỗi
     const description = `Thanh toán gói tập Gym: ${packageType} (${months} tháng)`;
 
     // Data truyền đi
@@ -50,10 +50,7 @@ export async function POST(req: NextRequest) {
       app_time,
       amount,
       app_user: 'gym_customer', // Tên user phía mình tự định nghĩa
-      embed_data: JSON.stringify({
-        redirecturl: redirectUrl,
-        description,
-      }),
+      embed_data: JSON.stringify({ redirecturl: redirectUrl, description }),
       item: JSON.stringify([]),
       description,
       bank_code: '',
@@ -72,7 +69,7 @@ export async function POST(req: NextRequest) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams(data),
+      body: new URLSearchParams(data).toString(), // Chuyển đổi thành chuỗi
     });
 
     console.info('[ZALOPAY] Received Response:', JSON.stringify(result, null, 2));

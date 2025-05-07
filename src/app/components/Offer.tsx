@@ -24,7 +24,7 @@ const Offers = () => {
         <h1 className="text-3xl md:text-4xl font-bold text-[#171717]">TÍNH CHỈ SỐ BMI</h1>
         <h1 className="text-3xl md:text-4xl font-bold text-[#171717]">Ưu đãi dành cho bạn</h1>
         <p className="text-[#171717] text-sm md:text-base font-medium leading-relaxed">
-          Đo chỉ số BMI tại CITIGYM để đánh giá mức độ béo, gầy hoặc cân nặng lý tưởng của bạn.
+          Đo chỉ số BMI tại ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ để đánh giá mức độ béo, gầy hoặc cân nặng lý tưởng của bạn.
           <br />
           Chúng tôi hỗ trợ thành viên đo chỉ số BMI trước và trong quá trình tập luyện để theo dõi kết quả tập luyện.
           <br />
