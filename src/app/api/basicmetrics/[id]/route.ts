@@ -19,10 +19,10 @@ interface BasicMetricsInput {
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = await getUser(req);
-    if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
-      return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    }
+    // const user = await getUser(req);
+    // if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
+    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
+    // }
 
     const idBasicMetrics = parseInt(params.id);
     if (isNaN(idBasicMetrics)) {
@@ -99,10 +99,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = await getUser(req);
-    if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
-      return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
-    }
+    // const user = await getUser(req);
+    // if (!user || (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer')) {
+    //   return NextResponse.json({ error: 'Bạn Chưa Đăng Nhập hoặc Không Có Quyền' }, { status: 401 });
+    // }
 
     const idBasicMetrics = parseInt(params.id);
     if (isNaN(idBasicMetrics)) {

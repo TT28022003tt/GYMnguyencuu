@@ -6,20 +6,56 @@ import { logDebug } from "@/app/lib/utils/logger";
 export async function GET(req: NextRequest) {
   const user = await getUser(req);
   try {
-    const mealPlans = await prisma.thucdon.findMany({
-      where: user?.VaiTro === 'admin' ? {} : {
-        hocvien: {
-          idUSER: user?.idUser,
-        },
-      },
-      include: {
-        chitietthucdon: {
-          include: {
-            buaan: true,
+    if (!user) {
+      return NextResponse.json({ error: "Chưa Đăng Nhập" }, { status: 401 });
+    }
+
+    let mealPlans;
+    if (user.VaiTro === "admin") {
+      // Admin: View all meal plans
+      mealPlans = await prisma.thucdon.findMany({
+        include: {
+          chitietthucdon: {
+            include: {
+              buaan: true,
+            },
           },
         },
-      },
-    });
+      });
+    } else if (user.VaiTro === "trainer") {
+      // Trainer: View meal plans of their trainees
+      mealPlans = await prisma.thucdon.findMany({
+        where: {
+          hocvien: {
+            MaHLV: user.idUser, // Assuming MaHLV is the trainer's idUser
+          },
+        },
+        include: {
+          chitietthucdon: {
+            include: {
+              buaan: true,
+            },
+          },
+        },
+      });
+    } else {
+      // Trainee: View their own meal plans
+      mealPlans = await prisma.thucdon.findMany({
+        where: {
+          hocvien: {
+            idUSER: user.idUser,
+          },
+        },
+        include: {
+          chitietthucdon: {
+            include: {
+              buaan: true,
+            },
+          },
+        },
+      });
+    }
+
     return NextResponse.json(mealPlans, { status: 200 });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách thực đơn:", error);
@@ -44,7 +80,7 @@ export async function POST(req: Request | NextRequest) {
     });
 
     // Kiểm tra thông tin bắt buộc
-    if (!TenThucDon || !SoCalo || !NgayBatDau || !MaHV || !chiTietThucDon) {
+    if (!NgayBatDau || !MaHV ) {
       return NextResponse.json(
         { error: "Thiếu thông tin cơ bản" },
         { status: 400 }

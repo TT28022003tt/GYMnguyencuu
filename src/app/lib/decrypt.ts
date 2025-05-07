@@ -1,4 +1,4 @@
-const JWT_SECRET: string | undefined = process.env.JWT_SECRET || "";
+const JWT_SECRET: string | undefined = process.env.NEXT_PUBLIC_JWT_SECRET || "";
 const key = new TextEncoder().encode(JWT_SECRET);
 import { jwtVerify } from "jose";
 

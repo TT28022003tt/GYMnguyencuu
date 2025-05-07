@@ -9,6 +9,7 @@ import FormModal from './FormModal';
 import TableSearch from './TableSearch';
 import { useMyContext } from '@/contexts/useContext';
 import { useMetrics } from '@/contexts/MetricsContext';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 interface ChiTietMucTieu {
   idChiTietMucTieu: number;
@@ -152,15 +153,7 @@ export default function TrainingPrograms() {
           >
             <FontAwesomeIcon icon={faFilter} className="w-5 h-5 text-gray-600" />
           </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-blue text-white rounded-full font-semibold"
-            onClick={handleCreateFromAI}
-          >
-            <FontAwesomeIcon icon={faComments} className="w-5 h-5" />
-            Tạo từ AI
-          </motion.button>
+          
           <FormModal
             table="training"
             type="create"
@@ -178,12 +171,6 @@ export default function TrainingPrograms() {
       </motion.div>
 
       <div className="w-full max-w-6xl">
-        <ul className="steps steps-vertical lg:steps-horizontal mb-8">
-          <li className="step step-primary">Chưa Được</li>
-          <li className="step step-primary">Cũng Cũng</li>
-          <li className="step">Ngon</li>
-          <li className="step">Xiu MLEMMLEM</li>
-        </ul>
         <AnimatePresence mode="wait">
           {filteredPlans.length === 0 ? (
             <motion.div
@@ -198,13 +185,14 @@ export default function TrainingPrograms() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white p-10 rounded-2xl shadow-xl max-w-lg mx-auto"
               >
-                <Image
-                  src="/images/gym-placeholder.png"
-                  alt="Gym Placeholder"
-                  width={250}
-                  height={250}
-                  className="mx-auto mb-6"
-                />
+                <div className="mx-auto mb-6 flex justify-center items-center">
+                  <DotLottieReact
+                    src="https://lottie.host/1de8c03e-e7e8-4d62-b4d9-cfb2106abee7/W6r2aXE58W.lottie"
+                    loop
+                    autoplay
+                    style={{ width: 200, height: 200 }}
+                  />
+                </div>
                 <p className="text-gray-600 text-lg font-medium mb-6">
                   Chưa có chương trình tập! Hãy bắt đầu tạo chương trình!
                 </p>
@@ -237,14 +225,14 @@ export default function TrainingPrograms() {
                   key={plan.idChuongTrinhTap}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
+                  className="p-6 text-black bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 relative"
                 >
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
                     {index + 1}. {plan.TenCTT}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <p>
-                      <strong>Mục tiêu:</strong> {plan.MucTieu || 'Chưa có mục tiêu'}
+                      <strong >Mục tiêu:</strong> {plan.MucTieu || 'Chưa có mục tiêu'}
                     </p>
                     <p>
                       <strong>Thời gian:</strong> {plan.ThoiGian || 'Chưa xác định'}

@@ -32,9 +32,9 @@ model chitietmuctieu {
 
 model chuongtrinhtap {
   idChuongTrinhTap Int              @id @default(autoincrement())
-  MaHV             Int
   TenCTT           String?          @db.VarChar(255)
   MucTieu          String?          @db.VarChar(255)
+  MaHV             Int
   ThoiGian         String?          @db.VarChar(255)
   TrangThai        Int?             @default(0)
   chitietmuctieu   chitietmuctieu[]
@@ -204,10 +204,10 @@ model lophoc {
   MoTa           String?        @db.VarChar(255)
   TheLoai        String?        @db.VarChar(45)
   SoLuong        Int?           @default(0)
-  ThoiGianBatDau DateTime?      @db.DateTime(0)
   idMaHLV        Int
   createdAt      DateTime       @default(now())
   updatedAt      DateTime?      @updatedAt
+  ThoiGianBatDau DateTime?      @db.DateTime(0)
   dangkylophoc   dangkylophoc[]
   lichtap        lichtap[]
   huanluyenvien  huanluyenvien  @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
@@ -296,6 +296,8 @@ model user {
   DiaChi        String?         @db.VarChar(255)
   SoDienThoai   String?         @db.VarChar(45)
   Email         String?         @db.VarChar(45)
+  Anh           String?         @db.VarChar(255)
+  chatmessage   chatmessage[]
   hocvien       hocvien[]
   huanluyenvien huanluyenvien[]
   taikhoan      taikhoan[]
@@ -333,7 +335,6 @@ model chitietthucdon {
   @@index([idThucDon], map: "FK_CTTD_TD_idx")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model advancedmetrics {
   idAdvancedMetrics  Int     @id @default(autoincrement())
   idMaHV             Int
@@ -349,7 +350,6 @@ model advancedmetrics {
   @@index([idMaHV], map: "FK_advancedmetrics_HV_idx")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model basicmetrics {
   idBasicMetrics Int     @id @default(autoincrement())
   idMaHV         Int
@@ -366,4 +366,15 @@ model basicmetrics {
   hocvien        hocvien @relation(fields: [idMaHV], references: [idMaHV], onDelete: Cascade, map: "FK_basicmetrics_HV")
 
   @@index([idMaHV], map: "FK_basicmetrics_HV_idx")
+}
+
+model chatmessage {
+  idchatmessage Int       @id @default(autoincrement())
+  idUser        Int
+  Text          String?   @db.LongText
+  Timestamp     DateTime? @db.DateTime(0)
+  from          String?   @db.VarChar(255)
+  user          user      @relation(fields: [idUser], references: [idUser], onDelete: Cascade, map: "FK_CM_User")
+
+  @@index([idUser], map: "FK_CM_User _idx")
 }

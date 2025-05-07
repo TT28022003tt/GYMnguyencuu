@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 import prisma from "../../prisma/client";
 
-const JWT_SECRET = process.env.JWT_SECRET||""
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET||""
 export async function getUser(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   if (!token) return null;

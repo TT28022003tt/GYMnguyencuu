@@ -34,7 +34,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     router.push("/logout");
-    setUser({ ten: "", admin: "" });
+    setUser({ ten: "", admin: "", anh: "" });
   };
 
   const navLinks = [
@@ -51,9 +51,13 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
+<<<<<<< HEAD
           <p className="text-lg font-bold text-gray-800 dark:text-white">
             ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ
           </p>
+=======
+          <p className="text-xl font-bold">ANH EM FREE FIRE</p>
+>>>>>>> 208320bddbdd721f4ce71e08fc8a35c2931a9650
         </div>
 
         {/* Desktop Menu */}
@@ -73,6 +77,7 @@ const Navbar = () => {
             <>
               <button
                 onClick={handleLogout}
+<<<<<<< HEAD
                 className="border rounded-full font-medium text-gray-700 dark:text-white"
               >
                 Logout
@@ -82,6 +87,26 @@ const Navbar = () => {
           ) : (
             <Link href="/login">
               <button className="border rounded-full font-medium text-gray-700 dark:text-white">
+=======
+                className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100"
+              >
+                Logout
+              </button>
+              <Link href="/Profile" className="flex items-center space-x-2">
+                <Image
+                  src={user.anh || "/default-avatar.png"}
+                  alt="Avatar"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover"
+                />
+                <span className="text-lg font-medium">{user.ten}</span>
+              </Link>
+            </>
+          ) : (
+            <Link href="/login">
+              <button className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100">
+>>>>>>> 208320bddbdd721f4ce71e08fc8a35c2931a9650
                 Login
               </button>
             </Link>

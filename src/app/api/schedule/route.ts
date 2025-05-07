@@ -1,19 +1,63 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 import { logDebug } from "@/app/lib/utils/logger";
+import { getUser } from "@/utils/Auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const user = await getUser(req);
   try {
-    const schedules = await prisma.lichtap.findMany({
-      include: {
-        hocvien: { include: { user: true } },
-        huanluyenvien: { include: { user: true } },
-        lophoc: true,
-        chuongtrinhtap: true,
-        goitap: true,
-        baitap: true,
-      },
-    });
+    if (!user) {
+      return NextResponse.json({ error: "Chưa Đăng Nhập" }, { status: 401 });
+    }
+
+    let schedules;
+    if (user.VaiTro === "admin") {
+      // Admin: Xem tất cả lịch tập
+      schedules = await prisma.lichtap.findMany({
+        include: {
+          hocvien: { include: { user: true } },
+          huanluyenvien: { include: { user: true } },
+          lophoc: true,
+          chuongtrinhtap: true,
+          goitap: true,
+          baitap: true,
+        },
+      });
+    } else if (user.VaiTro === "trainer") {
+      // Trainer: Xem lịch tập của học viên họ phụ trách
+      schedules = await prisma.lichtap.findMany({
+        where: {
+          hocvien: {
+            MaHLV: user.idUser, // Giả sử MaHLV là idUser của HLV
+          },
+        },
+        include: {
+          hocvien: { include: { user: true } },
+          huanluyenvien: { include: { user: true } },
+          lophoc: true,
+          chuongtrinhtap: true,
+          goitap: true,
+          baitap: true,
+        },
+      });
+    } else {
+      // Học viên: Xem lịch tập của chính họ
+      schedules = await prisma.lichtap.findMany({
+        where: {
+          hocvien: {
+            idUSER: user.idUser,
+          },
+        },
+        include: {
+          hocvien: { include: { user: true } },
+          huanluyenvien: { include: { user: true } },
+          lophoc: true,
+          chuongtrinhtap: true,
+          goitap: true,
+          baitap: true,
+        },
+      });
+    }
 
     const formattedEvents = schedules.map((schedule) => ({
       id: schedule.MaLT.toString(),
@@ -44,10 +88,10 @@ export async function GET() {
       },
     }));
 
-    return NextResponse.json(formattedEvents);
+    return NextResponse.json(formattedEvents, { status: 200 });
   } catch (error) {
-    console.error("Error fetching schedules:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Lỗi khi lấy danh sách lịch tập:", error);
+    return NextResponse.json({ error: "Lỗi khi lấy dữ liệu" }, { status: 500 });
   }
 }
 

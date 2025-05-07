@@ -9,7 +9,7 @@ import whatsapp from '../components/Assets/whatsapp_icon.png';
 
 const Footer: React.FC = () => {
   return (
-    <div className="flex flex-col justify-center items-center gap-12 py-10 px-4 bg-white text-gray-800">
+    <div className="flex flex-col justify-center items-center gap-12 py-10 px-4 ">
       {/* Logo + Text */}
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-4">

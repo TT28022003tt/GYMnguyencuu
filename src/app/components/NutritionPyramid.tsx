@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image";
 import { useState } from "react";
 
 const NutritionPyramid = () => {
@@ -17,7 +18,7 @@ const NutritionPyramid = () => {
             isHovered ? "translate-x-[-45%] h-[350px]" : "translate-x-0 h-[400px]"
           }`}
         >
-          <img
+          <Image
             src="/images/thapdinhduong.png"
             alt="Nutrition Pyramid"
             className="w-full h-full object-contain"

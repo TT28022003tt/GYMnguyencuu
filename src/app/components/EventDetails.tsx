@@ -31,7 +31,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedId, events, current
   useEffect(() => {
     const weekStart = dayjs(currentWeek.start);
     const weekEnd = dayjs(currentWeek.end);
-    let weekEvents = events.filter((event) => {
+    const weekEvents = events.filter((event) => {
       const eventDate = dayjs.utc(event.start);
       return eventDate.isAfter(weekStart.subtract(1, "day")) && eventDate.isBefore(weekEnd);
     });

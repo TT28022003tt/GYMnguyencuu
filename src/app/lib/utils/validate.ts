@@ -1,17 +1,23 @@
 import { Metrics } from '../metrics/types';
 
-export function validateChatInput(metrics: Metrics, question: string, requestType: 'program' | 'thucdon' | 'lichtap'): { isValid: boolean; error?: string } {
-  if (!metrics || !question) {
-    return { isValid: false, error: 'Vui lòng cung cấp chỉ số và câu hỏi' };
+export function validateChatInput(
+  metrics: Metrics | null,
+  question: string,
+  requestType: 'program' | 'thucdon' | 'lichtap' | 'free' | 'hlv' | 'lophoc' | 'goitap' | 'thehoivien'
+): { isValid: boolean; error?: string } {
+  if (!question) {
+    return { isValid: false, error: 'Vui lòng cung cấp câu hỏi' };
   }
-  if (!['basic', 'advanced'].includes(metrics.type)) {
-    return { isValid: false, error: 'Loại chỉ số không hợp lệ' };
+
+  if (metrics) {
+    if (!['basic', 'advanced'].includes(metrics.type)) {
+      return { isValid: false, error: 'Loại chỉ số không hợp lệ' };
+    }
   }
-  if (!metrics.data.idMaHV) {
-    return { isValid: false, error: 'Thiếu idMaHV' };
-  }
-  if (!['program', 'thucdon', 'lichtap'].includes(requestType)) {
+
+  if (!['program', 'thucdon', 'lichtap', 'free', 'hlv', 'lophoc', 'goitap', 'thehoivien'].includes(requestType)) {
     return { isValid: false, error: 'Loại yêu cầu không hợp lệ' };
   }
+
   return { isValid: true };
 }
