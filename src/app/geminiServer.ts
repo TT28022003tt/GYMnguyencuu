@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const googleApiKey = process.env.GOOGLE_API_KEY;
+const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
 if (!googleApiKey) {
   throw new Error('Missing GOOGLE_API_KEY environment variable');
