@@ -46,7 +46,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full shadow-md px-6 py-3 bg-white dark:bg-gray-800">
+    <nav className="w-full shadow-md px-6 py-3">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -119,7 +119,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <ul className="md:hidden absolute left-0 right-0 top-16 bg-white dark:bg-gray-800 p-4 space-y-4 shadow-md z-40">
+        <ul className="md:hidden absolute left-0 right-0 top-16 p-4 space-y-4 shadow-md z-40">
           {navLinks.map((item) => (
             <li
               key={item.name}
