@@ -110,7 +110,7 @@ const GymPayment: React.FC = () => {
               <div className="text-lg font-bold">{displayTotalPrice}đ</div>
             </div>
             <PaymentMethodSelector onPayment={handlePayment} />
-            <button type="submit" className="w-full p-2 mt-4 bg-blue-500 text-white rounded-2xl">Thanh Toán</button>
+            {/* <button type="submit" className="w-full p-2 mt-4 bg-blue-500 text-white rounded-2xl">Thanh Toán</button> */}
           </form>
         </div>
       </div>
