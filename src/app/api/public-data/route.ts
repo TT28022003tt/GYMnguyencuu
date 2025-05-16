@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
           Ten: true,
           Loai: true,
           Gia: true,
-          NgayBatDau: true,
-          NgayKetThuc: true,
         },
       }),
       prisma.chuongtrinhtap.findMany({
@@ -44,11 +42,15 @@ export async function GET(req: NextRequest) {
       prisma.lophoc.findMany({
         select: {
           idMaLH: true,
-          Ten: true,
-          TheLoai: true,
-          MoTa: true,
-          ThoiGianBatDau: true,
-          SoLuong: true,
+        Ten: true,
+        TheLoai: true,
+        MoTa: true,
+        ThoiGianBatDau: true,
+        ThoiGianKetThuc: true,
+        SoLuongMax: true,
+        SoLuong: true,
+        Phi: true,
+        ThoiLuong: true,
         },
       }),
       prisma.thehoivien.findMany({
@@ -69,8 +71,6 @@ export async function GET(req: NextRequest) {
         Ten: gt.Ten,
         Loai: gt.Loai,
         Gia: gt.Gia,
-        NgayBatDau: gt.NgayBatDau?.toISOString(),
-        NgayKetThuc: gt.NgayKetThuc?.toISOString(),
       })),
       chuongtrinhtap: chuongtrinhtap.map((ct) => ({
         idChuongTrinhTap: ct.idChuongTrinhTap,
@@ -99,7 +99,10 @@ export async function GET(req: NextRequest) {
         TheLoai: lh.TheLoai,
         MoTa: lh.MoTa,
         ThoiGianBatDau: lh.ThoiGianBatDau?.toISOString(),
-        SoLuong: lh.SoLuong,
+        ThoiGianKetThuc: lh.ThoiGianKetThuc?.toISOString(),
+        SoLuongText: `${lh.SoLuong}/${lh.SoLuongMax}`,
+        Phi: lh.Phi,
+        ThoiLuong: lh.ThoiLuong,
       })),
       thehoivien: thehoivien.map((thv) => ({
         idMaThe: thv.idMaThe,

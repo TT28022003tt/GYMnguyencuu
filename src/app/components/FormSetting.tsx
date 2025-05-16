@@ -80,6 +80,8 @@ const FormSetting: React.FC<FormSettingProps> = ({ onClose, userData }) => {
           <Image
             src={avatarPreview || "/default-avatar.png"}
             alt="Avatar"
+            width={200}
+            height={200}
             className="rounded-full h-80 mb-4 w-auto object-cover"
           />
           <input

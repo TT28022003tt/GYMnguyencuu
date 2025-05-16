@@ -68,7 +68,7 @@ const EventCalendar = () => {
 							}}
 							onClick={() => handleEventClick(event.title)} 
 							>
-							<h2 className="font-medium">{event.title}</h2>
+							<h2 className="font-medium text-xl ">{event.title}</h2>
 							<p className="text-sm ">
 								{new Date(event.start).toLocaleDateString()} -{" "}
 								{new Date(event.end).toLocaleDateString()}

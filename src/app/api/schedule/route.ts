@@ -109,6 +109,7 @@ export async function POST(req: Request) {
       idMaCTT,
       idMaGT,
       GhiChu,
+      TinhTrang,
       baitap,
     } = scheduleData;
 
@@ -184,6 +185,7 @@ export async function POST(req: Request) {
         idMaCTT,
         idMaGT,
         GhiChu,
+        TinhTrang,
         baitap: {
           create: baitap?.map((b: any) => ({
             TenBaiTap: b.name || b.TenBaiTap,

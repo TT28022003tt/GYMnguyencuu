@@ -38,12 +38,12 @@ const menuItems = [
           href: "/listManagement/nutrition",
           visible: ["admin", "trainer"],
         },
-        {
-          icon: faStar,
-          label: "Event",
-          href: "/listManagement/event",
-          visible: ["admin", "trainer"],//chỉ admin mới có quyền sửa
-        },
+        // {
+        //   icon: faStar,
+        //   label: "Event",
+        //   href: "/listManagement/event",
+        //   visible: ["admin", "trainer"],//chỉ admin mới có quyền sửa
+        // },
         {
           icon: faAddressCard,
           label: "Membership",//quản lý khách hàng đăng ký thẻ hội viên 

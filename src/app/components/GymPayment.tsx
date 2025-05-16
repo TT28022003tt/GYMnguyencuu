@@ -29,7 +29,7 @@ const GymPayment: React.FC = () => {
     e.preventDefault();
 
     if (!paymentMethod) {
-      alert('Vui lòng chọn phương thức thanh toán!');
+      // alert('Vui lòng chọn phương thức thanh toán!');
       return;
     }
 

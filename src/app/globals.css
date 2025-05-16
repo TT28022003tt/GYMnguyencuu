@@ -144,10 +144,7 @@ table {
     border-collapse: collapse;
 }
 
-td {
-    padding: 1rem; /* Khoảng cách trong ô */
-    border: 1px solid #ccc; /* Đường viền */
-}
+
 
 button {
     font-size: 1rem; /* Kích thước font cho nút */

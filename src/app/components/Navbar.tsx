@@ -9,22 +9,23 @@ import cart_icon from "../components/Assets/cart_icon.png";
 import ThemeToggle from "./toggleTheme";
 import { usePathname, useRouter } from "next/navigation";
 import { useMyContext } from "@/contexts/useContext";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import FeedbackForm from "./forms/FeedbackForm";
 
 const Navbar = () => {
-  const { user, setUser } = useMyContext();
+  const {user, setUser } = useMyContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState("mylight");
+  const [showFeedback, setShowFeedback] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    const newTheme =
-      document.documentElement.getAttribute("data-theme") || "mylight";
+    const newTheme = document.documentElement.getAttribute("data-theme") || "mylight";
     setTheme(newTheme);
 
     const observer = new MutationObserver(() => {
-      const updatedTheme =
-        document.documentElement.getAttribute("data-theme") || "mylight";
+      const updatedTheme = document.documentElement.getAttribute("data-theme") || "mylight";
       setTheme(updatedTheme);
     });
 
@@ -66,12 +67,10 @@ const Navbar = () => {
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-
           {user.ten ? (
             <>
               <button
                 onClick={handleLogout}
-
                 className="w-[100px] h-[40px] border rounded-full font-medium hover:bg-gray-100"
               >
                 Logout
@@ -95,7 +94,12 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link href="/shoppingcart/productlist">
+          {/* Feedback Icon */}
+          <button onClick={() => setShowFeedback(true)} className="text-orange-500 hover:text-orange-600">
+            <ExclamationCircleIcon className="h-8 w-8" />
+          </button>
+
+          {/* <Link href="/shoppingcart/productlist">
             <div className="relative">
               <Image
                 src={cart_icon}
@@ -108,7 +112,7 @@ const Navbar = () => {
                 0
               </span>
             </div>
-          </Link>
+          </Link> */}
 
           {/* Mobile Menu Button */}
           <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
@@ -132,6 +136,9 @@ const Navbar = () => {
           ))}
         </ul>
       )}
+
+      {/* Feedback Modal */}
+      {showFeedback && <FeedbackForm userId={user.id} onClose={() => setShowFeedback(false)} />}
     </nav>
   );
 };

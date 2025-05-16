@@ -64,7 +64,7 @@ const UserManagement = () => {
           fullName: user.Ten || "Unknown",
           phone: user.SoDienThoai || "N/A",
           email: user.Email || "N/A",
-          photo: user.Anh || "/default-user.png",
+          photo: user.Anh || "/images/default-avatar.png",
           role: user.huanluyenvien?.length > 0 ? "Coach" : user.hocvien?.length > 0 ? "Student" : "User", // Derive role
           status: "Active", // Hardcoded for now, adjust based on your logic
           address: user.DiaChi,

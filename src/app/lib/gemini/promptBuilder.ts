@@ -9,19 +9,22 @@ export function buildPrompt(
   user: any,
   currentDate?: string
 ): string {
-  const chuongtrinhtapList = publicData?.chuongtrinhtap?.map((ct: any) => 
+  const chuongtrinhtapList = publicData?.chuongtrinhtap?.map((ct: any) =>
     `- ${ct.TenCTT}: ${ct.MucTieu}, Thời gian: ${ct.ThoiGian}`
   ).join('\n') || 'Không có chương trình tập nào.';
-  const goitapList = publicData?.goitap?.map((gt: any) => 
-    `- ${gt.Ten}: ${gt.Loai}, Giá: ${gt.Gia}, Từ ${gt.NgayBatDau} đến ${gt.NgayKetThuc}`
+  const goitapList = publicData?.goitap?.map((gt: any) =>
+    `- ${gt.Ten}: ${gt.Loai}, Giá: ${gt.Gia}`
   ).join('\n') || 'Không có gói tập nào.';
-  const huanluyenvienList = publicData?.huanluyenvien?.map((hlv: any) => 
+  const huanluyenvienList = publicData?.huanluyenvien?.map((hlv: any) =>
     `- ${hlv.Ten}: Chuyên môn: ${hlv.ChuyenMon || 'N/A'}, Chứng chỉ: ${hlv.ChungChi || 'N/A'}, Bằng cấp: ${hlv.BangCap || 'N/A'}, Giới tính: ${hlv.GioiTinh || 'N/A'}, SĐT: ${hlv.SoDienThoai || 'N/A'}`
   ).join('\n') || 'Không có huấn luyện viên nào.';
-  const lophocList = publicData?.lophoc?.map((lh: any) => 
-    `- ${lh.Ten}: ${lh.TheLoai}, Mô tả: ${lh.MoTa}, Bắt đầu: ${lh.ThoiGianBatDau}, Số lượng: ${lh.SoLuong}`
+  const lophocList = publicData?.lophoc?.map((lh: any) =>
+    `- ${lh.Ten ?? 'Không tên'}: Thể loại: ${lh.TheLoai ?? 'N/A'}, Mô tả: ${lh.MoTa ?? 'Không có'}, ` +
+    `Bắt đầu: ${lh.ThoiGianBatDau ? new Date(lh.ThoiGianBatDau).toLocaleDateString() : 'Chưa rõ'}, ` +
+    `Số lượng: ${lh.SoLuong ?? 0}/${lh.SoLuongMax ?? 0}, Phòng: ${lh.Phong ?? 'N/A'}, ` +
+    `Học phí: ${lh.Phi ? `${lh.Phi} VNĐ` : 'Miễn phí'}, Trạng thái: ${lh.TrangThai ?? 'Không rõ'}`
   ).join('\n') || 'Không có lớp học nào.';
-  const thehoivienList = publicData?.thehoivien?.map((thv: any) => 
+  const thehoivienList = publicData?.thehoivien?.map((thv: any) =>
     `- Thẻ ${thv.idMaThe}: Tình trạng: ${thv.TinhTrang}, Ngày cấp: ${thv.NgayCap}, Hết hạn: ${thv.NgayHetHan}`
   ).join('\n') || 'Không có thẻ hội viên nào.';
   const tomorrow = currentDate
@@ -70,7 +73,7 @@ export function buildPrompt(
   if (requestType === 'program') {
     return `
       ${basePrompt}
-      Hãy tạo một chương trình tập luyện phù hợp với mục tiêu (VD: tăng cơ, giảm mỡ). Chương trình cần:
+      Hãy tạo một chương trình tập luyện phù hợp với mục tiêu (VD: tăng cơ, giảm mỡ,...). Chương trình cần:
       - Tên chương trình (TenCTT): Tên ngắn gọn, mô tả mục tiêu.
       - Mục tiêu (MucTieu): Mô tả mục tiêu tổng thể.
       - Thời gian (ThoiGian): Tổng thời gian (VD: "12 tuần").
@@ -84,7 +87,7 @@ export function buildPrompt(
           "TenCTT": "Tên chương trình",
           "MucTieu": "Mô tả mục tiêu",
           "ThoiGian": "Tổng thời gian",
-          "MaHV": null,
+          "MaHV": number,
           "chiTietMucTieu": [
             {
               "ThoiGian": "Tuần X-Y",
@@ -101,9 +104,9 @@ export function buildPrompt(
   if (requestType === 'thucdon') {
     return `
       ${basePrompt}
-      Hãy tạo một thực đơn phù hợp với mục tiêu (VD: tăng cơ, giảm mỡ) và ngày bắt đầu dựa trên yêu cầu thời gian trong câu hỏi (${question}) . Thực đơn cần:
+      Hãy tạo một thực đơn phù hợp với mục tiêu (VD: tăng cơ, giảm mỡ hoặc phù hợp với chương trình tập ở trên) và ngày bắt đầu dựa trên yêu cầu thời gian trong câu hỏi (${question}) . Thực đơn cần:
       - Tên thực đơn (TenThucDon): Tên ngắn gọn, mô tả mục tiêu.
-      - Tổng calo (SoCalo): Ước lượng tổng calo mỗi ngày.
+      - Tổng calo (SoCalo): Ước lượng tổng calo mỗi ngày kiểu number.
       - Ngày bắt đầu (NgayBatDau): Định dạng YYYY-MM-DD , >= ${currentDate || new Date().toISOString().split('T')[0]}, dựa trên yêu cầu (VD: "ngày mai" thì dùng ${tomorrow}) .
       - Chi tiết thực đơn (chiTietThucDon): Danh sách các ngày, mỗi ngày có 3-6 bữa ăn, mỗi bữa có tên (TenBuaAn) và mô tả (MoTa).
       Trả về định dạng JSON:
@@ -112,9 +115,9 @@ export function buildPrompt(
         "program": null,
         "thucdon": {
           "TenThucDon": "Tên thực đơn",
-          "SoCalo": "Tổng calo",
+          "SoCalo": number,
           "NgayBatDau": "YYYY-MM-DD",
-          "MaHV": null,
+          "MaHV": number,
           "chiTietThucDon": [
             {
               "Ngay": "YYYY-MM-DD",
@@ -135,7 +138,7 @@ export function buildPrompt(
   if (requestType === 'lichtap') {
     return `
       ${basePrompt}
-      Hãy tạo một lịch tập luyện phù hợp với mục tiêu (VD: thân dưới, toàn thân) cho ngày dựa trên yêu cầu thời gian trong câu hỏi (${question}). Lịch tập cần:
+      Hãy tạo một lịch tập luyện phù hợp với mục tiêu (VD: thân dưới, toàn thân,hoặc phù hợp với chương trình tập ở trên) cho ngày dựa trên yêu cầu thời gian trong câu hỏi (${question}). Lịch tập cần:
       - Ngày giờ bắt đầu (NgayGioBatDau): Định dạng YYYY-MM-DDTHH:mm:ssZ, >= ${currentDate || new Date().toISOString().split('T')[0]}, dựa trên yêu cầu (VD: "ngày mai" thì dùng ${tomorrow}).
       - Ngày giờ kết thúc (NgayGioKetThuc): Sau NgayGioBatDau 1-2 giờ.định dạng tương tự.
       - Ghi chú (GhiChu):Mô tả ngắn về lịch tập, tối đa 255 ký tự (VD: "Buổi tập giảm cân với cardio và tạ").
@@ -148,7 +151,7 @@ export function buildPrompt(
         Tạo ít nhất 1 buổi tập, tối đa 6 buổi/tuần, tùy theo yêu cầu.
       Trả về định dạng JSON:
       {
-        "reply": "Dưới đây là lịch tập luyện được thiết kế cho bạn:\\n- **Thời gian bắt đầu**: {NgayGioBatDau}\\n- **Thời gian kết thúc**: {NgayGioKetThuc}\\n- **Ghi chú**: {GhiChu}\\n- **Danh sách bài tập**:\\n{format baitap as bullet points}\\nHãy khởi động kỹ trước khi tập và nghỉ ngơi đầy đủ.",
+        "reply": "Dưới đây là lịch tập luyện được thiết kế cho bạn:\\n- **Thời gian bắt đầu**: {NgayGioBatDau} ở định dạng DD/MM/YYYY\\n- **Thời gian kết thúc**: {NgayGioKetThuc}\\n- **Ghi chú**: {GhiChu}\\n- **Danh sách bài tập**:\\n{format baitap as bullet points}\\nHãy khởi động kỹ trước khi tập và nghỉ ngơi đầy đủ.",
         "program": null,
         "thucdon": null,
         "lichtap": [
@@ -161,6 +164,7 @@ export function buildPrompt(
             "idMaCTT": null,
             "idMaGT": null,
             "GhiChu": string,
+            "TinhTrang": Ongoing,
             "baitap": [
               {
                 "TenBaiTap": string,
