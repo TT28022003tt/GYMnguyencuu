@@ -107,7 +107,6 @@ export async function POST(req: NextRequest) {
       data: {
         idUSER: newUser.idUser,
         NgayDangKy: new Date(),
-        MaHLV: 1,
       },
     });
     console.log("HocVien created:", newHocVien);
