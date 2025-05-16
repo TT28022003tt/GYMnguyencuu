@@ -36,10 +36,10 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Không tìm thấy học viên' }, { status: 404 });
       }
 
-      // Kiểm tra quyền truy cập
-      if (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer' && user.idUser !== parseInt(idUser)) {
-        return NextResponse.json({ error: 'Không có quyền truy cập' }, { status: 403 });
-      }
+      // // Kiểm tra quyền truy cập
+      // if (user.VaiTro !== 'admin' && user.VaiTro !== 'trainer' && user.idUser !== parseInt(idUser)) {
+      //   return NextResponse.json({ error: 'Không có quyền truy cập' }, { status: 403 });
+      // }
 
       return NextResponse.json(hocvien);
     } else {

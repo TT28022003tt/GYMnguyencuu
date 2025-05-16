@@ -44,21 +44,6 @@ model chuongtrinhtap {
   @@index([MaHV], map: "FK_CTT_HV_idx")
 }
 
-model dangkylophoc {
-  idDangKyLopHoc Int       @id @default(autoincrement()) @db.UnsignedInt
-  idMaLH         Int
-  idMaHV         Int
-  NgayDangKy     DateTime? @db.Date
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime? @updatedAt
-  hocvien        hocvien   @relation(fields: [idMaHV], references: [idMaHV], onDelete: Cascade, map: "FK_DKLH_MaHV")
-  lophoc         lophoc    @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_DKLH_MaLH")
-
-  @@unique([idMaHV, idMaLH])
-  @@index([idMaHV], map: "MaHV_idx")
-  @@index([idMaLH], map: "MaLH_idx")
-}
-
 model danhgia {
   idMaDG        Int           @id @default(autoincrement())
   Diem          Int?
@@ -88,7 +73,6 @@ model hocvien {
   idMaHV          Int               @id @default(autoincrement())
   idMaGT          Int?
   NgayDangKy      DateTime?         @db.Date
-  idMaLH          Int?
   MaHLV           Int
   idUSER          Int
   createdAt       DateTime          @default(now())
@@ -96,10 +80,8 @@ model hocvien {
   advancedmetrics advancedmetrics[]
   basicmetrics    basicmetrics[]
   chuongtrinhtap  chuongtrinhtap[]
-  dangkylophoc    dangkylophoc[]
   danhgia         danhgia[]
   huanluyenvien   huanluyenvien     @relation(fields: [MaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_HV_HVL")
-  lophoc          lophoc?           @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_HV_LH")
   user            user              @relation(fields: [idUSER], references: [idUser], onDelete: Cascade, map: "FK_HV_USER")
   goitap          goitap?           @relation(fields: [idMaGT], references: [idMaGT], map: "FK_HocVien_MaGT")
   hopdong         hopdong[]
@@ -112,7 +94,6 @@ model hocvien {
   @@index([MaHLV], map: "FK_HV_HVL_idx")
   @@index([idUSER], map: "FK_HV_USER_idx")
   @@index([idMaGT], map: "FK_HocVien_MaGT_idx")
-  @@index([idMaLH], map: "FK_HV_LH_idx")
 }
 
 model hopdong {
@@ -198,26 +179,24 @@ model baitap {
 }
 
 model lophoc {
-  idMaLH          Int            @id @default(autoincrement())
-  Ten             String?        @db.VarChar(255)
-  ThoiGianBatDau  DateTime?      @db.Date
-  ThoiGianKetThuc DateTime?      @db.Date
-  Phong           String?        @db.VarChar(255)
-  MoTa            String?        @db.VarChar(255)
-  TheLoai         String?        @db.VarChar(45)
-  SoLuongMax      Int?           @default(0)
+  idMaLH          Int           @id @default(autoincrement())
+  Ten             String?       @db.VarChar(255)
+  ThoiGianBatDau  DateTime?     @db.Date
+  ThoiGianKetThuc DateTime?     @db.Date
+  Phong           String?       @db.VarChar(255)
+  MoTa            String?       @db.VarChar(255)
+  TheLoai         String?       @db.VarChar(45)
+  SoLuongMax      Int?          @default(0)
   SoLuong         Int?
-  Phi             Decimal?       @db.Decimal(10, 2)
-  TrangThai       String?        @db.VarChar(255)
+  Phi             Decimal?      @db.Decimal(10, 2)
+  TrangThai       String?       @db.VarChar(255)
   ThoiLuong       Int?
   idMaHLV         Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime?      @updatedAt
-  dangkylophoc    dangkylophoc[]
-  hocvien         hocvien[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime?     @updatedAt
   lichlophoc      lichlophoc[]
   lichtap         lichtap[]
-  huanluyenvien   huanluyenvien  @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
+  huanluyenvien   huanluyenvien @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
 
   @@index([idMaHLV], map: "MaHLV_idx")
 }

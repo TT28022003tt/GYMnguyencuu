@@ -12,9 +12,9 @@ const GymPayment: React.FC = () => {
   const [displayTotalPrice, setDisplayTotalPrice] = useState<string>('0'); // State để hiển thị tổng tiền
 
   const packagePrices: Record<'FIRE' | 'FIRE-PLUS' | 'FIRE-VIP', number> = {
-    FIRE: 500000,
-    'FIRE-PLUS': 800000,
-    'FIRE-VIP': 1200000
+    FIRE: 5000,
+    'FIRE-PLUS': 8000,
+    'FIRE-VIP': 12000
   };
 
   const discount = voucher === 'GIAM50K' ? 50000 : 0;
@@ -83,9 +83,9 @@ const GymPayment: React.FC = () => {
             <div className="mb-4">
               <label className="block mb-2 font-medium">Chọn Gói Tập</label>
               <div onChange={(e: any) => setPackageType(e.target.value)}>
-                <label className="block"><input type="radio" value="FIRE" checked={packageType === 'FIRE'} onChange={() => setPackageType("FIRE")} className="mr-2" />FIRE - 500.000đ/tháng</label>
-                <label className="block"><input type="radio" value="FIRE-PLUS" checked={packageType === 'FIRE-PLUS'} onChange={() => setPackageType("FIRE-PLUS")} className="mr-2" />FIRE-PLUS - 800.000đ/tháng</label>
-                <label className="block"><input type="radio" value="FIRE-VIP" checked={packageType === 'FIRE-VIP'} onChange={() => setPackageType("FIRE-VIP")} className="mr-2" />FIRE-VIP - 1.200.000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE" checked={packageType === 'FIRE'} onChange={() => setPackageType("FIRE")} className="mr-2" />FIRE - 5.000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE-PLUS" checked={packageType === 'FIRE-PLUS'} onChange={() => setPackageType("FIRE-PLUS")} className="mr-2" />FIRE-PLUS - 8.000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE-VIP" checked={packageType === 'FIRE-VIP'} onChange={() => setPackageType("FIRE-VIP")} className="mr-2" />FIRE-VIP - 1.000đ/tháng</label>
               </div>
             </div>
 

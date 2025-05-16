@@ -98,14 +98,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Tạo bản ghi hocvien
+    console.log("Creating hocvien with data:", {
+      idUSER: newUser.idUser,
+      NgayDangKy: new Date(),
+      MaHLV: 1,
+    });
     const newHocVien = await prisma.hocvien.create({
       data: {
         idUSER: newUser.idUser,
         NgayDangKy: new Date(),
-        MaHLV: 1, // Giả định HLV mặc định, có thể để null nếu không bắt buộc
+        MaHLV: 1,
       },
     });
+    console.log("HocVien created:", newHocVien);
 
     // Tạo JWT token
     const token = jwt.sign(
