@@ -90,6 +90,7 @@ model hocvien {
   thehoivien      thehoivien[]
   thucdon         thucdon[]
   tuvanhotro      tuvanhotro[]
+  dangkylophoc    dangkylophoc[]
 
   @@index([MaHLV], map: "FK_HV_HVL_idx")
   @@index([idUSER], map: "FK_HV_USER_idx")
@@ -184,20 +185,19 @@ model lophoc {
   Phong           String?       @db.VarChar(255)
   MoTa            String?       @db.VarChar(255)
   TheLoai         String?       @db.VarChar(45)
-  SoLuong         Int?
+  SoLuongMax      Int?          @default(0) 
+  Phi             Decimal?      @db.Decimal(10, 2)
+  TrangThai       String?       @db.VarChar(255)
+  ThoiLuong       Int?
+  ThoiGianBatDau  DateTime?     @db.Date
+  ThoiGianKetThuc DateTime?     @db.Date
   idMaHLV         Int
   createdAt       DateTime      @default(now())
   updatedAt       DateTime?     @updatedAt
-  ThoiGianBatDau  DateTime?     @db.Date
-  Phi             Decimal?      @db.Decimal(10, 2)
-  SoLuongMax      Int?          @default(0)
-  ThoiGianKetThuc DateTime?     @db.Date
-  ThoiLuong       Int?
-  TrangThai       String?       @db.VarChar(255)
+  dangkylophoc    dangkylophoc[] 
   lichlophoc      lichlophoc[]
   lichtap         lichtap[]
   huanluyenvien   huanluyenvien @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_LopHoc_MaHLV")
-
   @@index([idMaHLV], map: "MaHLV_idx")
 }
 
@@ -388,4 +388,16 @@ model lichlophoc {
   lophoc       lophoc  @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_LLH_LH")
 
   @@index([idMaLH], map: "FK_LLH_LH_idx")
+}
+
+model dangkylophoc {
+  id         Int       @id @default(autoincrement())
+  idHocVien  Int
+  idLopHoc   Int
+  NgayDangKy DateTime? @db.DateTime(0)
+  hocvien    hocvien   @relation(fields: [idHocVien], references: [idMaHV], onDelete: Cascade)
+  lophoc     lophoc    @relation(fields: [idLopHoc], references: [idMaLH], onDelete: Cascade)
+
+  @@index([idHocVien])
+  @@index([idLopHoc])
 }
