@@ -43,20 +43,21 @@ const Navbar = () => {
     { name: "Training Plans", href: "/trainingplans" },
     { name: "Health Consultation", href: "/healthconsultation" },
     { name: "Schedule", href: "/schedule" },
+    { name: "Class", href: "/class" },
     { name: "Checkout", href: "/checkout" },
   ];
 
   return (
     <nav className="w-full shadow-md px-6 py-3">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className=" mx-auto flex justify-center items-center">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
-          <p className="text-xl font-bold">ANH EM FREE FIRE</p>
+          <p className="text-xl font-bold">GYM FITNESS</p>
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-8 text-lg font-medium">
+        <ul className="hidden md:flex space-x-8 text-lg font-medium mx-7">
           {navLinks.map((item) => (
             <li key={item.name} className="hover:text-red-500 transition">
               <Link href={item.href}>{item.name}</Link>

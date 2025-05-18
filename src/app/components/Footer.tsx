@@ -14,7 +14,8 @@ const Footer: React.FC = () => {
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-4">
           <FontAwesomeIcon icon={faDumbbell} className="w-16 h-16 text-[#f97000] rotate-45" />
-          <span className="font-bold text-2xl text-center">ANH EM FREE FIRE SỐNG DAI NHƯ QUỶ</span>
+          <span className="font-bold text-2xl text-center uppercase">Biến mồ hôi thành sức mạnh, biến thói quen thành bản lĩnh</span>
+          <FontAwesomeIcon icon={faDumbbell} className="w-16 h-16 text-[#f97000] rotate-45" />
         </Link>
       </div>
 
@@ -41,7 +42,7 @@ const Footer: React.FC = () => {
       {/* Copyright */}
       <div className="flex flex-col items-center gap-6 w-full mt-4 text-base">
         <hr className="w-4/5 h-[3px] bg-gray-300 rounded-lg border-none" />
-        <p className="text-center">&copy; Copyright Team nam anh em sieu nhan</p>
+        <p className="text-center">&copy; Copyright Team GYM FITNESS</p>
       </div>
     </div>
   );

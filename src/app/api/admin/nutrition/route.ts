@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       id: nutrition.hocvien.idUSER,
       nutritionId: nutrition.idThucDon,
       customerName: nutrition.hocvien.user.Ten || "N/A",
-      trainerName: nutrition.hocvien.huanluyenvien.user.Ten || "N/A",
+      trainerName: nutrition.hocvien.huanluyenvien?.user.Ten || "N/A",
       goal: nutrition.TenThucDon || "N/A",
       caloricNeeds: nutrition.SoCalo,
       startDate: nutrition.NgayBatDau
