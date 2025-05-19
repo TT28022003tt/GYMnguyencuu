@@ -36,7 +36,7 @@ const FormModal = ({
   onSuccess,
   customButton,
 }: {
-  table: "user" | "workoutSchedule" | "nutrition" | "event" | "membership" | "feedback" | "class" | "trainer" | "training" | "basicmetrics" | "advancedmetrics";
+  table: "user" | "workoutSchedule" | "nutrition" | "event" | "membership" | "feedback" | "class" | "classAD" | "trainer" | "training" | "basicmetrics" | "advancedmetrics";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
@@ -59,7 +59,10 @@ const FormModal = ({
         return "trainers";
       case "workoutSchedule":
         return "schedule";
-
+      case "class":
+        return "class";
+      case "classAD":
+        return "/admin/class";
       case "basicmetrics":
         return "basicmetrics";
       case "advancedmetrics":
@@ -139,7 +142,7 @@ const FormModal = ({
       )}
       {open && (
         <div className="fixed inset-0 w-screen h-screen left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white text-black max-h-[80vh] overflow-auto sm:max-h-screen p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
+          <div className="bg-white text-black max-h-[80vh] overflow-auto sm:max-h-screen p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%]">
             <Form />
             <div className="absolute top-4 right-4 cursor-pointer" onClick={() => setOpen(false)}>
               <Image src="/images/close.png" alt="Close" width={14} height={14} />

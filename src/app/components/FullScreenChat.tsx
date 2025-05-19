@@ -610,7 +610,7 @@ Bạn muốn tư vấn gì? (VD: lịch tập tăng cơ cho tuần sau, thực �
             animate={{ opacity: 1 }}
             className="flex items-start gap-3"
           >
-            <Image src={botAvatar} alt="Bot"  width={200} height={200} className="w-8 h-8 rounded-full shrink-0 mt-1" />
+            <Image src={botAvatar} alt="Bot" width={200} height={200} className="w-8 h-8 rounded-full shrink-0 mt-1" />
             <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-2xl shadow-md">
               <div className="flex gap-1">
                 <motion.span

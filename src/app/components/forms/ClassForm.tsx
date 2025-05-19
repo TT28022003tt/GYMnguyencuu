@@ -36,11 +36,14 @@ interface ClassFormProps {
 }
 
 const ClassForm = ({ type, data }: ClassFormProps) => {
-  const [trainers, setTrainers] = useState<{ idMaHLV: number; name: string }[]>([]);
+  const [trainers, setTrainers] = useState<{ idMaHLV: number; Ten: string }[]>([]);
+  const [phiDisplay, setPhiDisplay] = useState<string>("");
+
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
@@ -57,20 +60,38 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
     name: "lichlophoc",
   });
 
+  // Fetch trainers
   useEffect(() => {
     const fetchTrainers = async () => {
       try {
         const res = await fetch("/api/huanluyenvien");
         if (res.ok) {
           const data = await res.json();
+          console.log("Trainers data:", data); // Debug
           setTrainers(data);
+        } else {
+          console.error("Lỗi khi lấy danh sách huấn luyện viên");
         }
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách huấn luyện viên", error);
+        console.error("Lỗi khi lấy danh sách huấn luyện viên:", error);
       }
     };
     fetchTrainers();
   }, []);
+
+  // Format Phi for display
+  useEffect(() => {
+    if (data?.Phi) {
+      setPhiDisplay(data.Phi.toLocaleString("vi-VN"));
+    }
+  }, [data]);
+
+  const handlePhiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    const numberValue = parseInt(value) || 0;
+    setPhiDisplay(numberValue.toLocaleString("vi-VN"));
+    setValue("Phi", numberValue);
+  };
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
@@ -92,11 +113,11 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
   });
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
+    <form className="flex flex-col gap-4 p-4 bg-white text-black rounded-lg max-w-5xl mx-auto" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold text-orange-400">
         {type === "create" ? "Tạo Lớp Học Mới" : "Cập Nhật Lớp Học"}
       </h1>
-      <div className="flex justify-between flex-wrap gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <InputField
           label="Tên Lớp"
           name="Ten"
@@ -109,13 +130,6 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           name="Phong"
           register={register}
           error={errors.Phong}
-          type="text"
-        />
-        <InputField
-          label="Mô Tả"
-          name="MoTa"
-          register={register}
-          error={errors.MoTa}
           type="text"
         />
         <InputField
@@ -132,13 +146,19 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           error={errors.SoLuongMax}
           type="number"
         />
-        <InputField
-          label="Phí (VND)"
-          name="Phi"
-          register={register}
-          error={errors.Phi}
-          type="number"
-        />
+        <div className="flex flex-col gap-2 bg-white text-black">
+          <label className="text-xs ">Phí (VND)</label>
+          <input
+            value={phiDisplay}
+            onChange={handlePhiChange}
+            placeholder="Nhập phí"
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
+          />
+          {errors.Phi?.message && (
+            <p className="text-xs text-red-400">{errors.Phi.message}</p>
+          )}
+        </div>
+        
         <InputField
           label="Thời Lượng (phút)"
           name="ThoiLuong"
@@ -160,33 +180,50 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           error={errors.ThoiGianKetThuc}
           type="date"
         />
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
+        <div className="flex flex-col gap-2">
           <label className="text-xs ">Huấn Luyện Viên</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full "
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
             {...register("idMaHLV", { valueAsNumber: true })}
           >
             <option value="">Chọn HLV</option>
-            {trainers.map((trainer) => (
-              <option key={trainer.idMaHLV} value={trainer.idMaHLV}>
-                {trainer.name}
+            {trainers.length > 0 ? (
+              trainers.map((trainer) => (
+                <option key={trainer.idMaHLV} value={trainer.idMaHLV}>
+                  {trainer.Ten}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                Đang tải...
               </option>
-            ))}
+            )}
           </select>
           {errors.idMaHLV?.message && (
             <p className="text-xs text-red-400">{errors.idMaHLV.message}</p>
           )}
         </div>
       </div>
-
+      <div className="flex flex-col gap-2 bg-white text-black">
+        <label className="text-xs ">Mô Tả</label>
+        <textarea
+          {...register("MoTa")}
+          rows={4}
+          className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
+          placeholder="Nhập mô tả lớp học"
+        />
+        {errors.MoTa?.message && (
+          <p className="text-xs text-red-400">{errors.MoTa.message}</p>
+        )}
+      </div>
       <div>
-        <p className="text-sm font-semibold  mb-2">Lịch Học</p>
+        <p className="text-sm font-semibold bg-white text-black mb-2">Lịch Học</p>
         {fields.map((field, index) => (
-          <div key={field.id} className="flex items-center gap-4 mb-2">
-            <div className="flex flex-col gap-2 w-1/3">
+          <div key={field.id} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2 items-end bg-white text-black">
+            <div className="flex flex-col gap-2">
               <label className="text-xs ">Thứ</label>
               <select
-                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full "
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
                 {...register(`lichlophoc.${index}.Thu`, { valueAsNumber: true })}
               >
                 {[1, 2, 3, 4, 5, 6, 7].map((day) => (
@@ -199,11 +236,11 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
                 <p className="text-xs text-red-400">{errors.lichlophoc[index].Thu.message}</p>
               )}
             </div>
-            <div className="flex flex-col gap-2 w-1/3">
+            <div className="flex flex-col gap-2 bg-white text-black">
               <label className="text-xs ">Giờ Bắt Đầu</label>
               <input
                 type="time"
-                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full "
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black "
                 {...register(`lichlophoc.${index}.GioBatDau`)}
               />
               {errors.lichlophoc?.[index]?.GioBatDau?.message && (
@@ -213,7 +250,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
             <button
               type="button"
               onClick={() => remove(index)}
-              className="text-red-400 hover:text-red-600"
+              className="text-red-400 hover:text-red-600 self-end "
             >
               <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
             </button>
@@ -222,7 +259,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
         <button
           type="button"
           onClick={() => append({ Thu: 1, GioBatDau: "08:00" })}
-          className="flex items-center gap-2 text-orange-400 hover:text-orange-600"
+          className="flex items-center gap-2 text-orange-400 hover:text-orange-600 mt-2 "
         >
           <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
           Thêm Lịch
@@ -231,8 +268,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           <p className="text-xs text-red-400">{errors.lichlophoc.message}</p>
         )}
       </div>
-
-      <button className="bg-orange-500 text-white p-2 rounded-md hover:bg-orange-600">
+      <button className="bg-orange-500 text-white p-2 rounded-md hover:bg-orange-600 w-full sm:w-auto">
         {type === "create" ? "Tạo" : "Cập Nhật"}
       </button>
     </form>

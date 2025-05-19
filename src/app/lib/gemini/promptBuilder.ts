@@ -10,23 +10,34 @@ export function buildPrompt(
   currentDate?: string
 ): string {
   const chuongtrinhtapList = publicData?.chuongtrinhtap?.map((ct: any) =>
-    `- ${ct.TenCTT}: ${ct.MucTieu}, Thời gian: ${ct.ThoiGian}`
+    `- ${ct.TenCTT ?? 'Không tên'}: ${ct.MucTieu ?? 'Không có mục tiêu'}, Thời gian: ${ct.ThoiGian ?? 'Không rõ'}`
   ).join('\n') || 'Không có chương trình tập nào.';
+
   const goitapList = publicData?.goitap?.map((gt: any) =>
     `- ${gt.Ten}: ${gt.Loai}, Giá: ${gt.Gia}`
   ).join('\n') || 'Không có gói tập nào.';
+
   const huanluyenvienList = publicData?.huanluyenvien?.map((hlv: any) =>
     `- ${hlv.Ten}: Chuyên môn: ${hlv.ChuyenMon || 'N/A'}, Chứng chỉ: ${hlv.ChungChi || 'N/A'}, Bằng cấp: ${hlv.BangCap || 'N/A'}, Giới tính: ${hlv.GioiTinh || 'N/A'}, SĐT: ${hlv.SoDienThoai || 'N/A'}`
   ).join('\n') || 'Không có huấn luyện viên nào.';
-  const lophocList = publicData?.lophoc?.map((lh: any) =>
+
+  const lophocList = publicData?.lophoc?.map((lh: any) => {
+    const lichHocStr = lh.LichLopHoc?.map((llh: any) =>
+      `Thứ ${llh.Thu} - ${llh.GioBatDau}`
+    ).join(', ') || 'Chưa có lịch học';
     `- ${lh.Ten ?? 'Không tên'}: Thể loại: ${lh.TheLoai ?? 'N/A'}, Mô tả: ${lh.MoTa ?? 'Không có'}, ` +
-    `Bắt đầu: ${lh.ThoiGianBatDau ? new Date(lh.ThoiGianBatDau).toLocaleDateString() : 'Chưa rõ'}, ` +
-    `Số lượng: ${lh.SoLuong ?? 0}/${lh.SoLuongMax ?? 0}, Phòng: ${lh.Phong ?? 'N/A'}, ` +
-    `Học phí: ${lh.Phi ? `${lh.Phi} VNĐ` : 'Miễn phí'}, Trạng thái: ${lh.TrangThai ?? 'Không rõ'}`
-  ).join('\n') || 'Không có lớp học nào.';
+      `Bắt đầu: ${lh.ThoiGianBatDau ? new Date(lh.ThoiGianBatDau).toLocaleDateString() : 'Chưa rõ'}, ` +
+      `Kết thúc: ${lh.ThoiGianKetThuc ? new Date(lh.ThoiGianKetThuc).toLocaleDateString() : 'Chưa rõ'}, ` +
+      `Số lượng: ${lh.DangKy ?? '0/0'}, ` +
+      `Học phí: ${lh.Phi ? `${lh.Phi} VNĐ` : 'Miễn phí'}, Thời lượng: ${lh.ThoiLuong ?? 'Không rõ'}` +
+      `Phòng: ${lh.Phong ?? 'N/A'}` +
+      `Lịch học: ${lichHocStr}`;
+  }).join('\n') || 'Không có lớp học nào.';
+
   const thehoivienList = publicData?.thehoivien?.map((thv: any) =>
-    `- Thẻ ${thv.idMaThe}: Tình trạng: ${thv.TinhTrang}, Ngày cấp: ${thv.NgayCap}, Hết hạn: ${thv.NgayHetHan}`
+    `- Thẻ ${thv.idMaThe}: Tình trạng: ${thv.TinhTrang ?? 'Không rõ'}, Ngày cấp: ${thv.NgayCap ? new Date(thv.NgayCap).toLocaleDateString() : 'Chưa cấp'}, Hết hạn: ${thv.NgayHetHan ? new Date(thv.NgayHetHan).toLocaleDateString() : 'Chưa rõ'}`
   ).join('\n') || 'Không có thẻ hội viên nào.';
+
   const tomorrow = currentDate
     ? new Date(new Date(currentDate).setDate(new Date(currentDate).getDate() + 1)).toISOString().split('T')[0]
     : new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
@@ -61,10 +72,10 @@ export function buildPrompt(
     - Trình bày dễ nhìn ưu tiên các thông tin hiện ra xuống dòng gọn gàng
     - Nếu người dùng hỏi về chương trình tập, thực đơn, lịch tập, lớp học, gói tập, thẻ hội viên đề xuất dựa trên dữ liệu công khai phù hợp hoặc tạo mới nếu người dùng yêu cầu tạo.
     - Nếu có chỉ số (chiều cao, cân nặng, BMI), sử dụng để đưa ra gợi ý cá nhân hóa (VD: BMI < 18.5 thì đề xuất tăng cân, >24.9 thì giảm cân).
-    - Nếu hỏi về huấn luyện viên, cung cấp thông tin chi tiết bao gồm tên, giới tính, số điện thoại, chuyên môn, chứng chỉ, bằng cấp. Nếu hỏi cụ thể về HLV nữ, lọc danh sách theo giới tính những tiêu chí khác cũng vậy và nếu không có cứ đề cử các huấn luyện viên khác ưu tiên huấn luyện viên gần với câu hỏi.
-    - Nếu hỏi về lớp học(VD: bên bạn đang có lớp học nào,...), liệt kê các lớp đang mở với thông tin về thể loại, thời gian bắt đầu, và số lượng.
-    - Nếu hỏi về gói tập(VD: bên bạn đang có gói tập nào,...), cung cấp danh sách gói tập với tên, loại, giá, và thời gian hiệu lực.
-    - Nếu hỏi về thẻ hội viên (VD: bên bạn đang thẻ hội viên gì,...), cung cấp thông tin về tình trạng, ngày cấp, và ngày hết hạn.
+    - Nếu hỏi về huấn luyện viên , cung cấp thông tin chi tiết bao gồm tên, giới tính, số điện thoại, chuyên môn, chứng chỉ, bằng cấp. Nếu hỏi cụ thể về HLV nữ, lọc danh sách theo giới tính những tiêu chí khác cũng vậy và nếu không có cứ đề cử các huấn luyện viên khác ưu tiên huấn luyện viên gần với câu hỏi.
+    - Nếu hỏi về lớp học(VD: đang có lớp học nào,...), liệt kê các lớp đang mở với thông tin về thể loại, thời gian bắt đầu, số lượng,...
+    - Nếu hỏi về gói tập(VD: đang có gói tập nào,...), cung cấp danh sách gói tập với tên, loại, giá, và thời gian hiệu lực,...
+    - Nếu hỏi về thẻ hội viên (VD: đang thẻ hội viên gì,...), cung cấp thông tin về tình trạng, ngày cấp, và ngày hết hạn,...
     - Nếu không đăng nhập, thông báo rằng không thể lưu dữ liệu nhưng vẫn có thể tư vấn.
     - Đảm bảo trả lời liền mạch, dựa trên lịch sử hội thoại để nhớ ngữ cảnh (VD: chiều cao, cân nặng đã nhắc trước đó).
     - Đừng nhầm lẫn giữa chương trình tập, thực đơn, lịch tập, lớp học, gói tập, thẻ hội viên nếu người dùng hỏi về cái gì hãy đưa nó lên đầu tiên và đề xuất thêm 1 số cái liên quan phía sau

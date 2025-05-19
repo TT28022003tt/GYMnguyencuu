@@ -42,14 +42,27 @@ export async function GET(req: NextRequest) {
       prisma.lophoc.findMany({
         select: {
           idMaLH: true,
-        Ten: true,
-        TheLoai: true,
-        MoTa: true,
-        ThoiGianBatDau: true,
-        ThoiGianKetThuc: true,
-        SoLuongMax: true,
-        Phi: true,
-        ThoiLuong: true,
+          Ten: true,
+          TheLoai: true,
+          MoTa: true,
+          ThoiGianBatDau: true,
+          ThoiGianKetThuc: true,
+          SoLuongMax: true,
+          Phi: true,
+          ThoiLuong: true,
+          Phong: true,
+          lichlophoc: {
+            select: {
+              idLichLopHoc: true,
+              Thu: true,
+              GioBatDau: true,
+            },
+          },
+          dangkylophoc: {
+            select: {
+              id: true,
+            },
+          },
         },
       }),
       prisma.thehoivien.findMany({
@@ -69,7 +82,7 @@ export async function GET(req: NextRequest) {
         idMaGT: gt.idMaGT,
         Ten: gt.Ten,
         Loai: gt.Loai,
-        Gia: gt.Gia,
+        Gia: gt.Gia?.toString() || '0',
       })),
       chuongtrinhtap: chuongtrinhtap.map((ct) => ({
         idChuongTrinhTap: ct.idChuongTrinhTap,
@@ -86,9 +99,9 @@ export async function GET(req: NextRequest) {
       huanluyenvien: huanluyenvien.map((hlv) => ({
         idMaHLV: hlv.idMaHLV,
         Ten: hlv.user?.Ten || 'Không xác định',
-        ChuyenMon: hlv.ChuyeMon,
-        ChungChi: hlv.ChungChi,
-        BangCap: hlv.BangCap,
+        ChuyenMon: hlv.ChuyeMon || 'Không xác định',
+        ChungChi: hlv.ChungChi || 'Không xác định',
+        BangCap: hlv.BangCap || 'Không xác định',
         GioiTinh: hlv.user?.GioiTinh === 1 ? 'Nam' : 'Nữ',
         SoDienThoai: hlv.user?.SoDienThoai,
       })),
@@ -99,9 +112,16 @@ export async function GET(req: NextRequest) {
         MoTa: lh.MoTa,
         ThoiGianBatDau: lh.ThoiGianBatDau?.toISOString(),
         ThoiGianKetThuc: lh.ThoiGianKetThuc?.toISOString(),
-        SoLuongMax: lh.SoLuongMax,
+        DangKy: `${lh.dangkylophoc.length}/${lh.SoLuongMax}`,
         Phi: lh.Phi,
         ThoiLuong: lh.ThoiLuong,
+        Phong: lh.Phong,
+        LichLopHoc: lh.lichlophoc.map((llh) => ({
+          idLichLopHoc: llh.idLichLopHoc,
+          Thu: llh.Thu,
+          GioBatDau: llh.GioBatDau,
+
+        })),
       })),
       thehoivien: thehoivien.map((thv) => ({
         idMaThe: thv.idMaThe,

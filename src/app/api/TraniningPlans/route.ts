@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 // Tạo chương trình tập mới
 export async function POST(req: NextRequest) {
   try {
-    const { TenCTT, MucTieu, ThoiGian, MaHV, chiTietMucTieu, TrangThai } = await req.json();
+    const { TenCTT, MucTieu, ThoiGian, MaHV, chiTietMucTieu } = await req.json();
 
     if (!TenCTT || !MaHV) {
       return NextResponse.json(

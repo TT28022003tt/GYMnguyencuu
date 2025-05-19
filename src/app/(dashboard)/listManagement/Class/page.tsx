@@ -135,7 +135,7 @@ const ClassManagement = () => {
                   })),
                 }}
               />
-              <FormModal table="class" type="delete" id={item.id} />
+              <FormModal table="classAD" type="delete" id={item.id} />
             </>
         </div>
       </td>
