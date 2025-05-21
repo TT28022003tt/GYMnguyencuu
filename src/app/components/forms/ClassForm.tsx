@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -38,19 +38,29 @@ interface ClassFormProps {
 const ClassForm = ({ type, data }: ClassFormProps) => {
   const [trainers, setTrainers] = useState<{ idMaHLV: number; Ten: string }[]>([]);
   const [phiDisplay, setPhiDisplay] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-    defaultValues: data || {
+    defaultValues: {
       Ten: "",
+      Phong: "",
+      MoTa: "",
+      TheLoai: "",
       SoLuongMax: 1,
+      Phi: 0,
       TrangThai: "Đang mở",
+      ThoiLuong: 0,
+      ThoiGianBatDau: "",
+      ThoiGianKetThuc: "",
+      idMaHLV: undefined, // Không đặt mặc định là 1
       lichlophoc: [{ Thu: 1, GioBatDau: "08:00" }],
     },
   });
@@ -67,7 +77,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
         const res = await fetch("/api/huanluyenvien");
         if (res.ok) {
           const data = await res.json();
-          console.log("Trainers data:", data); // Debug
+          console.log("Trainers data:", data);
           setTrainers(data);
         } else {
           console.error("Lỗi khi lấy danh sách huấn luyện viên");
@@ -79,12 +89,32 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
     fetchTrainers();
   }, []);
 
-  // Format Phi for display
+  // Reset form when data changes (for update mode)
   useEffect(() => {
-    if (data?.Phi) {
-      setPhiDisplay(data.Phi.toLocaleString("vi-VN"));
+    if (type === "update" && data) {
+      console.log("Form data:", data); // Log để kiểm tra data
+      reset({
+        Ten: data.Ten || "",
+        Phong: data.Phong || "",
+        MoTa: data.MoTa || "",
+        TheLoai: data.TheLoai || "",
+        SoLuongMax: data.SoLuongMax || 1,
+        Phi: data.Phi || 0,
+        TrangThai: data.TrangThai || "Đang mở",
+        ThoiLuong: data.ThoiLuong || 0,
+        ThoiGianBatDau: data.ThoiGianBatDau || "",
+        ThoiGianKetThuc: data.ThoiGianKetThuc || "",
+        idMaHLV: data.idMaHLV ?? undefined, // Đặt HLV từ data
+        lichlophoc:
+          data.lichlophoc && data.lichlophoc.length > 0
+            ? data.lichlophoc
+            : [{ Thu: 1, GioBatDau: "08:00" }],
+      });
+      if (data.Phi) {
+        setPhiDisplay(data.Phi.toLocaleString("vi-VN"));
+      }
     }
-  }, [data]);
+  }, [data, type, reset]);
 
   const handlePhiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
@@ -93,27 +123,38 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
     setValue("Phi", numberValue);
   };
 
-  const onSubmit = handleSubmit(async (formData) => {
+  const onSubmit = async (formData: Inputs) => {
+    console.log("Form data submitted:", formData); // Log để kiểm tra idMaHL hơi trước khi submit
+    setIsSubmitting(true);
     try {
       const url = type === "create" ? "/api/admin/class" : `/api/admin/class/${data?.id}`;
       const method = type === "create" ? "POST" : "PUT";
-      const res = await fetch(url, {
+
+      const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      if (res.ok) {
-        console.log(`${type === "create" ? "Tạo" : "Cập nhật"} lớp học thành công`);
-      } else {
-        console.error("Lỗi khi gửi form");
-      }
-    } catch (error) {
-      console.error("Lỗi:", error);
+
+      if (!response.ok) throw new Error("Lỗi khi gửi dữ liệu lớp học");
+
+      alert(`${type === "create" ? "Tạo" : "Cập nhật"} lớp học thành công!`);
+
+      window.dispatchEvent(new CustomEvent("refreshClassList"));
+      window.dispatchEvent(new CustomEvent("formSuccess"));
+    } catch (err: any) {
+      console.error("Lỗi submit:", err);
+      alert(err.message || "Đã có lỗi xảy ra");
+    } finally {
+      setIsSubmitting(false);
     }
-  });
+  };
 
   return (
-    <form className="flex flex-col gap-4 p-4 bg-white text-black rounded-lg max-w-5xl mx-auto" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col gap-4 p-4 bg-white text-black rounded-lg max-w-5xl mx-auto"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <h1 className="text-xl font-semibold text-orange-400">
         {type === "create" ? "Tạo Lớp Học Mới" : "Cập Nhật Lớp Học"}
       </h1>
@@ -147,7 +188,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           type="number"
         />
         <div className="flex flex-col gap-2 bg-white text-black">
-          <label className="text-xs ">Phí (VND)</label>
+          <label className="text-xs">Phí (VND)</label>
           <input
             value={phiDisplay}
             onChange={handlePhiChange}
@@ -158,7 +199,6 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
             <p className="text-xs text-red-400">{errors.Phi.message}</p>
           )}
         </div>
-        
         <InputField
           label="Thời Lượng (phút)"
           name="ThoiLuong"
@@ -181,31 +221,39 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           type="date"
         />
         <div className="flex flex-col gap-2">
-          <label className="text-xs ">Huấn Luyện Viên</label>
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
-            {...register("idMaHLV", { valueAsNumber: true })}
-          >
-            <option value="">Chọn HLV</option>
-            {trainers.length > 0 ? (
-              trainers.map((trainer) => (
-                <option key={trainer.idMaHLV} value={trainer.idMaHLV}>
-                  {trainer.Ten}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                Đang tải...
-              </option>
+          <label className="text-xs">Huấn Luyện Viên</label>
+          <Controller
+            name="idMaHLV"
+            control={control}
+            render={({ field }) => (
+              <select
+                {...field}
+                value={field.value ?? ""}
+                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
+              >
+                <option value="">Chọn HLV</option>
+                {trainers.length > 0 ? (
+                  trainers.map((trainer) => (
+                    <option key={trainer.idMaHLV} value={trainer.idMaHLV}>
+                      {trainer.Ten}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    Đang tải...
+                  </option>
+                )}
+              </select>
             )}
-          </select>
+          />
           {errors.idMaHLV?.message && (
             <p className="text-xs text-red-400">{errors.idMaHLV.message}</p>
           )}
         </div>
       </div>
       <div className="flex flex-col gap-2 bg-white text-black">
-        <label className="text-xs ">Mô Tả</label>
+        <label className="text-xs">Mô Tả</label>
         <textarea
           {...register("MoTa")}
           rows={4}
@@ -219,11 +267,16 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
       <div>
         <p className="text-sm font-semibold bg-white text-black mb-2">Lịch Học</p>
         {fields.map((field, index) => (
-          <div key={field.id} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2 items-end bg-white text-black">
+          <div
+            key={field.id}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2 items-end bg-white text-black"
+          >
             <div className="flex flex-col gap-2">
-              <label className="text-xs ">Thứ</label>
+              <label className="text-xs">Thứ</label>
               <select
-                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg
+
+-white text-black"
                 {...register(`lichlophoc.${index}.Thu`, { valueAsNumber: true })}
               >
                 {[1, 2, 3, 4, 5, 6, 7].map((day) => (
@@ -237,10 +290,10 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
               )}
             </div>
             <div className="flex flex-col gap-2 bg-white text-black">
-              <label className="text-xs ">Giờ Bắt Đầu</label>
+              <label className="text-xs">Giờ Bắt Đầu</label>
               <input
                 type="time"
-                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black "
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full bg-white text-black"
                 {...register(`lichlophoc.${index}.GioBatDau`)}
               />
               {errors.lichlophoc?.[index]?.GioBatDau?.message && (
@@ -250,7 +303,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
             <button
               type="button"
               onClick={() => remove(index)}
-              className="text-red-400 hover:text-red-600 self-end "
+              className="text-red-400 hover:text-red-600 self-end"
             >
               <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
             </button>
@@ -259,7 +312,7 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
         <button
           type="button"
           onClick={() => append({ Thu: 1, GioBatDau: "08:00" })}
-          className="flex items-center gap-2 text-orange-400 hover:text-orange-600 mt-2 "
+          className="flex items-center gap-2 text-orange-400 hover:text-orange-600 mt-2"
         >
           <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
           Thêm Lịch
@@ -268,8 +321,12 @@ const ClassForm = ({ type, data }: ClassFormProps) => {
           <p className="text-xs text-red-400">{errors.lichlophoc.message}</p>
         )}
       </div>
-      <button className="bg-orange-500 text-white p-2 rounded-md hover:bg-orange-600 w-full sm:w-auto">
-        {type === "create" ? "Tạo" : "Cập Nhật"}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-orange-500 text-white p-2 rounded-md hover:bg-orange-600 w-full sm:w-auto"
+      >
+        {isSubmitting ? "Đang gửi..." : type === "create" ? "Tạo" : "Cập Nhật"}
       </button>
     </form>
   );

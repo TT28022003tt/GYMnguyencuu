@@ -41,7 +41,7 @@ const FormModal = ({
   data?: any;
   id?: number;
   onSuccess?: () => void;
-  customButton?: JSX.Element; // Thêm customButton
+  customButton?: JSX.Element; 
 }) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const [open, setOpen] = useState(false);

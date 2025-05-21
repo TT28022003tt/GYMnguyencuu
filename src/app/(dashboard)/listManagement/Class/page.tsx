@@ -9,13 +9,13 @@ import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import ClassDetailModal from "@/app/components/ClassDetailModal";
-import { useSession } from "next-auth/react";
 
 type Class = {
   id: number;
   className: string;
   startTime: string;
   endTime: string;
+  idMaHLV:number;
   sessionDuration: string;
   location: string;
   trainerName: string;
@@ -49,26 +49,43 @@ const ClassManagement = () => {
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/admin/class");
-        if (res.ok) {
-          const data = await res.json();
-          setClasses(data);
-        } else {
-          console.error("Lỗi khi lấy danh sách lớp học");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchClasses = async () => {
+  try {
+    const response = await fetch('/api/admin/class', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
 
-    fetchClasses();
-  }, []);
+    if (!response.ok) {
+      throw new Error('Không thể lấy danh sách lớp học');
+    }
+
+    const data = await response.json();
+    setClasses(data);
+  } catch (err: any) {
+    console.error(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  setLoading(true);
+  fetchClasses();
+}, []);
+
+useEffect(() => {
+  const handleRefresh = () => {
+    fetchClasses(); 
+  };
+
+  window.addEventListener('refreshClassList', handleRefresh);
+
+  return () => {
+    window.removeEventListener('refreshClassList', handleRefresh);
+  };
+}, []);
 
   const handleViewDetails = (id: number) => {
     setSelectedClassId(id);
@@ -123,19 +140,19 @@ const ClassManagement = () => {
                   MoTa: item.description,
                   TheLoai: item.type,
                   SoLuongMax: item.maxStudents,
-                  Phi: parseFloat(item.fee.replace(/[^0-9.-]+/g, "")) || 0,
+                  Phi: item.fee ? parseInt(item.fee.replace(/[^0-9]/g, "")) : 0,
                   TrangThai: item.status,
                   ThoiLuong: parseInt(item.sessionDuration) || 0,
                   ThoiGianBatDau: new Date(item.startTime).toISOString().split("T")[0],
                   ThoiGianKetThuc: new Date(item.endTime).toISOString().split("T")[0],
-                  idMaHLV: 1, 
+                  idMaHLV: item.idMaHLV || 1,
                   lichlophoc: item.schedules.map((s) => ({
                     Thu: s.day,
                     GioBatDau: s.startTime,
                   })),
                 }}
               />
-              <FormModal table="classAD" type="delete" id={item.id} />
+              <FormModal table="classAD" type="delete" id={item.id} onSuccess={fetchClasses}/>
             </>
         </div>
       </td>

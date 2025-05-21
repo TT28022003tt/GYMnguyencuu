@@ -44,6 +44,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       location: classItem.Phong || "N/A",
       trainerName: classItem.huanluyenvien?.user?.Ten || "N/A",
       trainerEmail: classItem.huanluyenvien?.user?.Email || "N/A",
+      idMaHLV: classItem.idMaHLV || 1,
       photo: classItem.huanluyenvien?.user?.Anh || "/images/default-avatar.png",
       currentStudents: classItem.dangkylophoc.length,
       maxStudents: classItem.SoLuongMax || 0,
@@ -153,7 +154,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Lớp học không tồn tại" }, { status: 404 });
     }
 
-    // Kiểm tra HLV tồn tại
     const trainer = await prisma.huanluyenvien.findUnique({
       where: { idMaHLV: data.idMaHLV },
     });
@@ -161,9 +161,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Huấn luyện viên không tồn tại" }, { status: 400 });
     }
 
-    // Transaction để cập nhật lớp học và lịch
     const updatedClass = await prisma.$transaction(async (tx) => {
-      // Cập nhật LopHoc
       const updated = await tx.lophoc.update({
         where: { idMaLH: parseInt(id) },
         data: {
@@ -188,12 +186,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         },
       });
 
-      // Xóa lịch học cũ
       await tx.lichlophoc.deleteMany({
         where: { idMaLH: parseInt(id) },
       });
 
-      // Tạo lịch học mới
       await tx.lichlophoc.createMany({
         data: data.lichlophoc.map((lich) => ({
           idMaLH: parseInt(id),
@@ -205,7 +201,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return updated;
     });
 
-    // Định dạng phản hồi giống GET và POST
     const formattedClass = {
       id: updatedClass.idMaLH,
       className: updatedClass.Ten || "N/A",
@@ -215,6 +210,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       location: updatedClass.Phong || "N/A",
       trainerName: updatedClass.huanluyenvien?.user?.Ten || "N/A",
       trainerEmail: updatedClass.huanluyenvien?.user?.Email || "N/A",
+      idMaHLV: updatedClass.idMaHLV || 1,
       photo: updatedClass.huanluyenvien?.user?.Anh || "/default-avatar.png",
       currentStudents: updatedClass.dangkylophoc.length,
       maxStudents: updatedClass.SoLuongMax || 0,

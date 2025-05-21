@@ -1,29 +1,33 @@
 "use client";
 
 import FormModal from "@/app/components/FormModal";
+import MembershipDetailModal from "@/app/components/MembershipDetailModal";
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import { faCirclePlus, faEye, faFilter, faPlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Membership = {
-  id: number; // idchitietgoitap
-  cardId: number; // goitap.idMaGT
-  accountId: string; // idchitietgoitap
-  memberName: string; // user.Ten
-  startDate: string; // NgayDangKy
-  endDate: string; // NgayHetHan
-  cardType: string; // goitap.Ten
-  status: "Ongoing" | "Completed"; // TinhTrang
+  id: number;
+  cardId: number;
+  userId: number;
+  memberName: string;
+  email: string;
+  photo: string;
+  startDate: string;
+  endDate: string;
+  cardType: string;
+  status: "Ongoing" | "Completed";
 };
 
 const columns = [
   { header: "Member Name", accessor: "memberName", className: "w-40" },
   { header: "ID Card", accessor: "cardId", className: "w-24" },
-  { header: "Account ID", accessor: "accountId", className: "w-24" },
+  { header: "ID User", accessor: "accountId", className: "w-24" },
   { header: "Start Date", accessor: "startDate", className: "w-32 hidden lg:table-cell" },
   { header: "End Date", accessor: "endDate", className: "w-32 hidden lg:table-cell" },
   { header: "Card Type", accessor: "cardType", className: "w-28 hidden md:table-cell" },
@@ -35,14 +39,20 @@ const MembershipManagement = () => {
   const role = "admin";
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (userId: number) => {
+    setSelectedUserId(userId);
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchMemberships = async () => {
       try {
         const response = await fetch("/api/admin/membership");
         const data = await response.json();
-        console.log("Fetched memberships:", data); // Debug
-        // Sort by member name (A-Z)
+        console.log("Fetched memberships:", data);
         const sortedData = data.sort((a: Membership, b: Membership) =>
           a.memberName.localeCompare(b.memberName)
         );
@@ -77,13 +87,25 @@ const MembershipManagement = () => {
 
   const renderRow = (item: Membership) => (
     <tr key={item.id} className="border-b text-sm hover:bg-gray-400">
-      <td className="p-2">{item.memberName}</td>
-      <td className="p-2">{item.cardId}</td>
-      <td className="p-2">{item.accountId}</td>
-      <td className="p-2 hidden lg:table-cell">{item.startDate}</td>
-      <td className="p-2 hidden lg:table-cell">{item.endDate}</td>
-      <td className="p-2 hidden md:table-cell">{item.cardType}</td>
-      <td className="p-2 hidden md:table-cell">
+      <td className=" flex items-center gap-3">
+        <Image
+          src={item.photo}
+          alt={item.memberName}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover hidden md:block"
+        />
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{item.memberName}</h3>
+          <p className="text-xs text-gray-500">{item.email}</p>
+        </div>
+      </td>
+      <td className="">{item.cardId}</td>
+      <td className="">{item.userId}</td>
+      <td className=" hidden lg:table-cell">{item.startDate}</td>
+      <td className=" hidden lg:table-cell">{item.endDate}</td>
+      <td className=" hidden md:table-cell">{item.cardType}</td>
+      <td className=" hidden md:table-cell">
         <select
           value={item.status}
           onChange={(e) =>
@@ -95,16 +117,28 @@ const MembershipManagement = () => {
           <option value="Completed">Completed</option>
         </select>
       </td>
-      <td className="p-2">
+      <td className="">
         <div className="flex items-center gap-2">
-          <Link href={`/listManagement/membership/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full">
-              <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
-            </button>
-          </Link>
-          {role === "admin" && (
-            <FormModal table="membership" type="delete" id={item.id} />
-          )}
+          <button
+            onClick={() => handleViewDetails(item.userId)}
+            className="w-7 h-7 flex items-center justify-center rounded-full"
+          >
+            <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
+          </button>
+          <FormModal
+            table="membership"
+            type="update"
+            data={{
+              id: item.id,
+              idMaGT: item.cardId,
+              idUser: item.userId,
+              NgayDangKy: item.startDate,
+              NgayHetHan: item.endDate,
+              TinhTrang: item.status === "Ongoing" ? 1 : 0,
+            }}
+          />
+
+          <FormModal table="membership" type="delete" id={item.id} />
         </div>
       </td>
     </tr>
@@ -138,6 +172,13 @@ const MembershipManagement = () => {
       <div>
         <Pagination />
       </div>
+      {selectedUserId && (
+        <MembershipDetailModal
+          userId={selectedUserId}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

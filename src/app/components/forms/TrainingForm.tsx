@@ -65,7 +65,7 @@ export default function TrainingForm({
   const onSubmit = async (formData: TrainingFormInput) => {
     setIsSubmitting(true);
     try {
-      console.log("Submitting data:", formData); // Debug
+      console.log("Submitting data:", formData); 
       const response = await fetch(
         type === "create"
           ? "/api/TraniningPlans"
@@ -80,7 +80,6 @@ export default function TrainingForm({
       if (!response.ok) throw new Error("Lỗi khi gửi dữ liệu");
 
       alert(`${type === "create" ? "Create" : "Update"} thành công!`);
-      // Gọi lại callback nếu có
       if (typeof window !== "undefined") {
         const event = new CustomEvent("formSuccess");
         window.dispatchEvent(event);

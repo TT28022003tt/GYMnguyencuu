@@ -13,14 +13,14 @@ import { useEffect, useState } from "react";
 
 type Feedback = {
   idMaPH: number;
-  customerName: string; // user.Ten
-  email: string | null; // user.Email
-  phone: string | null; // user.SoDienThoai
-  sentDate: string; // NgayTao
-  rating: number | null; // SoSao
-  feedbackType: string | null; // LoaiPhanHoi
-  content: string | null; // NoiDung
-  photo: string | null; // user.Anh
+  customerName: string;
+  email: string | null;
+  phone: string | null;
+  sentDate: string;
+  rating: number | null;
+  feedbackType: string | null;
+  content: string | null;
+  photo: string | null;
 };
 
 const columns = [
@@ -38,9 +38,14 @@ const columns = [
 const FeedbackManagement = () => {
   const [feedbackData, setFeedbackData] = useState<Feedback[]>([]);
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchFeedback = async () => {
+      setLoading(true); 
+      setError(null);
       try {
         const res = await fetch("/api/admin/feedback");
         if (!res.ok) throw new Error("Failed to fetch feedback");
@@ -48,11 +53,15 @@ const FeedbackManagement = () => {
         setFeedbackData(data);
       } catch (error) {
         console.error("Error fetching feedback:", error);
+        setError("Không thể tải phản hồi.");
+      } finally {
+        setLoading(false); 
       }
     };
 
     fetchFeedback();
   }, []);
+
 
   const renderRow = (item: Feedback) => (
     <tr key={item.idMaPH} className="border-b text-sm hover:bg-gray-100">
@@ -81,11 +90,11 @@ const FeedbackManagement = () => {
       <td>
         <div className="flex items-center gap-2">
           {/* <Link href={`/listManagement/feedback/${item.idMaPH}`}> */}
-            <button 
+          <button
             onClick={() => setSelectedFeedback(item)}
             className="w-7 h-7 flex items-center justify-center rounded-full ">
-              <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
-            </button>
+            <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
+          </button>
           {/* </Link> */}
           <FormModal table="feedback" type="delete" id={item.idMaPH} />
         </div>
@@ -107,15 +116,24 @@ const FeedbackManagement = () => {
       </div>
 
       <div className="flex-1">
-        <Table colums={columns} renderRow={renderRow} data={feedbackData} />
+        {loading ? (
+          <div className="text-center py-10 text-gray-500">Đang tải phản hồi...</div>
+        ) : error ? (
+          <div className="text-center py-10 text-red-500">{error}</div>
+        ) : feedbackData.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">Không có phản hồi nào.</div>
+        ) : (
+          <Table colums={columns} renderRow={renderRow} data={feedbackData} />
+        )}
       </div>
+
 
       <div>
         <Pagination />
       </div>
       {selectedFeedback && (
-          <FeedbackDetailModal feedback={selectedFeedback} onClose={() => setSelectedFeedback(null)} />
-        )}
+        <FeedbackDetailModal feedback={selectedFeedback} onClose={() => setSelectedFeedback(null)} />
+      )}
     </div>
   );
 };

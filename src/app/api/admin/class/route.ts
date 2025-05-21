@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
       endTime: cls.ThoiGianKetThuc?.toISOString() || "N/A",
       sessionDuration: cls.ThoiLuong ? `${cls.ThoiLuong} phút` : "N/A",
       location: cls.Phong || "N/A",
+      idMaHLV: cls.idMaHLV || 1,
       trainerName: cls.huanluyenvien?.user?.Ten || "N/A",
       trainerEmail: cls.huanluyenvien?.user?.Email || "N/A",
       photo: cls.huanluyenvien?.user?.Anh || "/images/default-avatar.png",
