@@ -15,12 +15,15 @@ type Membership = {
   id: number;
   cardId: number;
   userId: number;
+  idMaHLV: number;
   memberName: string;
   email: string;
   photo: string;
   startDate: string;
   endDate: string;
   cardType: string;
+  SoThang: number;
+  TongTien: number;
   status: "Ongoing" | "Completed";
 };
 
@@ -46,25 +49,35 @@ const MembershipManagement = () => {
     setSelectedUserId(userId);
     setIsModalOpen(true);
   };
+  const fetchMemberships = async () => {
+    try {
+      const response = await fetch("/api/admin/membership");
+      const data = await response.json();
+      console.log("Fetched memberships:", data);
+      const sortedData = data.sort((a: Membership, b: Membership) =>
+        a.memberName.localeCompare(b.memberName)
+      );
+      setMemberships(sortedData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching memberships:", error);
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const fetchMemberships = async () => {
-      try {
-        const response = await fetch("/api/admin/membership");
-        const data = await response.json();
-        console.log("Fetched memberships:", data);
-        const sortedData = data.sort((a: Membership, b: Membership) =>
-          a.memberName.localeCompare(b.memberName)
-        );
-        setMemberships(sortedData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching memberships:", error);
-        setLoading(false);
-      }
-    };
-
     fetchMemberships();
+  }, []);
+
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchMemberships();
+    };
+    window.addEventListener('refreshMemberships', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshMemberships', handleRefresh);
+    };
   }, []);
 
   const handleStatusChange = async (membershipId: number, newStatus: "Ongoing" | "Completed") => {
@@ -130,15 +143,17 @@ const MembershipManagement = () => {
             type="update"
             data={{
               id: item.id,
-              idMaGT: item.cardId,
               idUser: item.userId,
+              idMaGT: item.cardId,
+              idMaHLV: item.idMaHLV,
+              SoThang: item.SoThang,
+              TongTien: item.TongTien,
               NgayDangKy: item.startDate,
               NgayHetHan: item.endDate,
               TinhTrang: item.status === "Ongoing" ? 1 : 0,
             }}
           />
-
-          <FormModal table="membership" type="delete" id={item.id} />
+          <FormModal table="membership" type="delete" id={item.id} onSuccess={fetchMemberships}/>
         </div>
       </td>
     </tr>
@@ -154,9 +169,7 @@ const MembershipManagement = () => {
             <button className="w-8 h-8 flex items-center justify-center">
               <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
             </button>
-            <Link href={`/products&services`} className="flex items-center justify-center">
-              <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
-            </Link>
+            <FormModal table="membership" type="create" />
           </div>
         </div>
       </div>

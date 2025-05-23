@@ -15,6 +15,7 @@ const TrainerForm = dynamic(() => import("./forms/TrainerForm"), { loading: () =
 const TrainingForm = dynamic(() => import("./forms/TrainingForm"), { loading: () => <h1>Loading</h1> });
 const BasicMetricsForm = dynamic(() => import("./forms/BasicMetricsForm"), { loading: () => <h1>Loading</h1> });
 const AdvancedMetricsForm = dynamic(() => import("./forms/AdvancedMetricsForm"), { loading: () => <h1>Loading</h1> });
+const MembershipForm = dynamic(() => import("./forms/MembershipForm"), { loading: () => <h1>Loading</h1> });
 
 const forms: { [key: string]: (type: "create" | "update", data?: any) => JSX.Element } = {
   training: (type, data) => <TrainingForm type={type} data={data} />,
@@ -26,6 +27,7 @@ const forms: { [key: string]: (type: "create" | "update", data?: any) => JSX.Ele
   trainer: (type, data) => <TrainerForm type={type} data={data} />,
   basicmetrics: (type, data) => <BasicMetricsForm type={type} data={data} />,
   advancedmetrics: (type, data) => <AdvancedMetricsForm type={type} data={data} />,
+  membership: (type, data) => <MembershipForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -41,7 +43,7 @@ const FormModal = ({
   data?: any;
   id?: number;
   onSuccess?: () => void;
-  customButton?: JSX.Element; 
+  customButton?: JSX.Element;
 }) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const [open, setOpen] = useState(false);
@@ -63,6 +65,8 @@ const FormModal = ({
         return "class";
       case "classAD":
         return "/admin/class";
+      case "membership":
+        return "/admin/membership";
       case "basicmetrics":
         return "basicmetrics";
       case "advancedmetrics":

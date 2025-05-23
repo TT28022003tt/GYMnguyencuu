@@ -15,7 +15,7 @@ type Class = {
   className: string;
   startTime: string;
   endTime: string;
-  idMaHLV:number;
+  idMaHLV: number;
   sessionDuration: string;
   location: string;
   trainerName: string;
@@ -50,42 +50,42 @@ const ClassManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchClasses = async () => {
-  try {
-    const response = await fetch('/api/admin/class', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
+    try {
+      const response = await fetch('/api/admin/class', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
 
-    if (!response.ok) {
-      throw new Error('Không thể lấy danh sách lớp học');
+      if (!response.ok) {
+        throw new Error('Không thể lấy danh sách lớp học');
+      }
+
+      const data = await response.json();
+      setClasses(data);
+    } catch (err: any) {
+      console.error(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const data = await response.json();
-    setClasses(data);
-  } catch (err: any) {
-    console.error(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  setLoading(true);
-  fetchClasses();
-}, []);
-
-useEffect(() => {
-  const handleRefresh = () => {
-    fetchClasses(); 
   };
 
-  window.addEventListener('refreshClassList', handleRefresh);
+  useEffect(() => {
+    setLoading(true);
+    fetchClasses();
+  }, []);
 
-  return () => {
-    window.removeEventListener('refreshClassList', handleRefresh);
-  };
-}, []);
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchClasses();
+    };
+
+    window.addEventListener('refreshClassList', handleRefresh);
+
+    return () => {
+      window.removeEventListener('refreshClassList', handleRefresh);
+    };
+  }, []);
 
   const handleViewDetails = (id: number) => {
     setSelectedClassId(id);
@@ -129,31 +129,31 @@ useEffect(() => {
           >
             <FontAwesomeIcon icon={faEye} className="w-5 h-5" />
           </button>
-            <>
-              <FormModal
-                table="class"
-                type="update"
-                data={{
-                  id: item.id,
-                  Ten: item.className,
-                  Phong: item.location,
-                  MoTa: item.description,
-                  TheLoai: item.type,
-                  SoLuongMax: item.maxStudents,
-                  Phi: item.fee ? parseInt(item.fee.replace(/[^0-9]/g, "")) : 0,
-                  TrangThai: item.status,
-                  ThoiLuong: parseInt(item.sessionDuration) || 0,
-                  ThoiGianBatDau: new Date(item.startTime).toISOString().split("T")[0],
-                  ThoiGianKetThuc: new Date(item.endTime).toISOString().split("T")[0],
-                  idMaHLV: item.idMaHLV || 1,
-                  lichlophoc: item.schedules.map((s) => ({
-                    Thu: s.day,
-                    GioBatDau: s.startTime,
-                  })),
-                }}
-              />
-              <FormModal table="classAD" type="delete" id={item.id} onSuccess={fetchClasses}/>
-            </>
+          <>
+            <FormModal
+              table="class"
+              type="update"
+              data={{
+                id: item.id,
+                Ten: item.className,
+                Phong: item.location,
+                MoTa: item.description,
+                TheLoai: item.type,
+                SoLuongMax: item.maxStudents,
+                Phi: item.fee ? parseInt(item.fee.replace(/[^0-9]/g, "")) : 0,
+                TrangThai: item.status,
+                ThoiLuong: parseInt(item.sessionDuration) || 0,
+                ThoiGianBatDau: new Date(item.startTime).toISOString().split("T")[0],
+                ThoiGianKetThuc: new Date(item.endTime).toISOString().split("T")[0],
+                idMaHLV: item.idMaHLV || 1,
+                lichlophoc: item.schedules.map((s) => ({
+                  Thu: s.day,
+                  GioBatDau: s.startTime,
+                })),
+              }}
+            />
+            <FormModal table="classAD" type="delete" id={item.id} onSuccess={fetchClasses} />
+          </>
         </div>
       </td>
     </tr>
@@ -171,7 +171,7 @@ useEffect(() => {
             <button className="w-8 h-8 flex items-center justify-center  rounded-full hover:bg-gray-500">
               <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
             </button>
-              <FormModal table="class" type="create" />
+            <FormModal table="class" type="create" />
           </div>
         </div>
       </div>

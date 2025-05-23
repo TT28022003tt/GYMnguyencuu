@@ -367,7 +367,7 @@ model chatmessage {
 }
 
 model chitietgoitap {
-  idchitietgoitap Int           @id
+  idchitietgoitap Int           @id @default(autoincrement())
   SoThang         Int?
   TongTien        Decimal?      @db.Decimal(10, 0)
   NgayDangKy      DateTime?     @db.Date
@@ -377,7 +377,7 @@ model chitietgoitap {
   idMaHLV         Int
   TinhTrang       Int?          @default(1) @db.TinyInt
   goitap          goitap        @relation(fields: [idMaGT], references: [idMaGT], onDelete: Cascade, map: "FK_CTGT_GT")
-  huanluyenvien   huanluyenvien @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: NoAction, onUpdate: NoAction, map: "FK_CTGT_HLV")
+  huanluyenvien   huanluyenvien @relation(fields: [idMaHLV], references: [idMaHLV], onDelete: Cascade, map: "FK_CTGT_HLV")
   user            user          @relation(fields: [idUser], references: [idUser], onDelete: Cascade, map: "FK_CTGT_User")
 
   @@index([idMaGT], map: "FK_CTGT_GT_idx")

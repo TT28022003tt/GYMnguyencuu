@@ -7,6 +7,7 @@ export async function GET() {
       select: {
         idMaGT: true,
         Ten: true,
+        Gia: true,
       },
     });
 
@@ -18,6 +19,7 @@ export async function GET() {
       goitap.map((gt) => ({
         idMaGT: gt.idMaGT,
         Ten: gt.Ten || "Không xác định",
+        Gia: gt.Gia
       }))
     );
   } catch (error) {

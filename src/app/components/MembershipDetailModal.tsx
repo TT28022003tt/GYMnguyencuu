@@ -5,7 +5,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 
 interface MembershipDetailModalProps {
-  userId: number; // Thay memberId bằng userId
+  userId: number; 
   isOpen: boolean;
   onClose: () => void;
 }
