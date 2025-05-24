@@ -9,6 +9,7 @@ import { JSX, useEffect, useState } from "react";
 const UserForm = dynamic(() => import("./forms/UserForm"), { loading: () => <h1>Loading</h1> });
 const WorkoutScheduleForm = dynamic(() => import("./forms/WorkoutScheduleForm"), { loading: () => <h1>Loading</h1> });
 const NutritionForm = dynamic(() => import("./forms/NutritionForm"), { loading: () => <h1>Loading</h1> });
+const NutritionADForm = dynamic(() => import("./forms/NutritionADForm"), { loading: () => <h1>Loading</h1> });
 const EventForm = dynamic(() => import("./forms/EventForm"), { loading: () => <h1>Loading</h1> });
 const ClassForm = dynamic(() => import("./forms/ClassForm"), { loading: () => <h1>Loading</h1> });
 const TrainerForm = dynamic(() => import("./forms/TrainerForm"), { loading: () => <h1>Loading</h1> });
@@ -22,6 +23,7 @@ const forms: { [key: string]: (type: "create" | "update", data?: any) => JSX.Ele
   user: (type, data) => <UserForm type={type} data={data} />,
   workoutSchedule: (type, data) => <WorkoutScheduleForm type={type} data={data} />,
   nutrition: (type, data) => <NutritionForm type={type} data={data} />,
+  nutritionAD: (type, data) => <NutritionADForm type={type} data={data} />,
   event: (type, data) => <EventForm type={type} data={data} />,
   class: (type, data) => <ClassForm type={type} data={data} />,
   trainer: (type, data) => <TrainerForm type={type} data={data} />,
@@ -38,7 +40,7 @@ const FormModal = ({
   onSuccess,
   customButton,
 }: {
-  table: "user" | "workoutSchedule" | "nutrition" | "event" | "membership" | "feedback" | "class" | "classAD" | "trainer" | "training" | "basicmetrics" | "advancedmetrics";
+  table: "user" | "workoutSchedule" | "nutrition" | "nutritionAD" | "event" | "membership" | "feedback" | "class" | "classAD" | "trainer" | "training" | "basicmetrics" | "advancedmetrics";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
