@@ -1,4 +1,3 @@
-// app/api/sendMail/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
@@ -22,8 +21,8 @@ export async function POST(req: NextRequest) {
     });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      from: process.env.NEXT_PUBLIC_EMAIL_USER,
+      to: process.env.NEXT_PUBLIC_EMAIL_USER,
       replyTo: email,
       subject: `Người Gửi ${name}`,
       html: `<p><strong>Email:</strong> ${email}</p><p>${message}</p>`,
@@ -31,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error sending email:', error.message); // << Log lỗi thật
+    console.error('Error sending email:', error.message); 
     return NextResponse.json(
       { error: error.message || 'Unknown error' },
       { status: 500 }

@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
         ) : userData ? (
           <div className="flex flex-col items-center space-y-4">
             <Image
-              src={userData.Anh || "/default-avatar.png"}
+              src={userData.Anh || "/images/default-avatar.png"}
               alt="Avatar"
               width={120}
               height={120}
