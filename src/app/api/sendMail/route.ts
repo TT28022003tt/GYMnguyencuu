@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Test SMTP connection
     await transporter.verify().then(() => {
       console.log('SMTP connection is ready!');
     }).catch((err) => {

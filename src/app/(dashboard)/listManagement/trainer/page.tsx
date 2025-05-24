@@ -45,20 +45,18 @@ const Trainer = () => {
   const [loading, setLoading] = useState(true);
   const [selectedTrainerId, setSelectedTrainerId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const fetchTrainers = async () => {
+    try {
+      const response = await fetch("/api/admin/trainer");
+      const data = await response.json();
+      setTrainers(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching trainers:", error);
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchTrainers = async () => {
-      try {
-        const response = await fetch("/api/admin/trainer");
-        const data = await response.json();
-        setTrainers(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching trainers:", error);
-        setLoading(false);
-      }
-    };
-
     fetchTrainers();
   }, []);
 
@@ -116,7 +114,7 @@ const Trainer = () => {
               photo: item.photo,
             }}
           />
-          <FormModal table="trainer" type="delete" id={item.id} />
+          <FormModal table="trainer" type="delete" id={item.id} onSuccess={fetchTrainers} />
         </div>
       </td>
     </tr>

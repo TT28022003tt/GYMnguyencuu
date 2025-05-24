@@ -102,7 +102,7 @@ const MembershipManagement = () => {
     <tr key={item.id} className="border-b text-sm hover:bg-gray-400">
       <td className=" flex items-center gap-3">
         <Image
-          src={item.photo}
+          src={item.photo?.startsWith('/') ? item.photo : `/images/${item.photo}`}
           alt={item.memberName}
           width={40}
           height={40}

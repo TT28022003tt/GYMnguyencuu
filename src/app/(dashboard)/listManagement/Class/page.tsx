@@ -98,7 +98,7 @@ const ClassManagement = () => {
       <td className="hidden md:table-cell">{item.className}</td>
       <td className="flex items-center gap-2 py-2">
         <Image
-          src={item.photo}
+          src={item.photo?.startsWith('/') ? item.photo : `/images/${item.photo}`}
           alt={item.trainerName}
           width={30}
           height={30}

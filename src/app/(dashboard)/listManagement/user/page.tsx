@@ -128,7 +128,7 @@ const UserManagement = () => {
               }}
             />
           )}
-          {currentRole && <FormModal table="user" type="delete" id={item.id} />}
+          <FormModal table="user" type="delete" id={item.id} onSuccess={fetchUsers}/>
         </div>
       </td>
     </tr>
@@ -144,7 +144,7 @@ const UserManagement = () => {
             <button className="w-8 h-8 flex items-center justify-center">
               <FontAwesomeIcon icon={faFilter} className="w-5 h-5" />
             </button>
-            {currentRole && <FormModal table="user" type="create" />}
+            <FormModal table="user" type="create" />
           </div>
         </div>
       </div>
