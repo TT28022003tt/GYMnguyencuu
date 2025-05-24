@@ -17,8 +17,8 @@ type Trainer = {
   ten: string;
   ngaySinh: string;
   gioiTinh: number;
-  diaChi:string;
-  soDienThoai:string;
+  diaChi: string;
+  soDienThoai: string;
   chungChi: string | null;
   bangCap: string | null;
   chuyenMon: string | null;
@@ -28,15 +28,15 @@ type Trainer = {
 };
 
 const columns = [
-  { header: "Name", accessor: "ten" },
+  { header: "Tên", accessor: "ten" },
   { header: "ID", accessor: "idMaHLV" },
-  { header: "Date of Birth", accessor: "ngaySinh", className: "hidden md:table-cell" },
-  { header: "Gender", accessor: "gioiTinh", className: "hidden md:table-cell" },
-  { header: "Certification", accessor: "chungChi", className: "hidden lg:table-cell" },
-  { header: "Degree", accessor: "bangCap", className: "hidden lg:table-cell" },
-  { header: "Expertise", accessor: "chuyenMon", className: "hidden lg:table-cell" },
-  { header: "Salary", accessor: "luong", className: "hidden md:table-cell" },
-  { header: "Actions", accessor: "action" },
+  { header: "Ngày Sinh", accessor: "ngaySinh", className: "hidden md:table-cell" },
+  { header: "Giới Tính", accessor: "gioiTinh", className: "hidden md:table-cell" },
+  { header: "Chứng Chỉ", accessor: "chungChi", className: "hidden lg:table-cell" },
+  { header: "Bằng Cấp", accessor: "bangCap", className: "hidden lg:table-cell" },
+  { header: "Chuyên Môn", accessor: "chuyenMon", className: "hidden lg:table-cell" },
+  { header: "Lương", accessor: "luong", className: "hidden md:table-cell" },
+  { header: "Hành Động", accessor: "action" },
 ];
 
 const Trainer = () => {

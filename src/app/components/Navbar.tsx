@@ -13,7 +13,7 @@ import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import FeedbackForm from "./forms/FeedbackForm";
 
 const Navbar = () => {
-  const {user, setUser } = useMyContext();
+  const { user, setUser } = useMyContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState("mylight");
   const [showFeedback, setShowFeedback] = useState(false);
@@ -39,12 +39,12 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Training Plans", href: "/trainingplans" },
-    { name: "Health Consultation", href: "/healthconsultation" },
-    { name: "Schedule", href: "/schedule" },
-    { name: "Class", href: "/class" },
-    { name: "Checkout", href: "/checkout" },
+    { name: "Trang Chủ", href: "/" },
+    { name: "Kế Hoạch Tập Luyện", href: "/trainingplans" },
+    { name: "Tư Vấn Sức Khỏe", href: "/healthconsultation" },
+    { name: "Lịch", href: "/schedule" },
+    { name: "Lớp Học", href: "/class" },
+    { name: "Thanh Toán", href: "/checkout" },
   ];
 
   return (

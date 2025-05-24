@@ -39,6 +39,7 @@
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.8",
+    "cloudinary": "^2.6.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "date-fns": "^4.1.0",

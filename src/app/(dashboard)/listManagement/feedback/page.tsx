@@ -24,14 +24,14 @@ type Feedback = {
 };
 
 const columns = [
-  { header: "Customer Name", accessor: "customerName" },
+  { header: "Tên Khách Hàng", accessor: "customerName" },
   { header: "Email", accessor: "email", className: "hidden md:table-cell" },
-  { header: "Phone Number", accessor: "phone", className: "hidden md:table-cell" },
-  { header: "Sent Date", accessor: "sentDate", className: "hidden md:table-cell" },
-  { header: "Rating", accessor: "rating", className: "hidden md:table-cell" },
-  { header: "Feedback Type", accessor: "feedbackType", className: "hidden lg:table-cell" },
-  { header: "Content", accessor: "content", className: "hidden lg:table-cell" },
-  { header: "Action", accessor: "action" },
+  { header: "Số Điện Thoại", accessor: "phone", className: "hidden md:table-cell" },
+  { header: "Ngày Gửi", accessor: "sentDate", className: "hidden md:table-cell" },
+  { header: "Đánh Giá", accessor: "rating", className: "hidden md:table-cell" },
+  { header: "Loại Phản Hồi", accessor: "feedbackType", className: "hidden lg:table-cell" },
+  { header: "Nội Dung", accessor: "content", className: "hidden lg:table-cell" },
+  { header: "Hành Động", accessor: "action" },
 ];
 
 
@@ -44,7 +44,7 @@ const FeedbackManagement = () => {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      setLoading(true); 
+      setLoading(true);
       setError(null);
       try {
         const res = await fetch("/api/admin/feedback");
@@ -55,7 +55,7 @@ const FeedbackManagement = () => {
         console.error("Error fetching feedback:", error);
         setError("Không thể tải phản hồi.");
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 

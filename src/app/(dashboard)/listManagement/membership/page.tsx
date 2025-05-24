@@ -28,14 +28,14 @@ type Membership = {
 };
 
 const columns = [
-  { header: "Member Name", accessor: "memberName", className: "w-40" },
-  { header: "ID Card", accessor: "cardId", className: "w-24" },
-  { header: "ID User", accessor: "accountId", className: "w-24" },
-  { header: "Start Date", accessor: "startDate", className: "w-32 hidden lg:table-cell" },
-  { header: "End Date", accessor: "endDate", className: "w-32 hidden lg:table-cell" },
-  { header: "Card Type", accessor: "cardType", className: "w-28 hidden md:table-cell" },
-  { header: "Status", accessor: "status", className: "w-28 hidden md:table-cell" },
-  { header: "Actions", accessor: "actions", className: "w-24" },
+  { header: "Tên Thành Viên", accessor: "memberName", className: "w-40" },
+  { header: "ID thẻ", accessor: "cardId", className: "w-24" },
+  { header: "ID Người Dùng", accessor: "accountId", className: "w-24" },
+  { header: "Ngày Bắt Đầu", accessor: "startDate", className: "w-32 hidden lg:table-cell" },
+  { header: "Ngày Kết Thúc", accessor: "endDate", className: "w-32 hidden lg:table-cell" },
+  { header: "Loại Thẻ", accessor: "cardType", className: "w-28 hidden md:table-cell" },
+  { header: "Trạng Thái", accessor: "status", className: "w-28 hidden md:table-cell" },
+  { header: "Hành Động", accessor: "actions", className: "w-24" },
 ];
 
 const MembershipManagement = () => {
@@ -153,7 +153,7 @@ const MembershipManagement = () => {
               TinhTrang: item.status === "Ongoing" ? 1 : 0,
             }}
           />
-          <FormModal table="membership" type="delete" id={item.id} onSuccess={fetchMemberships}/>
+          <FormModal table="membership" type="delete" id={item.id} onSuccess={fetchMemberships} />
         </div>
       </td>
     </tr>
