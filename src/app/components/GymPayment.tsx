@@ -11,7 +11,7 @@ const GymPayment: React.FC = () => {
   const [months, setMonths] = useState<number>(1);
 
   const packagePrices: Record<'FIRE' | 'FIRE-PLUS' | 'FIRE-VIP', number> = {
-    FIRE: 500000,
+    'FIRE': 50000,
     'FIRE-PLUS': 800000,
     'FIRE-VIP': 1200000
   };
@@ -33,9 +33,10 @@ const GymPayment: React.FC = () => {
         apiUrl = '/api/payment/momo';
       } else if (paymentMethod === 'zalopay') {
         apiUrl = '/api/payment/zalopay';
-      } else {
-        alert('Phương thức thanh toán không hợp lệ');
-        return;
+      } else if (paymentMethod === 'vnpay'){
+        apiUrl = '/api/payment/vnpay';
+      }else {
+       alert('Phương Thức Thanh toán không hợp lệ')
       }
 
       const response = await fetch(apiUrl, {
@@ -77,9 +78,9 @@ const GymPayment: React.FC = () => {
             <div className="mb-4">
               <label className="block mb-2 font-medium">Chọn Gói Tập</label>
               <div onChange={(e: any) => setPackageType(e.target.value)}>
-                <label className="block"><input type="radio" value="FIRE" checked={packageType === 'FIRE'} onChange={()=> setPackageType("FIRE")} className="mr-2" />FIRE - 500.000đ/tháng</label>
-                <label className="block"><input type="radio" value="FIRE-PLUS" checked={packageType === 'FIRE-PLUS'} onChange={()=> setPackageType("FIRE-PLUS")} className="mr-2" />FIRE-PLUS - 800.000đ/tháng</label>
-                <label className="block"><input type="radio" value="FIRE-VIP" checked={packageType === 'FIRE-VIP'} onChange={()=> setPackageType("FIRE-VIP")} className="mr-2" />FIRE-VIP - 1.200.000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE" checked={packageType === 'FIRE'} onChange={()=> setPackageType("FIRE")} className="mr-2" />FIRE - 500000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE-PLUS" checked={packageType === 'FIRE-PLUS'} onChange={()=> setPackageType("FIRE-PLUS")} className="mr-2" />FIRE-PLUS - 800000đ/tháng</label>
+                <label className="block"><input type="radio" value="FIRE-VIP" checked={packageType === 'FIRE-VIP'} onChange={()=> setPackageType("FIRE-VIP")} className="mr-2" />FIRE-VIP - 1200000đ/tháng</label>
               </div>
             </div>
 

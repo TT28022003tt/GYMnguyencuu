@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(dashboard)/listManagement/Class"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(dashboard)/listManagement/Class", "src/app/api/payment/momo/route.js", "src/app/api/payment/momo/return/route.ts"],
   "exclude": ["node_modules"]
 }

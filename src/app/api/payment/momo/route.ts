@@ -12,16 +12,19 @@ export async function POST(req: NextRequest) {
     const redirectUrl = process.env.MOMO_REDIRECT_URL!;
     const ipnUrl = process.env.MOMO_IPN_URL!;
 
+
     // Tạo orderId và requestId
     const orderId = `${Date.now()}`;
     const requestId = `${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const amount = totalPrice.toString();
-    const orderInfo = `Thanh toán gói tập Gym: ${packageType} (${months} tháng)`;
+    const orderInfo = "Thanh toán gói tập gym";
     const requestType = 'captureWallet';
 
     // Tạo rawSignature
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
+    console.log("chuki", rawSignature)
     const signature = crypto.createHmac('sha256', secretKey).update(rawSignature).digest('hex');
+    console.log("sign", signature)
 
     // Xây dựng body request
     const bodyRequest = {
@@ -53,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     // Kiểm tra phản hồi từ MOMO
     const result = await response.json();
-
+    console.log("MOMO Response:", result)
     if (result.payUrl) {
       // Trả về URL thanh toán MOMO
       return NextResponse.json({ payUrl: result.payUrl });

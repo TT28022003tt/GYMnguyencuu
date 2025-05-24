@@ -22,7 +22,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({ onPayment
   const paymentOptions = [
     { id: 'momo', label: 'Ví MoMo', icon: faMobileAlt },
     { id: 'zalopay', label: 'ZaloPay', icon: faMoneyCheckAlt },
-    { id: 'card', label: 'Thẻ ATM / Visa', icon: faCreditCard },
+    { id: 'vnpay', label: 'VNPAY', icon: faCreditCard },
   ];
 
   return (
