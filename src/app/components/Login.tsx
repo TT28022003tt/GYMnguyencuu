@@ -35,7 +35,6 @@ interface ApiError {
   error: string;
 }
 
-// Thành phần con để sử dụng useSearchParams
 const LoginContent: React.FC = () => {
   const [action, setAction] = useState<string>("Login");
   const [showForgotPassword, setShowForgotPassword] = useState<boolean>(false);
