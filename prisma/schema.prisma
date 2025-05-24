@@ -381,18 +381,8 @@ model chitietgoitap {
   user            user          @relation(fields: [idUser], references: [idUser], onDelete: Cascade, map: "FK_CTGT_User")
 
   @@index([idMaGT], map: "FK_CTGT_GT_idx")
-  @@index([idUser], map: "FK_CTGT_User_idx")
   @@index([idMaHLV], map: "FK_CTGT_HLV_idx")
-}
-
-model lichlophoc {
-  idLichLopHoc Int     @id @default(autoincrement())
-  idMaLH       Int
-  Thu          Int?
-  GioBatDau    String? @db.VarChar(5)
-  lophoc       lophoc  @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_LLH_LH")
-
-  @@index([idMaLH], map: "FK_LLH_LH_idx")
+  @@index([idUser], map: "FK_CTGT_User_idx")
 }
 
 model dangkylophoc {
@@ -405,4 +395,14 @@ model dangkylophoc {
 
   @@index([idHocVien])
   @@index([idLopHoc])
+}
+
+model lichlophoc {
+  idLichLopHoc Int     @id @default(autoincrement())
+  idMaLH       Int
+  Thu          Int?
+  GioBatDau    String? @db.VarChar(5)
+  lophoc       lophoc  @relation(fields: [idMaLH], references: [idMaLH], onDelete: Cascade, map: "FK_LLH_LH")
+
+  @@index([idMaLH], map: "FK_LLH_LH_idx")
 }
